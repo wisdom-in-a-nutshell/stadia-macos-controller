@@ -6,16 +6,6 @@
     "ghostty": {
       "enabled": true,
       "mappings": {
-        "leftTrigger": {
-          "debounceMs": 250,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 2,
-            "modifiers": ["command"],
-            "description": "Ghostty split right (Cmd+D)"
-          }
-        },
         "rightTrigger": {
           "action": {
             "type": "holdKeystroke",
