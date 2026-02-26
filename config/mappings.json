@@ -15,12 +15,23 @@
           }
         },
         "y": {
-          "debounceMs": 200,
+          "debounceMs": 140,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  key code 36\nend tell",
-            "description": "Open /model popup for manual model selection"
+            "type": "keystroke",
+            "keyCode": 126,
+            "modifiers": [],
+            "description": "Model picker move up"
+          }
+        },
+        "x": {
+          "debounceMs": 140,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 125,
+            "modifiers": [],
+            "description": "Model picker move down"
           }
         },
         "options": {
@@ -37,8 +48,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/compact\"\n  key code 36\nend tell",
-            "description": "Run /compact in Codex session"
+            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  key code 36\nend tell",
+            "description": "Open /model popup"
           }
         },
         "leftThumbstickButton": {
