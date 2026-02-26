@@ -47,13 +47,16 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
 - Ghostty defaults:
   - `R2` (`rightTrigger`): hold Space (`holdKeystroke`)
-  - `L1`/`R1`: previous/next tab
-  - D-pad: split navigation (Cmd+Opt+Arrow)
+  - `L1` (`leftShoulder`): cycle tabs (next tab)
+  - `R1` (`rightShoulder`): cycle split focus in current tab
+  - D-pad `Up/Down`: model picker up/down
+  - D-pad `Left/Right`: currently unassigned (reserved for future)
 
 Non-profiled apps:
 - If frontmost app is not mapped in `appProfiles`, bridge logs `[SKIP] no active app profile` and executes nothing.
 
 If your Ghostty split binding differs, edit `config/mappings.json`.
+For design intent behind the current layout, see `docs/references/ghostty-mapping-rationale.md`.
 
 ## Hot Reload
 - `config/mappings.json` is watched while the bridge is running.
@@ -65,21 +68,21 @@ Install as a user LaunchAgent:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live
+./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
 ```
 
 Uninstall:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/uninstall-launchd-stadia-controller-bridge.sh
+./setup/stadia/uninstall-launchd-stadia-controller-bridge.sh
 ```
 
 Verify:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/verify-launchd-stadia-controller-bridge.sh
+./setup/stadia/verify-launchd-stadia-controller-bridge.sh
 ```
 
 ## Troubleshooting (Recurring Issues)
@@ -89,7 +92,7 @@ cd ~/GitHub/scripts
 - Symptom: worked earlier, then broke right after reinstall.
   - Cause: signing identity changed, or app executable was unnecessarily rebuilt/re-signed.
   - Fix: reinstall with stable signing:
-    - `cd ~/GitHub/scripts && ./setup/install-launchd-stadia-controller-bridge.sh --mode live`
+    - `cd ~/GitHub/scripts && ./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live`
 - Fast status checks:
   - `launchctl print gui/$(id -u)/com.stadia-controller-bridge | sed -n '1,90p'`
   - `tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log`

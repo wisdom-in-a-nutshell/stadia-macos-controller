@@ -14,26 +14,6 @@
             "description": "Hold to mimic Space"
           }
         },
-        "y": {
-          "debounceMs": 140,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 126,
-            "modifiers": [],
-            "description": "Model picker move up"
-          }
-        },
-        "x": {
-          "debounceMs": 140,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 125,
-            "modifiers": [],
-            "description": "Model picker move down"
-          }
-        },
         "options": {
           "debounceMs": 220,
           "edgeTrigger": true,
@@ -114,19 +94,6 @@
           }
         },
         "leftShoulder": {
-          "debounceMs": 210,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 33,
-            "modifiers": [
-              "command",
-              "shift"
-            ],
-            "description": "Previous tab (Cmd+Shift+[)"
-          }
-        },
-        "rightShoulder": {
           "debounceMs": 200,
           "edgeTrigger": true,
           "action": {
@@ -136,59 +103,39 @@
               "command",
               "shift"
             ],
-            "description": "Next tab (Cmd+Shift+])"
+            "description": "Cycle tabs (next tab, Cmd+Shift+])"
+          }
+        },
+        "rightShoulder": {
+          "debounceMs": 200,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 30,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Cycle splits within current tab (Ghostty goto_split:next via Cmd+])"
           }
         },
         "dpadUp": {
-          "debounceMs": 150,
+          "debounceMs": 140,
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
             "keyCode": 126,
-            "modifiers": [
-              "command",
-              "option"
-            ],
-            "description": "Move to split up (Cmd+Opt+Up)"
+            "modifiers": [],
+            "description": "Model picker move up"
           }
         },
         "dpadDown": {
-          "debounceMs": 150,
+          "debounceMs": 140,
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
             "keyCode": 125,
-            "modifiers": [
-              "command",
-              "option"
-            ],
-            "description": "Move to split down (Cmd+Opt+Down)"
-          }
-        },
-        "dpadLeft": {
-          "debounceMs": 150,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 123,
-            "modifiers": [
-              "command",
-              "option"
-            ],
-            "description": "Move to split left (Cmd+Opt+Left)"
-          }
-        },
-        "dpadRight": {
-          "debounceMs": 150,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 124,
-            "modifiers": [
-              "command",
-              "option"
-            ],
-            "description": "Move to split right (Cmd+Opt+Right)"
+            "modifiers": [],
+            "description": "Model picker move down"
           }
         }
       }

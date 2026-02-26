@@ -17,7 +17,7 @@ Build a local bridge that maps Stadia controller inputs to macOS actions and app
 
 ## Correctness Guardrails
 - Do not claim bridge changes are correct without validation evidence (`launchctl print gui/$(id -u)/com.stadia-controller-bridge` plus a live button press check).
-- Prefer running `~/GitHub/scripts/setup/verify-launchd-stadia-controller-bridge.sh` after install/reinstall before declaring launchd wiring healthy.
+- Prefer running `~/GitHub/scripts/setup/stadia/verify-launchd-stadia-controller-bridge.sh` after install/reinstall before declaring launchd wiring healthy.
 - Use canonical machine-level launchd entrypoints from `~/GitHub/scripts/setup/` to avoid setup drift across machines.
 - Keep launchd service identity consistent (`com.stadia-controller-bridge`) across machines; do not introduce per-machine labels unless explicitly requested.
 - Keep staged runtime target consistent: `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`.

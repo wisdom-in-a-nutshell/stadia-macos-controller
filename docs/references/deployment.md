@@ -13,18 +13,19 @@ swift build
 
 ## 2) Configure mappings
 Edit `config/mappings.json` as needed. Hot reload is enabled while the bridge process is running.
+For Ghostty layout rationale, see `docs/references/ghostty-mapping-rationale.md`.
 
 ## 3) Install launchd service
 Canonical machine-ops command (recommended) from `~/GitHub/scripts`:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live
+./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
 ```
 
 Optional signing override examples:
-- `./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto` (default behavior)
-- `./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc`
+- `./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto` (default behavior)
+- `./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc`
 
 Project-local fallback (equivalent):
 
@@ -37,7 +38,7 @@ For safer testing first:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode dry-run
+./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode dry-run
 ```
 
 What this installer now does:
@@ -64,7 +65,7 @@ If entries got messy from old runs:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live
+./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
 ```
 
 ## 5) Validate service state
@@ -81,7 +82,7 @@ tail -n 80 ~/Library/Logs/stadia-controller-bridge.launchd.err.log
 One-command verifier (recommended):
 ```bash
 cd ~/GitHub/scripts
-./setup/verify-launchd-stadia-controller-bridge.sh
+./setup/stadia/verify-launchd-stadia-controller-bridge.sh
 ```
 
 ## 6) Update workflow
@@ -108,5 +109,5 @@ tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log
 3. Reconcile install with stable signing:
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live
+./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
 ```
