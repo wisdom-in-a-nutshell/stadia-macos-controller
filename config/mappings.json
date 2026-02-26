@@ -60,14 +60,10 @@
           "debounceMs": 500,
           "edgeTrigger": true,
           "action": {
-            "type": "text",
-            "preKeyCode": 17,
-            "preModifiers": ["command"],
-            "preDelayMs": 700,
-            "text": "codex",
-            "delayMs": 80,
-            "pressEnter": true,
-            "description": "Capture button: new Ghostty tab + start codex"
+            "type": "keystroke",
+            "keyCode": 17,
+            "modifiers": ["command"],
+            "description": "Capture button: open new tab (Ghostty auto-runs codex)"
           }
         },
         "leftThumbstickButton": {
@@ -75,9 +71,19 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 2,
+            "keyCode": 30,
             "modifiers": ["command", "shift"],
             "description": "Split down (Cmd+Shift+D)"
+          }
+        },
+        "rightThumbstickButton": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 2,
+            "modifiers": ["command"],
+            "description": "Split right (Cmd+D)"
           }
         },
         "a": {
