@@ -57,14 +57,15 @@
           }
         },
         "share": {
-          "debounceMs": 220,
+          "debounceMs": 500,
           "edgeTrigger": true,
           "action": {
             "type": "text",
             "preKeyCode": 17,
             "preModifiers": ["command"],
-            "preDelayMs": 360,
+            "preDelayMs": 700,
             "text": "codex",
+            "delayMs": 80,
             "pressEnter": true,
             "description": "Capture button: new Ghostty tab + start codex"
           }
