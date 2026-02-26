@@ -171,8 +171,12 @@ struct ConfigLoader {
     }
 
     private static func validate(config: BridgeConfig) throws {
-        guard config.profiles["default"] != nil else {
-            throw BridgeError.configValidationFailed("Config must include a 'default' profile")
+        for (bundleID, profileName) in config.appProfiles {
+            guard config.profiles[profileName] != nil else {
+                throw BridgeError.configValidationFailed(
+                    "appProfiles entry '\(bundleID)' references unknown profile '\(profileName)'"
+                )
+            }
         }
 
         for (profileName, profile) in config.profiles {
@@ -211,12 +215,12 @@ final class ProfileResolver {
         self.appProfiles = appProfiles
     }
 
-    func resolveActiveProfile() -> String {
+    func resolveActiveProfile() -> String? {
         guard let bundleID = currentFrontmostBundleID() else {
-            return "default"
+            return nil
         }
 
-        return appProfiles[bundleID] ?? "default"
+        return appProfiles[bundleID]
     }
 
     func currentFrontmostBundleID() -> String? {
@@ -718,7 +722,6 @@ final class ControllerBridge: NSObject {
         }
 
         let bundleID = profileResolver.currentFrontmostBundleID() ?? "unknown"
-        let activeProfileName = profileResolver.resolveActiveProfile()
 
         if let emergencyButton = config.safety.emergencyToggleButton,
            event.button == emergencyButton {
@@ -729,6 +732,11 @@ final class ControllerBridge: NSObject {
 
         guard bridgeEnabled else {
             print("[SKIP] Bridge disabled via emergency toggle")
+            return
+        }
+
+        guard let activeProfileName = profileResolver.resolveActiveProfile() else {
+            print("[SKIP] no active app profile bundle=\(bundleID) button=\(event.button)")
             return
         }
 
@@ -773,17 +781,9 @@ final class ControllerBridge: NSObject {
     }
 
     private func resolveMapping(forButton button: String, activeProfileName: String) -> (profileName: String, mapping: MappingConfig)? {
-        let defaultProfile = config.profiles["default"]
-
         if let activeProfile = config.profiles[activeProfileName], activeProfile.enabled ?? true,
            let mapping = activeProfile.mappings[button] {
             return (activeProfileName, mapping)
-        }
-
-        if let defaultProfile,
-           defaultProfile.enabled ?? true,
-           let mapping = defaultProfile.mappings[button] {
-            return ("default", mapping)
         }
 
         return nil
