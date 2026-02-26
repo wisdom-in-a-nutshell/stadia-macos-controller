@@ -98,6 +98,9 @@ struct ActionConfig: Decodable {
     let text: String?
     let pressEnter: Bool?
     let delayMs: Int?
+    let preKeyCode: Int?
+    let preModifiers: [String]?
+    let preDelayMs: Int?
     let description: String?
 }
 
@@ -191,11 +194,11 @@ struct ConfigLoader {
                     guard let script = mapping.action.script, !script.isEmpty else {
                         throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' applescript action requires script")
                     }
-                case .text:
-                    guard let text = mapping.action.text, !text.isEmpty else {
-                        throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' text action requires text")
-                    }
-                }
+        case .text:
+            guard let text = mapping.action.text, !text.isEmpty else {
+                throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' text action requires text")
+            }
+        }
             }
         }
     }
@@ -277,6 +280,15 @@ final class ActionExecutor {
 
             if !AXIsProcessTrusted() {
                 throw BridgeError.actionExecutionFailed("Accessibility permission is required for typed text injection")
+            }
+
+            if let preKeyCodeValue = action.preKeyCode {
+                let preFlags = modifierFlags(from: action.preModifiers ?? [])
+                try postKeystroke(keyCode: CGKeyCode(preKeyCodeValue), modifiers: preFlags)
+
+                if let preDelayMs = action.preDelayMs, preDelayMs > 0 {
+                    Thread.sleep(forTimeInterval: Double(preDelayMs) / 1000.0)
+                }
             }
 
             try postText(text)

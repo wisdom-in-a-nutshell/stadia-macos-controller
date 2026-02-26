@@ -31,6 +31,9 @@ The bridge config lives at `config/mappings.json`.
   - `script` (`string`, required)
 - Text fields:
   - `text` (`string`, required)
+  - `preKeyCode` (`int`, optional): keystroke to send before typing text.
+  - `preModifiers` (`string[]`, optional): modifiers for `preKeyCode`.
+  - `preDelayMs` (`int`, optional): delay after pre-keystroke and before typing text.
   - `pressEnter` (`bool`, optional): if true, press Enter after typing text.
   - `delayMs` (`int`, optional): delay between typing text and Enter.
 - Optional shared field:
