@@ -71,7 +71,7 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 30,
+            "keyCode": 2,
             "modifiers": ["command", "shift"],
             "description": "Split down (Cmd+Shift+D)"
           }
