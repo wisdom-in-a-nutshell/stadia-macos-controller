@@ -136,6 +136,7 @@ fi
 
 if [[ -z "$BINARY_PATH" ]]; then
   echo "Building ${BUILD_CONFIG} binary..."
+  (cd "$REPO_DIR" && swift build -c "$BUILD_CONFIG" >/dev/null)
   BIN_DIR="$(cd "$REPO_DIR" && swift build -c "$BUILD_CONFIG" --show-bin-path)"
   BUILT_BINARY="${BIN_DIR}/stadia-controller-bridge"
   if [[ ! -x "$BUILT_BINARY" ]]; then
