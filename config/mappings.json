@@ -39,7 +39,7 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/compact\"\n  key code 36\nend tell",
+            "script": "tell application \"System Events\"\n  keystroke \"/compact\"\n  delay 0.08\n  key code 36\nend tell",
             "description": "Run /compact in Codex session"
           }
         },
@@ -48,7 +48,7 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  key code 36\nend tell",
+            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  delay 0.08\n  key code 36\nend tell",
             "description": "Open /model popup"
           }
         },
