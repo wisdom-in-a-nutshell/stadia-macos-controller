@@ -60,11 +60,10 @@
           "debounceMs": 220,
           "edgeTrigger": true,
           "action": {
-            "type": "text",
-            "text": "/model",
-            "delayMs": 80,
-            "pressEnter": true,
-            "description": "Assistant button: open /model popup"
+            "type": "keystroke",
+            "keyCode": 24,
+            "modifiers": ["command", "shift"],
+            "description": "Assistant button: zoom in (Cmd+Plus)"
           }
         },
         "share": {
