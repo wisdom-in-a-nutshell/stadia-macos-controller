@@ -10,10 +10,11 @@ If implemented poorly, global hotkeys could fire in the wrong app and disrupt ac
 
 ## Context
 The Stadia controller is detected on this macOS machine via USB (`18d1:9400`) and appears in Apple GameController APIs as an extended gamepad profile.
-This repo currently contains planning/docs only; runtime code has not been scaffolded yet.
+This repo now contains a working Swift bridge (`src/main.swift`), launchd installers, and live mappings in `config/mappings.json`.
 The desired behavior is profile-based: when the frontmost app changes, action mappings should switch automatically.
 Phase 1 only requires a `ghostty` profile plus a safe `default` fallback; additional app profiles come later.
 The user often dictates commands/prompts, so button mappings should prioritize quick tap/hold actions that complement voice input.
+Ghostty global startup behavior (Codex first, then fallback shell) is intentionally machine-level and lives in `~/GitHub/scripts/setup/codex/ghostty-codex-then-shell.sh` on both machines.
 
 ## Decisions
 Use Swift + Apple `GameController` for controller input capture.
@@ -21,9 +22,10 @@ Use Apple AppKit/Accessibility APIs for frontmost-app awareness and action execu
 Implement a single source-of-truth config layer for profile mappings (not hardcoded in multiple places).
 Start with one concrete profile: `ghostty`, plus a safe `default` fallback profile.
 Support edge-trigger (press once), hold-repeat (optional), and debounce controls per mapping.
+Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; keep controller profile/mapping logic in this repo.
 
 ## Open Questions
-None for current implementation.
+- Why MacBook occasionally applies stale `leftThumbstickButton` runtime action (`keyCode=30`) even after config updated to `keyCode=2` and launchd kickstart.
 
 ## Tasks
 - [x] Scaffold Swift CLI app in `src/` with controller connection/disconnection logging and per-button event logging.
@@ -39,7 +41,8 @@ None for current implementation.
 - [ ] Validate end-to-end: focus Ghostty, press mapped buttons, verify expected action fires only once per press.
 - [ ] Validate fallback behavior when frontmost app has no profile (`default` profile applies, no unexpected global action).
 - [x] Install and validate `launchd` service on both machines using repo-local installer.
-- [ ] Grant Accessibility permission on second machine for staged bridge binary path (`~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`).
+- [x] Grant Accessibility permission on second machine for staged bridge binary path (`~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`).
+- [ ] Resolve MacBook `leftThumbstickButton` stale runtime mapping and verify it emits `keyCode=2` (split down) in live logs.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (no new repo-local rule needed yet).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -66,8 +69,10 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Installed local LaunchAgent `com.$USER.stadia-controller-bridge` and verified `launchctl` state is `running`.
 - 2026-02-26: [DONE] Installed second-machine LaunchAgent over SSH (`com.adi.stadia-controller-bridge`) and verified `launchctl` state is `running`.
 - 2026-02-26: [DONE] Moved Ghostty Codex startup behavior to global machine-ops repo (`~/GitHub/scripts/setup/codex/ghostty-codex-then-shell.sh`) and pointed Ghostty config on both machines to the global script path.
+- 2026-02-26: [DONE] Updated `leftThumbstickButton` mapping in config to `Cmd+Shift+D` (`keyCode=2`) and synced config file on both machines.
+- 2026-02-26: [IN_PROGRESS] MacBook local validation still needed because live logs intermittently showed stale runtime `keyCode=30` for `leftThumbstickButton`.
 
 ## Next 3 Actions
-1. Grant Accessibility permission on the second machine for `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`.
-2. Validate Ghostty + controller mappings live on both machines (including `share` -> `Cmd+T` and Codex-first startup behavior).
+1. On MacBook, run local live-log verification while pressing `leftThumbstickButton` and confirm `[ACTION] ... keyCode=2`.
+2. If stale action persists, perform full local reinstall (`./scripts/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto`) and re-validate in Ghostty frontmost.
 3. Archive project notes to `docs/projects/archive/stadia-macos-controller/` once user confirms completion.
