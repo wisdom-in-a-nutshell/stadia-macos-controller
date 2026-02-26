@@ -10,7 +10,7 @@ START_INTERVAL=0
 RUN_AT_LOAD=1
 BUILD_CONFIG="release" # release|debug
 RUNTIME_DIR="${HOME}/Library/Application Support/stadia-controller-bridge"
-SIGN_IDENTITY="auto"   # auto|adhoc|none|<identity string>
+SIGN_IDENTITY="adhoc"  # auto|adhoc|none|<identity string>
 SIGNING_IDENTIFIER="com.${USER}.stadia-controller-bridge"
 
 PLIST_PATH="${HOME}/Library/LaunchAgents/${LABEL}.plist"
@@ -39,7 +39,7 @@ Options:
 
 Examples:
   ./scripts/install-launchd-stadia-controller-bridge.sh
-  ./scripts/install-launchd-stadia-controller-bridge.sh --sign-identity auto
+  ./scripts/install-launchd-stadia-controller-bridge.sh --sign-identity adhoc
   ./scripts/install-launchd-stadia-controller-bridge.sh --sign-identity "Apple Development: Your Name (TEAMID)"
   ./scripts/install-launchd-stadia-controller-bridge.sh --mode dry-run
   ./scripts/install-launchd-stadia-controller-bridge.sh --repo-dir ~/GitHub/stadia-macos-controller
