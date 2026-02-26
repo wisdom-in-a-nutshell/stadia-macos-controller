@@ -20,6 +20,12 @@ or:
 swift run stadia-controller-bridge --config config/mappings.json --no-dry-run
 ```
 
+If Accessibility permission has not appeared yet, run once with prompt enabled:
+
+```bash
+swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --prompt-accessibility
+```
+
 ## Accessibility Permission (required for keystroke actions)
 1. Open `System Settings` > `Privacy & Security` > `Accessibility`.
 2. Allow your terminal app (for example Ghostty/Terminal/iTerm) to control your Mac.

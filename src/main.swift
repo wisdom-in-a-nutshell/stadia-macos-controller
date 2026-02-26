@@ -7,10 +7,12 @@ import GameController
 struct CLIOptions {
     let configPath: String
     let dryRunOverride: Bool?
+    let promptAccessibility: Bool
 
     static func parse(arguments: [String]) throws -> CLIOptions {
         var configPath = "config/mappings.json"
         var dryRunOverride: Bool?
+        var promptAccessibility = false
 
         var index = 1
         while index < arguments.count {
@@ -32,12 +34,19 @@ struct CLIOptions {
             case "--help", "-h":
                 Self.printHelp()
                 Foundation.exit(0)
+            case "--prompt-accessibility":
+                promptAccessibility = true
+                index += 1
             default:
                 throw BridgeError.invalidArguments("Unknown argument: \(argument)")
             }
         }
 
-        return CLIOptions(configPath: configPath, dryRunOverride: dryRunOverride)
+        return CLIOptions(
+            configPath: configPath,
+            dryRunOverride: dryRunOverride,
+            promptAccessibility: promptAccessibility
+        )
     }
 
     static func printHelp() {
@@ -51,6 +60,7 @@ struct CLIOptions {
           --config <path>   Path to mappings config JSON (default: config/mappings.json)
           --dry-run         Force dry-run mode (no key/command execution)
           --no-dry-run      Force live mode
+          --prompt-accessibility  Ask macOS to show Accessibility permission prompt
           --help, -h        Show this help text
         """
         print(help)
@@ -304,7 +314,7 @@ final class ControllerBridge: NSObject {
     private var lastTriggeredAt: [String: Date] = [:]
     private var bridgeEnabled = true
 
-    init(config: BridgeConfig, dryRunOverride: Bool?) {
+    init(config: BridgeConfig, dryRunOverride: Bool?, promptAccessibility: Bool) {
         self.config = config
         self.profileResolver = ProfileResolver(appProfiles: config.appProfiles)
 
@@ -315,6 +325,9 @@ final class ControllerBridge: NSObject {
         print("Bridge mode: \(dryRun ? "dry-run" : "live")")
         if !dryRun && !AXIsProcessTrusted() {
             print("WARNING: Accessibility permission is not granted. Keystroke actions will fail until enabled.")
+            if promptAccessibility {
+                promptForAccessibilityPermission()
+            }
         }
     }
 
@@ -383,38 +396,87 @@ final class ControllerBridge: NSObject {
             return
         }
 
-        bind(gamepad.buttonA, buttonName: "a", controllerID: controllerID)
-        bind(gamepad.buttonB, buttonName: "b", controllerID: controllerID)
-        bind(gamepad.buttonX, buttonName: "x", controllerID: controllerID)
-        bind(gamepad.buttonY, buttonName: "y", controllerID: controllerID)
-        bind(gamepad.leftShoulder, buttonName: "leftShoulder", controllerID: controllerID)
-        bind(gamepad.rightShoulder, buttonName: "rightShoulder", controllerID: controllerID)
-        bind(gamepad.leftTrigger, buttonName: "leftTrigger", controllerID: controllerID)
-        bind(gamepad.rightTrigger, buttonName: "rightTrigger", controllerID: controllerID)
-        bind(gamepad.dpad.up, buttonName: "dpadUp", controllerID: controllerID)
-        bind(gamepad.dpad.down, buttonName: "dpadDown", controllerID: controllerID)
-        bind(gamepad.dpad.left, buttonName: "dpadLeft", controllerID: controllerID)
-        bind(gamepad.dpad.right, buttonName: "dpadRight", controllerID: controllerID)
-
-        bind(gamepad.buttonMenu, buttonName: "menu", controllerID: controllerID)
-
-        if let buttonOptions = gamepad.buttonOptions {
-            bind(buttonOptions, buttonName: "options", controllerID: controllerID)
+        gamepad.valueChangedHandler = { [weak self] gamepad, element in
+            self?.handleGamepadValueChanged(controllerID: controllerID, gamepad: gamepad, element: element)
         }
+        print("[INFO] Registered valueChangedHandler for controller id=\(controllerID)")
+    }
 
-        if let leftThumbstickButton = gamepad.leftThumbstickButton {
-            bind(leftThumbstickButton, buttonName: "leftThumbstickButton", controllerID: controllerID)
+    private func handleGamepadValueChanged(
+        controllerID: String,
+        gamepad: GCExtendedGamepad,
+        element: GCControllerElement
+    ) {
+        if element === gamepad.buttonA {
+            handleButtonEvent(controllerID: controllerID, buttonName: "a", pressed: gamepad.buttonA.isPressed)
+            return
         }
-
-        if let rightThumbstickButton = gamepad.rightThumbstickButton {
-            bind(rightThumbstickButton, buttonName: "rightThumbstickButton", controllerID: controllerID)
+        if element === gamepad.buttonB {
+            handleButtonEvent(controllerID: controllerID, buttonName: "b", pressed: gamepad.buttonB.isPressed)
+            return
+        }
+        if element === gamepad.buttonX {
+            handleButtonEvent(controllerID: controllerID, buttonName: "x", pressed: gamepad.buttonX.isPressed)
+            return
+        }
+        if element === gamepad.buttonY {
+            handleButtonEvent(controllerID: controllerID, buttonName: "y", pressed: gamepad.buttonY.isPressed)
+            return
+        }
+        if element === gamepad.leftShoulder {
+            handleButtonEvent(controllerID: controllerID, buttonName: "leftShoulder", pressed: gamepad.leftShoulder.isPressed)
+            return
+        }
+        if element === gamepad.rightShoulder {
+            handleButtonEvent(controllerID: controllerID, buttonName: "rightShoulder", pressed: gamepad.rightShoulder.isPressed)
+            return
+        }
+        if element === gamepad.leftTrigger {
+            handleButtonEvent(controllerID: controllerID, buttonName: "leftTrigger", pressed: gamepad.leftTrigger.isPressed)
+            return
+        }
+        if element === gamepad.rightTrigger {
+            handleButtonEvent(controllerID: controllerID, buttonName: "rightTrigger", pressed: gamepad.rightTrigger.isPressed)
+            return
+        }
+        if element === gamepad.buttonMenu {
+            handleButtonEvent(controllerID: controllerID, buttonName: "menu", pressed: gamepad.buttonMenu.isPressed)
+            return
+        }
+        if let buttonOptions = gamepad.buttonOptions, element === buttonOptions {
+            handleButtonEvent(controllerID: controllerID, buttonName: "options", pressed: buttonOptions.isPressed)
+            return
+        }
+        if let leftThumbstickButton = gamepad.leftThumbstickButton, element === leftThumbstickButton {
+            handleButtonEvent(controllerID: controllerID, buttonName: "leftThumbstickButton", pressed: leftThumbstickButton.isPressed)
+            return
+        }
+        if let rightThumbstickButton = gamepad.rightThumbstickButton, element === rightThumbstickButton {
+            handleButtonEvent(controllerID: controllerID, buttonName: "rightThumbstickButton", pressed: rightThumbstickButton.isPressed)
+            return
+        }
+        if element === gamepad.dpad.up {
+            handleButtonEvent(controllerID: controllerID, buttonName: "dpadUp", pressed: gamepad.dpad.up.isPressed)
+            return
+        }
+        if element === gamepad.dpad.down {
+            handleButtonEvent(controllerID: controllerID, buttonName: "dpadDown", pressed: gamepad.dpad.down.isPressed)
+            return
+        }
+        if element === gamepad.dpad.left {
+            handleButtonEvent(controllerID: controllerID, buttonName: "dpadLeft", pressed: gamepad.dpad.left.isPressed)
+            return
+        }
+        if element === gamepad.dpad.right {
+            handleButtonEvent(controllerID: controllerID, buttonName: "dpadRight", pressed: gamepad.dpad.right.isPressed)
+            return
         }
     }
 
-    private func bind(_ input: GCControllerButtonInput, buttonName: String, controllerID: String) {
-        input.pressedChangedHandler = { [weak self] _, _, pressed in
-            self?.handleButtonEvent(controllerID: controllerID, buttonName: buttonName, pressed: pressed)
-        }
+    private func promptForAccessibilityPermission() {
+        let options = ["AXTrustedCheckOptionPrompt": true] as CFDictionary
+        _ = AXIsProcessTrustedWithOptions(options)
+        print("[INFO] Requested macOS Accessibility permission prompt for this terminal app.")
     }
 
     private func handleButtonEvent(controllerID: String, buttonName: String, pressed: Bool) {
@@ -510,7 +572,11 @@ func run() throws {
     let options = try CLIOptions.parse(arguments: CommandLine.arguments)
     let config = try ConfigLoader.load(path: options.configPath)
 
-    let bridge = ControllerBridge(config: config, dryRunOverride: options.dryRunOverride)
+    let bridge = ControllerBridge(
+        config: config,
+        dryRunOverride: options.dryRunOverride,
+        promptAccessibility: options.promptAccessibility
+    )
     bridge.start()
 }
 
