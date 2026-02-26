@@ -7,6 +7,10 @@ The bridge config lives at `config/mappings.json`.
 - `profiles` (`object<string, ProfileConfig>`): named profile definitions.
 - `safety` (`SafetyConfig`): runtime safety defaults.
 
+Behavior note:
+- The bridge does not use a global fallback profile.
+- If the frontmost app bundle ID is not present in `appProfiles`, button events are ignored.
+
 ## ProfileConfig
 - `enabled` (`bool`, optional, default `true`): disable an entire profile.
 - `mappings` (`object<string, MappingConfig>`): button name -> mapping.

@@ -28,21 +28,19 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 
 ## Accessibility Permission (required for keystroke actions)
 1. Open `System Settings` > `Privacy & Security` > `Accessibility`.
-2. Allow your terminal app (for example Ghostty/Terminal/iTerm) to control your Mac.
-3. Restart the terminal session after enabling permission.
+2. Allow this staged bridge binary:
+   - `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`
+3. Keep using a stable signing mode (`--sign-identity adhoc`) to avoid trust churn.
 
 ## Current Starter Mapping
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
-- App profile: `com.openai.codex` -> `codex`
 - Ghostty defaults:
-  - `L2` (`leftTrigger`): `Cmd+D` split right
-  - `R2` (`rightTrigger`): `Cmd+Shift+D` split down
+  - `R2` (`rightTrigger`): hold Space (`holdKeystroke`)
   - `L1`/`R1`: previous/next tab
   - D-pad: split navigation (Cmd+Opt+Arrow)
-- Codex defaults:
-  - `A`: `holdKeystroke` Space (keyCode `49`)
-  - `B`: Enter (keyCode `36`)
-  - `L1`/`R1`: previous/next tab
+
+Non-profiled apps:
+- If frontmost app is not mapped in `appProfiles`, bridge logs `[SKIP] no active app profile` and executes nothing.
 
 If your Ghostty split binding differs, edit `config/mappings.json`.
 
@@ -65,3 +63,15 @@ Uninstall:
 cd ~/GitHub/scripts
 ./setup/uninstall-launchd-stadia-controller-bridge.sh
 ```
+
+## Troubleshooting (Recurring Issues)
+- Symptom: controller events appear in logs but no actions fire.
+  - Cause: Accessibility trust missing for staged binary.
+  - Fix: re-enable `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge` in Accessibility.
+- Symptom: worked earlier, then broke right after reinstall.
+  - Cause: signing identity changed, so macOS trust entry no longer matches.
+  - Fix: reinstall with stable signing:
+    - `cd ~/GitHub/scripts && ./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc`
+- Fast status checks:
+  - `launchctl print gui/$(id -u)/com.$USER.stadia-controller-bridge | sed -n '1,90p'`
+  - `tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log`

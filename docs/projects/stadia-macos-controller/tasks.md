@@ -12,7 +12,7 @@ If implemented poorly, global hotkeys could fire in the wrong app and disrupt ac
 The Stadia controller is detected on this macOS machine via USB (`18d1:9400`) and appears in Apple GameController APIs as an extended gamepad profile.
 This repo now contains a working Swift bridge (`src/main.swift`), launchd installers, and live mappings in `config/mappings.json`.
 The desired behavior is profile-based: when the frontmost app changes, action mappings should switch automatically.
-Phase 1 only requires a `ghostty` profile plus a safe `default` fallback; additional app profiles come later.
+Phase 1 uses explicit profile mapping only (`ghostty` now; more app profiles later). If an app is not mapped, no action should fire.
 The user often dictates commands/prompts, so button mappings should prioritize quick tap/hold actions that complement voice input.
 Ghostty global startup behavior (Codex first, then fallback shell) is intentionally machine-level and lives in `~/GitHub/scripts/setup/codex/ghostty-codex-then-shell.sh` on both machines.
 
@@ -20,7 +20,7 @@ Ghostty global startup behavior (Codex first, then fallback shell) is intentiona
 Use Swift + Apple `GameController` for controller input capture.
 Use Apple AppKit/Accessibility APIs for frontmost-app awareness and action execution so behavior remains native on macOS.
 Implement a single source-of-truth config layer for profile mappings (not hardcoded in multiple places).
-Start with one concrete profile: `ghostty`, plus a safe `default` fallback profile.
+Start with one concrete profile: `ghostty` (no global fallback profile).
 Support edge-trigger (press once), hold-repeat (optional), and debounce controls per mapping.
 Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; keep controller profile/mapping logic in this repo.
 
@@ -30,7 +30,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 ## Tasks
 - [x] Scaffold Swift CLI app in `src/` with controller connection/disconnection logging and per-button event logging.
 - [x] Add input event normalization layer (`button`, `state`, `timestamp`, `repeat`) so mapping logic is controller-model agnostic.
-- [x] Build profile resolver that tracks frontmost app bundle identifier and selects active profile (`ghostty`, `default`).
+- [x] Build profile resolver that tracks frontmost app bundle identifier and selects active mapped profile (`ghostty`).
 - [x] Implement mapping engine with per-action debounce, edge-trigger semantics, and optional hold behavior.
 - [x] Implement action executors for: keyboard shortcuts, shell commands, and optional AppleScript commands.
 - [x] Add config loader with schema validation for profile mappings in `config/mappings.json`.
@@ -39,7 +39,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Add global safety controls: dry-run mode, per-profile enable/disable, and emergency toggle/hotkey.
 - [x] Add startup/run scripts and setup notes for required permissions (Accessibility/Input Monitoring if required).
 - [x] Validate end-to-end: focus Ghostty, press mapped buttons, verify expected action fires only once per press.
-- [ ] Validate fallback behavior when frontmost app has no profile (`default` profile applies, no unexpected global action).
+- [x] Validate behavior when frontmost app has no profile (bridge skips actions, no unexpected global action).
 - [x] Install and validate `launchd` service on both machines using repo-local installer.
 - [x] Add canonical machine-ops wrappers in `~/GitHub/scripts/setup/` so launchd install/uninstall is consolidated for both machines.
 - [x] Grant Accessibility permission on second machine for staged bridge binary path (`~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`).
@@ -61,7 +61,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Added frontmost-app profile-switching architecture to the plan.
 - 2026-02-26: [DONE] Re-scoped Phase 1 to Ghostty-only per user direction; Codex deferred to Phase 2.
 - 2026-02-26: [DONE] Implemented first runnable Swift CLI bridge (`Package.swift`, `src/main.swift`) with controller events, profile resolution, debounce, and action execution.
-- 2026-02-26: [DONE] Added starter mappings and safety defaults in `config/mappings.json` (Ghostty + default profiles, dry-run on, emergency toggle button).
+- 2026-02-26: [DONE] Added starter mappings and safety defaults in `config/mappings.json` (Ghostty profile, dry-run on, emergency toggle button).
 - 2026-02-26: [DONE] Added run/setup docs and script (`scripts/run-bridge.sh`, `docs/architecture/bridge-overview.md`, `docs/references/mappings-schema.md`, `docs/references/setup.md`).
 - 2026-02-26: [DONE] Added robust input polling and background monitoring (`GCController.shouldMonitorBackgroundEvents=true`) to fix missing button events.
 - 2026-02-26: [DONE] Added optional `codex` profile defaults (`com.openai.codex`) including `A` hold-space behavior (`holdKeystroke`) and `B` enter.
@@ -75,8 +75,9 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] User confirmed controller bridge is working again across mapped buttons.
 - 2026-02-26: [DONE] Consolidated machine-level bridge commands into `~/GitHub/scripts/setup/` wrappers and updated scheduler/health-check integration.
 - 2026-02-26: [DONE] Hardened installer signing flow: auto-sign now falls back to ad-hoc on failure; machine scheduler reconciliation uses ad-hoc to avoid cross-machine cert mismatch.
+- 2026-02-26: [DONE] Removed `default` profile fallback behavior from runtime/config; non-profiled apps now explicitly no-op (`[SKIP] no active app profile`).
 
 ## Next 3 Actions
-1. Validate fallback behavior in a non-profiled frontmost app to confirm `default` profile is applied safely.
-2. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.
-3. Archive project notes to `docs/projects/archive/stadia-macos-controller/` once user confirms project completion.
+1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.
+2. Archive project notes to `docs/projects/archive/stadia-macos-controller/` once user confirms project completion.
+3. Keep troubleshooting notes in `docs/references/setup.md` and `docs/references/deployment.md` current when recovery steps change.

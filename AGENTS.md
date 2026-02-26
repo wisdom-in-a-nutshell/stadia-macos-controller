@@ -8,6 +8,7 @@ Build a local bridge that maps Stadia controller inputs to macOS actions and app
 - Prefer native Apple frameworks first when feasible.
 - Keep mappings configurable (do not hardcode behavior in multiple places).
 - Keep machine-level install/reconcile entrypoints in `~/GitHub/scripts/setup/` (project repo keeps bridge code/config as source of truth).
+- Use explicit app profile mapping only; do not add global fallback profile behavior unless explicitly requested.
 
 ## Documentation
 - Keep architecture notes in `docs/architecture/`.

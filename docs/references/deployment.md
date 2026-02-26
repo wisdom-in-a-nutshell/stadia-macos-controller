@@ -39,7 +39,7 @@ cd ~/GitHub/scripts
 What this installer now does:
 - Builds a fresh binary (`release` by default).
 - Stages it to a stable runtime path: `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`.
-- Code-signs the staged binary (auto identity by default).
+- Code-signs the staged binary (use `--sign-identity adhoc` for stable cross-machine behavior).
 - Points launchd to that staged path.
 
 This avoids relying on transient `.build/...` binaries and reduces repeated Accessibility re-approval.
@@ -80,3 +80,19 @@ git pull --rebase
 ```
 
 No restart is needed for mapping changes only (hot reload). Restart/reinstall is needed if code or launchd settings change.
+
+## Troubleshooting (Recovery Runbook)
+If actions stop firing but controller appears connected:
+
+1. Check service + logs:
+```bash
+launchctl print gui/$(id -u)/com.$USER.stadia-controller-bridge | sed -n '1,90p'
+tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log
+```
+2. If logs show Accessibility errors, re-enable staged binary in:
+   `System Settings > Privacy & Security > Accessibility`
+3. Reconcile install with stable signing:
+```bash
+cd ~/GitHub/scripts
+./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc
+```
