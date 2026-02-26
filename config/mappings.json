@@ -80,16 +80,6 @@
             "description": "Split down (Cmd+Shift+D)"
           }
         },
-        "rightThumbstickButton": {
-          "debounceMs": 180,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 2,
-            "modifiers": ["command"],
-            "description": "Split right (Cmd+D)"
-          }
-        },
         "a": {
           "debounceMs": 120,
           "edgeTrigger": true,
