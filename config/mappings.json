@@ -1,0 +1,30 @@
+{
+  "appProfiles": {
+    "com.mitchellh.ghostty": "ghostty"
+  },
+  "profiles": {
+    "ghostty": {
+      "enabled": true,
+      "mappings": {
+        "a": {
+          "debounceMs": 250,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 2,
+            "modifiers": ["command"],
+            "description": "Ghostty split shortcut (Cmd+D by default)"
+          }
+        }
+      }
+    },
+    "default": {
+      "enabled": true,
+      "mappings": {}
+    }
+  },
+  "safety": {
+    "dryRun": true,
+    "emergencyToggleButton": "menu"
+  }
+}
