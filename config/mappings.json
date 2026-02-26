@@ -23,6 +23,15 @@
             "description": "Open /model popup for manual model selection"
           }
         },
+        "options": {
+          "debounceMs": 220,
+          "edgeTrigger": true,
+          "action": {
+            "type": "applescript",
+            "script": "tell application \"System Events\"\n  keystroke \"/compact\"\n  key code 36\nend tell",
+            "description": "Run /compact in Codex session"
+          }
+        },
         "leftThumbstickButton": {
           "debounceMs": 180,
           "edgeTrigger": true,
