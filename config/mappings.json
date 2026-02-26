@@ -62,8 +62,8 @@
           "action": {
             "type": "keystroke",
             "keyCode": 24,
-            "modifiers": ["command", "shift"],
-            "description": "Assistant button: zoom in (Cmd+Plus)"
+            "modifiers": ["command"],
+            "description": "Assistant button: zoom in (Cmd+Equal)"
           }
         },
         "share": {
