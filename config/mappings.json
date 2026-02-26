@@ -18,11 +18,12 @@
           "debounceMs": 220,
           "edgeTrigger": true,
           "action": {
-            "type": "text",
-            "text": "/compact",
-            "delayMs": 80,
-            "pressEnter": true,
-            "description": "Run /compact in Codex session"
+            "type": "keystroke",
+            "keyCode": 13,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Close focused split surface (Ghostty close_surface via Cmd+W)"
           }
         },
         "menu": {
