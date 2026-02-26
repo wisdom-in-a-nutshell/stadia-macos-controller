@@ -283,10 +283,8 @@ final class ActionExecutor {
             }
 
             if let preKeyCodeValue = action.preKeyCode {
-                try postModifiedKeystroke(
-                    keyCode: CGKeyCode(preKeyCodeValue),
-                    modifiers: action.preModifiers ?? []
-                )
+                let preFlags = modifierFlags(from: action.preModifiers ?? [])
+                try postKeystroke(keyCode: CGKeyCode(preKeyCodeValue), modifiers: preFlags)
 
                 if let preDelayMs = action.preDelayMs, preDelayMs > 0 {
                     Thread.sleep(forTimeInterval: Double(preDelayMs) / 1000.0)
@@ -370,41 +368,11 @@ final class ActionExecutor {
         }
     }
 
-    private func modifierKeyCodes(from modifiers: [String]) -> [CGKeyCode] {
-        modifiers.compactMap { modifier in
-            switch modifier.lowercased() {
-            case "command", "cmd":
-                return 55
-            case "shift":
-                return 56
-            case "option", "alt":
-                return 58
-            case "control", "ctrl":
-                return 59
-            default:
-                return nil
-            }
-        }
-    }
-
     private func postKeystroke(keyCode: CGKeyCode, modifiers: CGEventFlags) throws {
         try postKeyEvent(keyCode: keyCode, keyDown: true, modifiers: modifiers)
         try postKeyEvent(keyCode: keyCode, keyDown: false, modifiers: modifiers)
     }
 
-    private func postModifiedKeystroke(keyCode: CGKeyCode, modifiers: [String]) throws {
-        let modifierCodes = modifierKeyCodes(from: modifiers)
-
-        for modifierCode in modifierCodes {
-            try postKeyEvent(keyCode: modifierCode, keyDown: true, modifiers: [])
-        }
-
-        try postKeystroke(keyCode: keyCode, modifiers: [])
-
-        for modifierCode in modifierCodes.reversed() {
-            try postKeyEvent(keyCode: modifierCode, keyDown: false, modifiers: [])
-        }
-    }
 
     private func postKeyEvent(keyCode: CGKeyCode, keyDown: Bool, modifiers: CGEventFlags) throws {
         guard let source = CGEventSource(stateID: .hidSystemState),
