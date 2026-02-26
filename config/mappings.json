@@ -63,7 +63,7 @@
             "type": "text",
             "preKeyCode": 17,
             "preModifiers": ["command"],
-            "preDelayMs": 140,
+            "preDelayMs": 360,
             "text": "codex",
             "pressEnter": true,
             "description": "Capture button: new Ghostty tab + start codex"
