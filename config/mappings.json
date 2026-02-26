@@ -93,14 +93,6 @@
       "enabled": true,
       "mappings": {
         "a": {
-          "action": {
-            "type": "holdKeystroke",
-            "keyCode": 49,
-            "modifiers": [],
-            "description": "Hold to mimic Space"
-          }
-        },
-        "b": {
           "debounceMs": 120,
           "edgeTrigger": true,
           "action": {
@@ -108,6 +100,24 @@
             "keyCode": 36,
             "modifiers": [],
             "description": "Send Enter"
+          }
+        },
+        "b": {
+          "debounceMs": 120,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 53,
+            "modifiers": [],
+            "description": "Send Escape"
+          }
+        },
+        "rightTrigger": {
+          "action": {
+            "type": "holdKeystroke",
+            "keyCode": 49,
+            "modifiers": [],
+            "description": "Hold to mimic Space"
           }
         },
         "leftShoulder": {
