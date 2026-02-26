@@ -38,7 +38,8 @@ None for current implementation.
 - [x] Add startup/run scripts and setup notes for required permissions (Accessibility/Input Monitoring if required).
 - [ ] Validate end-to-end: focus Ghostty, press mapped buttons, verify expected action fires only once per press.
 - [ ] Validate fallback behavior when frontmost app has no profile (`default` profile applies, no unexpected global action).
-- [ ] Install and validate `launchd` service on both machines using repo-local installer (local machine done; second machine pending).
+- [x] Install and validate `launchd` service on both machines using repo-local installer.
+- [ ] Grant Accessibility permission on second machine for staged bridge binary path (`~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`).
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (no new repo-local rule needed yet).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -63,8 +64,10 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Implemented config hot-reload on `config/mappings.json` via file modification watch timer.
 - 2026-02-26: [DONE] Added launchd automation scripts and deployment notes (`scripts/install-launchd-stadia-controller-bridge.sh`, `scripts/uninstall-launchd-stadia-controller-bridge.sh`, `docs/references/deployment.md`).
 - 2026-02-26: [DONE] Installed local LaunchAgent `com.$USER.stadia-controller-bridge` and verified `launchctl` state is `running`.
+- 2026-02-26: [DONE] Installed second-machine LaunchAgent over SSH (`com.adi.stadia-controller-bridge`) and verified `launchctl` state is `running`.
+- 2026-02-26: [DONE] Moved Ghostty Codex startup behavior to global machine-ops repo (`~/GitHub/scripts/setup/codex/ghostty-codex-then-shell.sh`) and pointed Ghostty config on both machines to the global script path.
 
 ## Next 3 Actions
-1. Install the launchd service on the second machine and verify `launchctl print gui/$(id -u)/com.$USER.stadia-controller-bridge`.
-2. Validate Ghostty + Codex mappings in live mode on both machines after launchd start.
-3. Finalize preferred default mappings (Codex + Ghostty) after a short usage session.
+1. Grant Accessibility permission on the second machine for `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`.
+2. Validate Ghostty + controller mappings live on both machines (including `share` -> `Cmd+T` and Codex-first startup behavior).
+3. Archive project notes to `docs/projects/archive/stadia-macos-controller/` once user confirms completion.
