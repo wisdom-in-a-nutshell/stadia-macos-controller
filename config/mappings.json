@@ -15,13 +15,12 @@
           }
         },
         "y": {
-          "debounceMs": 250,
+          "debounceMs": 200,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 2,
-            "modifiers": ["command", "shift"],
-            "description": "Ghostty split down (Cmd+Shift+D)"
+            "type": "applescript",
+            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  key code 36\n  delay 0.08\n  key code 125\n  key code 36\nend tell",
+            "description": "Switch to next Codex model via /model picker"
           }
         },
         "a": {
