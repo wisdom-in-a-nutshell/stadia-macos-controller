@@ -37,6 +37,12 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 - Bundle identifier/signing identifier default: `com.stadia-controller-bridge`
 - Staged app bundle path: `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`
 
+## Signing Modes (Installer)
+- `--sign-identity auto` (default): prefer Apple cert if available, fallback to ad-hoc.
+- `--sign-identity adhoc`: always ad-hoc sign (`-`), no Apple cert dependency.
+- `--sign-identity "Apple Development: ..."`: pin one explicit cert for maximum consistency.
+- `--sign-identity none`: skip signing (not recommended).
+
 ## Current Starter Mapping
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
 - Ghostty defaults:
@@ -67,6 +73,13 @@ Uninstall:
 ```bash
 cd ~/GitHub/scripts
 ./setup/uninstall-launchd-stadia-controller-bridge.sh
+```
+
+Verify:
+
+```bash
+cd ~/GitHub/scripts
+./setup/verify-launchd-stadia-controller-bridge.sh
 ```
 
 ## Troubleshooting (Recurring Issues)

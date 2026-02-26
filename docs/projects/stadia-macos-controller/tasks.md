@@ -45,6 +45,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Grant Accessibility permission on second machine for staged bridge executable path (`~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge`).
 - [x] Resolve MacBook `leftThumbstickButton` stale runtime mapping and verify it emits `keyCode=2` (split down) in live logs.
 - [x] Standardize launchd label + signing identifier + staged runtime path across both machines to avoid per-machine identity drift.
+- [x] Add a one-command launchd verifier script and document canonical machine-level verify usage.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (stable cross-machine service identity/path now documented).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -81,6 +82,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Completed staged runtime migration from loose binary to app bundle (`~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`) and signed bundle target.
 - 2026-02-26: [DONE] Standardized defaults across both machines: launchd label `com.stadia-controller-bridge` and signing identifier `com.stadia-controller-bridge`.
 - 2026-02-26: [DONE] Updated setup/deployment docs and repo guardrails with the stable cross-machine naming/path policy.
+- 2026-02-26: [DONE] Added `scripts/verify-launchd-stadia-controller-bridge.sh` and documented wrapper usage via `~/GitHub/scripts/setup/verify-launchd-stadia-controller-bridge.sh`.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.

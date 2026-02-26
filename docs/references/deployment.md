@@ -22,6 +22,10 @@ cd ~/GitHub/scripts
 ./setup/install-launchd-stadia-controller-bridge.sh --mode live
 ```
 
+Optional signing override examples:
+- `./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto` (default behavior)
+- `./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc`
+
 Project-local fallback (equivalent):
 
 ```bash
@@ -72,6 +76,12 @@ Check logs:
 ```bash
 tail -n 80 ~/Library/Logs/stadia-controller-bridge.launchd.out.log
 tail -n 80 ~/Library/Logs/stadia-controller-bridge.launchd.err.log
+```
+
+One-command verifier (recommended):
+```bash
+cd ~/GitHub/scripts
+./setup/verify-launchd-stadia-controller-bridge.sh
 ```
 
 ## 6) Update workflow
