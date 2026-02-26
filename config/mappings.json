@@ -23,6 +23,26 @@
             "description": "Open /model popup for manual model selection"
           }
         },
+        "leftThumbstickButton": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 30,
+            "modifiers": ["command", "shift"],
+            "description": "Split down (Cmd+Shift+D)"
+          }
+        },
+        "rightThumbstickButton": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 2,
+            "modifiers": ["command"],
+            "description": "Split right (Cmd+D)"
+          }
+        },
         "a": {
           "debounceMs": 120,
           "edgeTrigger": true,
