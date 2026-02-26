@@ -25,7 +25,7 @@ Support edge-trigger (press once), hold-repeat (optional), and debounce controls
 Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; keep controller profile/mapping logic in this repo.
 
 ## Open Questions
-- Why MacBook occasionally applies stale `leftThumbstickButton` runtime action (`keyCode=30`) even after config updated to `keyCode=2` and launchd kickstart.
+- None currently.
 
 ## Tasks
 - [x] Scaffold Swift CLI app in `src/` with controller connection/disconnection logging and per-button event logging.
@@ -38,11 +38,11 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Define initial Ghostty profile for high-frequency actions (tab navigation, split/nav, command palette, etc.).
 - [x] Add global safety controls: dry-run mode, per-profile enable/disable, and emergency toggle/hotkey.
 - [x] Add startup/run scripts and setup notes for required permissions (Accessibility/Input Monitoring if required).
-- [ ] Validate end-to-end: focus Ghostty, press mapped buttons, verify expected action fires only once per press.
+- [x] Validate end-to-end: focus Ghostty, press mapped buttons, verify expected action fires only once per press.
 - [ ] Validate fallback behavior when frontmost app has no profile (`default` profile applies, no unexpected global action).
 - [x] Install and validate `launchd` service on both machines using repo-local installer.
 - [x] Grant Accessibility permission on second machine for staged bridge binary path (`~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`).
-- [ ] Resolve MacBook `leftThumbstickButton` stale runtime mapping and verify it emits `keyCode=2` (split down) in live logs.
+- [x] Resolve MacBook `leftThumbstickButton` stale runtime mapping and verify it emits `keyCode=2` (split down) in live logs.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (no new repo-local rule needed yet).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -70,9 +70,10 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Installed second-machine LaunchAgent over SSH (`com.adi.stadia-controller-bridge`) and verified `launchctl` state is `running`.
 - 2026-02-26: [DONE] Moved Ghostty Codex startup behavior to global machine-ops repo (`~/GitHub/scripts/setup/codex/ghostty-codex-then-shell.sh`) and pointed Ghostty config on both machines to the global script path.
 - 2026-02-26: [DONE] Updated `leftThumbstickButton` mapping in config to `Cmd+Shift+D` (`keyCode=2`) and synced config file on both machines.
-- 2026-02-26: [IN_PROGRESS] MacBook local validation still needed because live logs intermittently showed stale runtime `keyCode=30` for `leftThumbstickButton`.
+- 2026-02-26: [DONE] Reinstalled LaunchAgent in live mode, reconnected controller, and restored stable input handling.
+- 2026-02-26: [DONE] User confirmed controller bridge is working again across mapped buttons.
 
 ## Next 3 Actions
-1. On MacBook, run local live-log verification while pressing `leftThumbstickButton` and confirm `[ACTION] ... keyCode=2`.
-2. If stale action persists, perform full local reinstall (`./scripts/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto`) and re-validate in Ghostty frontmost.
-3. Archive project notes to `docs/projects/archive/stadia-macos-controller/` once user confirms completion.
+1. Validate fallback behavior in a non-profiled frontmost app to confirm `default` profile is applied safely.
+2. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.
+3. Archive project notes to `docs/projects/archive/stadia-macos-controller/` once user confirms project completion.
