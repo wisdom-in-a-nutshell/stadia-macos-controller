@@ -8,6 +8,10 @@ BINARY_PATH=""
 MODE="live"   # live|dry-run
 START_INTERVAL=0
 RUN_AT_LOAD=1
+BUILD_CONFIG="release" # release|debug
+RUNTIME_DIR="${HOME}/Library/Application Support/stadia-controller-bridge"
+SIGN_IDENTITY="auto"   # auto|adhoc|none|<identity string>
+SIGNING_IDENTIFIER="com.${USER}.stadia-controller-bridge"
 
 PLIST_PATH="${HOME}/Library/LaunchAgents/${LABEL}.plist"
 OUT_LOG="${HOME}/Library/Logs/stadia-controller-bridge.launchd.out.log"
@@ -23,14 +27,20 @@ Options:
   --label <label>           LaunchAgent label (default: com.<user>.stadia-controller-bridge)
   --repo-dir <path>         Repo path (default: ~/GitHub/stadia-macos-controller)
   --config <path>           Config path relative to repo dir (default: config/mappings.json)
-  --binary <path>           Binary path (default: <repo>/.build/debug/stadia-controller-bridge)
+  --binary <path>           Use explicit binary path (skip build/stage pipeline)
   --mode <live|dry-run>     Bridge mode (default: live)
+  --build <release|debug>   Build config when --binary is not provided (default: release)
+  --runtime-dir <path>      Stable runtime dir for staged binary (default: ~/Library/Application Support/stadia-controller-bridge)
+  --sign-identity <value>   Code-sign identity: auto | adhoc | none | "Apple Development: ..."
+  --signing-id <id>         Code-sign identifier (default: com.<user>.stadia-controller-bridge)
   --start-interval <sec>    Optional restart interval in seconds (0 disables)
   --no-run-at-load          Disable RunAtLoad
   --help                    Show help
 
 Examples:
   ./scripts/install-launchd-stadia-controller-bridge.sh
+  ./scripts/install-launchd-stadia-controller-bridge.sh --sign-identity auto
+  ./scripts/install-launchd-stadia-controller-bridge.sh --sign-identity "Apple Development: Your Name (TEAMID)"
   ./scripts/install-launchd-stadia-controller-bridge.sh --mode dry-run
   ./scripts/install-launchd-stadia-controller-bridge.sh --repo-dir ~/GitHub/stadia-macos-controller
 USAGE
@@ -57,6 +67,22 @@ while [[ $# -gt 0 ]]; do
       ;;
     --binary)
       BINARY_PATH="${2:-}"
+      shift 2
+      ;;
+    --build)
+      BUILD_CONFIG="${2:-}"
+      shift 2
+      ;;
+    --runtime-dir)
+      RUNTIME_DIR="${2:-}"
+      shift 2
+      ;;
+    --sign-identity)
+      SIGN_IDENTITY="${2:-}"
+      shift 2
+      ;;
+    --signing-id)
+      SIGNING_IDENTIFIER="${2:-}"
       shift 2
       ;;
     --mode)
@@ -88,6 +114,11 @@ if [[ "$MODE" != "live" && "$MODE" != "dry-run" ]]; then
   exit 2
 fi
 
+if [[ "$BUILD_CONFIG" != "release" && "$BUILD_CONFIG" != "debug" ]]; then
+  echo "Invalid --build: $BUILD_CONFIG (expected release or debug)" >&2
+  exit 2
+fi
+
 if ! is_int "$START_INTERVAL"; then
   echo "Invalid --start-interval: $START_INTERVAL (expected integer >= 0)" >&2
   exit 2
@@ -104,17 +135,66 @@ if [[ ! -f "$REPO_DIR/$CONFIG_PATH" ]]; then
 fi
 
 if [[ -z "$BINARY_PATH" ]]; then
-  BINARY_PATH="${REPO_DIR}/.build/debug/stadia-controller-bridge"
+  echo "Building ${BUILD_CONFIG} binary..."
+  BIN_DIR="$(cd "$REPO_DIR" && swift build -c "$BUILD_CONFIG" --show-bin-path)"
+  BUILT_BINARY="${BIN_DIR}/stadia-controller-bridge"
+  if [[ ! -x "$BUILT_BINARY" ]]; then
+    echo "Built binary missing: $BUILT_BINARY" >&2
+    exit 1
+  fi
+
+  STAGED_DIR="${RUNTIME_DIR}/bin"
+  mkdir -p "$STAGED_DIR"
+  /usr/bin/install -m 0755 "$BUILT_BINARY" "$STAGED_DIR/stadia-controller-bridge"
+  BINARY_PATH="${STAGED_DIR}/stadia-controller-bridge"
+  echo "Staged runtime binary at: $BINARY_PATH"
+elif [[ "$BINARY_PATH" != /* ]]; then
+  BINARY_PATH="${REPO_DIR}/${BINARY_PATH}"
 fi
 
 if [[ ! -x "$BINARY_PATH" ]]; then
-  echo "Bridge binary not found at $BINARY_PATH; building debug binary first..."
-  (cd "$REPO_DIR" && swift build >/dev/null)
-fi
-
-if [[ ! -x "$BINARY_PATH" ]]; then
-  echo "Bridge binary missing after build: $BINARY_PATH" >&2
+  echo "Bridge binary not executable: $BINARY_PATH" >&2
   exit 1
+fi
+
+resolve_identity() {
+  local requested="$1"
+  if [[ "$requested" == "none" ]]; then
+    echo ""
+    return 0
+  fi
+
+  if [[ "$requested" == "adhoc" ]]; then
+    echo "-"
+    return 0
+  fi
+
+  if [[ "$requested" == "auto" ]]; then
+    local identities
+    identities="$(security find-identity -v -p codesigning 2>/dev/null | sed -n 's/.*"\(.*\)"/\1/p' || true)"
+    local selected
+    selected="$(printf '%s\n' "$identities" | awk '/^Developer ID Application:/{print; exit}')"
+    if [[ -z "$selected" ]]; then
+      selected="$(printf '%s\n' "$identities" | awk '/^Apple Development:/{print; exit}')"
+    fi
+    if [[ -z "$selected" ]]; then
+      selected="$(printf '%s\n' "$identities" | awk 'NF{print; exit}')"
+    fi
+    if [[ -z "$selected" ]]; then
+      echo "-"
+      return 0
+    fi
+    echo "$selected"
+    return 0
+  fi
+
+  echo "$requested"
+}
+
+SELECTED_IDENTITY="$(resolve_identity "$SIGN_IDENTITY")"
+if [[ -n "$SELECTED_IDENTITY" ]]; then
+  echo "Signing binary with identity: ${SELECTED_IDENTITY}"
+  /usr/bin/codesign --force --sign "$SELECTED_IDENTITY" --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"
 fi
 
 mkdir -p "$(dirname "$PLIST_PATH")"
@@ -196,6 +276,11 @@ launchctl kickstart -k "$DOMAIN/$LABEL" >/dev/null 2>&1 || true
 
 echo "Loaded $LABEL from $PLIST_PATH"
 echo "Mode: $MODE"
+echo "Binary: $BINARY_PATH"
+if [[ -n "${SELECTED_IDENTITY}" ]]; then
+  echo "Code signature:"
+  /usr/bin/codesign -dv --verbose=2 "$BINARY_PATH" 2>&1 | sed -n '1,14p'
+fi
 echo "Logs:"
 echo "  $OUT_LOG"
 echo "  $ERR_LOG"

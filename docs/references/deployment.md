@@ -28,15 +28,28 @@ For safer testing first:
 ./scripts/install-launchd-stadia-controller-bridge.sh --mode dry-run
 ```
 
-## 4) Accessibility permission (first-time)
-Grant Accessibility to the terminal process that launchd uses (or run once manually with prompt):
+What this installer now does:
+- Builds a fresh binary (`release` by default).
+- Stages it to a stable runtime path: `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`.
+- Code-signs the staged binary (auto identity by default).
+- Points launchd to that staged path.
+
+This avoids relying on transient `.build/...` binaries and reduces repeated Accessibility re-approval.
+
+## 4) Accessibility permission (first-time, one stable binary)
+Grant Accessibility to the staged binary path used by launchd:
+- `System Settings > Privacy & Security > Accessibility`
+- Add/enable:
+  - `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`
+
+If entries got messy from old runs:
+1. Remove old `stadia-controller-bridge` entries.
+2. Re-add the staged binary path above.
+3. Re-run installer:
 
 ```bash
-./scripts/run-bridge.sh --no-dry-run --prompt-accessibility
+./scripts/install-launchd-stadia-controller-bridge.sh --mode live
 ```
-
-Then enable in:
-- `System Settings > Privacy & Security > Accessibility`
 
 ## 5) Validate service state
 ```bash
