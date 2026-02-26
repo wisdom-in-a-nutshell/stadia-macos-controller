@@ -28,7 +28,7 @@
           }
         },
         "leftShoulder": {
-          "debounceMs": 200,
+          "debounceMs": 210,
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",

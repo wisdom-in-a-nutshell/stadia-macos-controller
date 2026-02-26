@@ -135,7 +135,7 @@ enum BridgeError: Error, LocalizedError {
 
 struct ConfigLoader {
     static func load(path: String) throws -> BridgeConfig {
-        let absolutePath = resolvedPath(for: path)
+        let absolutePath = absolutePath(for: path)
         let data: Data
 
         do {
@@ -156,7 +156,7 @@ struct ConfigLoader {
         return config
     }
 
-    private static func resolvedPath(for path: String) -> String {
+    static func absolutePath(for path: String) -> String {
         if path.hasPrefix("/") {
             return path
         }
@@ -361,23 +361,30 @@ final class ActionExecutor {
 }
 
 final class ControllerBridge: NSObject {
-    private let config: BridgeConfig
-    private let profileResolver: ProfileResolver
-    private let actionExecutor: ActionExecutor
+    private var config: BridgeConfig
+    private var profileResolver: ProfileResolver
+    private var actionExecutor: ActionExecutor
+
+    private let configPath: String
+    private let dryRunOverride: Bool?
 
     private var buttonStates: [String: Bool] = [:]
     private var lastTriggeredAt: [String: Date] = [:]
     private var polledButtonStates: [String: Bool] = [:]
     private var activeGamepads: [String: GCExtendedGamepad] = [:]
     private var pollingTimer: Timer?
+    private var configWatchTimer: Timer?
+    private var configLastModified: Date?
     private var activeHolds: [String: (profileName: String, action: ActionConfig)] = [:]
     private var bridgeEnabled = true
 
-    init(config: BridgeConfig, dryRunOverride: Bool?, promptAccessibility: Bool) {
+    init(config: BridgeConfig, configPath: String, dryRunOverride: Bool?, promptAccessibility: Bool) {
         self.config = config
         self.profileResolver = ProfileResolver(appProfiles: config.appProfiles)
+        self.configPath = configPath
+        self.dryRunOverride = dryRunOverride
 
-        let dryRun = dryRunOverride ?? config.safety.dryRun
+        let dryRun = Self.effectiveDryRun(for: config, dryRunOverride: dryRunOverride)
         self.actionExecutor = ActionExecutor(dryRun: dryRun)
         super.init()
 
@@ -392,6 +399,7 @@ final class ControllerBridge: NSObject {
 
     deinit {
         pollingTimer?.invalidate()
+        configWatchTimer?.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -399,6 +407,7 @@ final class ControllerBridge: NSObject {
         GCController.shouldMonitorBackgroundEvents = true
         print("[INFO] GCController.shouldMonitorBackgroundEvents=true")
         registerControllerNotifications()
+        startConfigWatcher()
 
         let existingControllers = GCController.controllers()
         if existingControllers.isEmpty {
@@ -413,6 +422,10 @@ final class ControllerBridge: NSObject {
 
         print("Bridge started. Press Ctrl+C to stop.")
         RunLoop.main.run()
+    }
+
+    private static func effectiveDryRun(for config: BridgeConfig, dryRunOverride: Bool?) -> Bool {
+        dryRunOverride ?? config.safety.dryRun
     }
 
     private func registerControllerNotifications() {
@@ -480,6 +493,63 @@ final class ControllerBridge: NSObject {
             repeats: true
         )
         RunLoop.main.add(pollingTimer!, forMode: .common)
+    }
+
+    private func startConfigWatcher() {
+        configLastModified = configModificationDate(path: configPath)
+        configWatchTimer = Timer.scheduledTimer(
+            timeInterval: 0.5,
+            target: self,
+            selector: #selector(checkConfigForChanges),
+            userInfo: nil,
+            repeats: true
+        )
+        if let configWatchTimer {
+            RunLoop.main.add(configWatchTimer, forMode: .common)
+        }
+        print("[INFO] Config hot-reload watching \(configPath)")
+    }
+
+    @objc
+    private func checkConfigForChanges() {
+        guard let currentModified = configModificationDate(path: configPath) else {
+            return
+        }
+
+        if let configLastModified, currentModified <= configLastModified {
+            return
+        }
+
+        configLastModified = currentModified
+        reloadConfigFromDisk()
+    }
+
+    private func reloadConfigFromDisk() {
+        do {
+            let newConfig = try ConfigLoader.load(path: configPath)
+            let oldDryRun = Self.effectiveDryRun(for: config, dryRunOverride: dryRunOverride)
+            let newDryRun = Self.effectiveDryRun(for: newConfig, dryRunOverride: dryRunOverride)
+
+            config = newConfig
+            profileResolver = ProfileResolver(appProfiles: newConfig.appProfiles)
+
+            if oldDryRun != newDryRun {
+                actionExecutor = ActionExecutor(dryRun: newDryRun)
+                print("[CONFIG] Reloaded. Bridge mode changed to \(newDryRun ? "dry-run" : "live").")
+            } else {
+                print("[CONFIG] Reloaded mappings from disk.")
+            }
+        } catch {
+            print("[CONFIG] Reload failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func configModificationDate(path: String) -> Date? {
+        guard let attributes = try? FileManager.default.attributesOfItem(atPath: path),
+              let modified = attributes[.modificationDate] as? Date else {
+            return nil
+        }
+        return modified
     }
 
     @objc
@@ -635,10 +705,12 @@ final class ControllerBridge: NSObject {
 
 func run() throws {
     let options = try CLIOptions.parse(arguments: CommandLine.arguments)
-    let config = try ConfigLoader.load(path: options.configPath)
+    let configPath = ConfigLoader.absolutePath(for: options.configPath)
+    let config = try ConfigLoader.load(path: configPath)
 
     let bridge = ControllerBridge(
         config: config,
+        configPath: configPath,
         dryRunOverride: options.dryRunOverride,
         promptAccessibility: options.promptAccessibility
     )
