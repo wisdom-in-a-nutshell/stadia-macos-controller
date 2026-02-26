@@ -55,7 +55,7 @@ Grant Accessibility to the staged executable path used by launchd:
 
 If entries got messy from old runs:
 1. Remove old `stadia-controller-bridge` entries.
-2. Re-add the staged binary path above.
+2. Re-add the staged executable path above.
 3. Re-run installer:
 
 ```bash
