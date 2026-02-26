@@ -56,16 +56,6 @@
             "description": "Open /model popup"
           }
         },
-        "home": {
-          "debounceMs": 220,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 24,
-            "modifiers": ["command"],
-            "description": "Assistant button: zoom in (Cmd+Equal)"
-          }
-        },
         "share": {
           "debounceMs": 220,
           "edgeTrigger": true,
