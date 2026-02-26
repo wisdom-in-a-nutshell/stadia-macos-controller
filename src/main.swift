@@ -312,6 +312,9 @@ final class ControllerBridge: NSObject {
 
     private var buttonStates: [String: Bool] = [:]
     private var lastTriggeredAt: [String: Date] = [:]
+    private var polledButtonStates: [String: Bool] = [:]
+    private var activeGamepads: [String: GCExtendedGamepad] = [:]
+    private var pollingTimer: Timer?
     private var bridgeEnabled = true
 
     init(config: BridgeConfig, dryRunOverride: Bool?, promptAccessibility: Bool) {
@@ -332,10 +335,13 @@ final class ControllerBridge: NSObject {
     }
 
     deinit {
+        pollingTimer?.invalidate()
         NotificationCenter.default.removeObserver(self)
     }
 
     func start() {
+        GCController.shouldMonitorBackgroundEvents = true
+        print("[INFO] GCController.shouldMonitorBackgroundEvents=true")
         registerControllerNotifications()
 
         let existingControllers = GCController.controllers()
@@ -383,6 +389,9 @@ final class ControllerBridge: NSObject {
             return
         }
         let controllerID = Self.controllerID(for: controller)
+        activeGamepads.removeValue(forKey: controllerID)
+        buttonStates = buttonStates.filter { !$0.key.hasPrefix("\(controllerID)::") }
+        polledButtonStates = polledButtonStates.filter { !$0.key.hasPrefix("\(controllerID)::") }
         print("Controller disconnected: \(controllerID)")
     }
 
@@ -396,81 +405,63 @@ final class ControllerBridge: NSObject {
             return
         }
 
-        gamepad.valueChangedHandler = { [weak self] gamepad, element in
-            self?.handleGamepadValueChanged(controllerID: controllerID, gamepad: gamepad, element: element)
-        }
-        print("[INFO] Registered valueChangedHandler for controller id=\(controllerID)")
+        activeGamepads[controllerID] = gamepad
+        startPollingIfNeeded()
+        print("[INFO] Registered polling for controller id=\(controllerID)")
     }
 
-    private func handleGamepadValueChanged(
-        controllerID: String,
-        gamepad: GCExtendedGamepad,
-        element: GCControllerElement
-    ) {
-        if element === gamepad.buttonA {
-            handleButtonEvent(controllerID: controllerID, buttonName: "a", pressed: gamepad.buttonA.isPressed)
+    private func startPollingIfNeeded() {
+        if pollingTimer != nil {
             return
         }
-        if element === gamepad.buttonB {
-            handleButtonEvent(controllerID: controllerID, buttonName: "b", pressed: gamepad.buttonB.isPressed)
+
+        pollingTimer = Timer.scheduledTimer(
+            timeInterval: 0.02,
+            target: self,
+            selector: #selector(pollControllers),
+            userInfo: nil,
+            repeats: true
+        )
+        RunLoop.main.add(pollingTimer!, forMode: .common)
+    }
+
+    @objc
+    private func pollControllers() {
+        for (controllerID, gamepad) in activeGamepads {
+            pollButton(controllerID: controllerID, buttonName: "a", pressed: gamepad.buttonA.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "b", pressed: gamepad.buttonB.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "x", pressed: gamepad.buttonX.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "y", pressed: gamepad.buttonY.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "leftShoulder", pressed: gamepad.leftShoulder.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "rightShoulder", pressed: gamepad.rightShoulder.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "leftTrigger", pressed: gamepad.leftTrigger.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "rightTrigger", pressed: gamepad.rightTrigger.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "menu", pressed: gamepad.buttonMenu.isPressed)
+            if let buttonOptions = gamepad.buttonOptions {
+                pollButton(controllerID: controllerID, buttonName: "options", pressed: buttonOptions.isPressed)
+            }
+            if let leftThumbstickButton = gamepad.leftThumbstickButton {
+                pollButton(controllerID: controllerID, buttonName: "leftThumbstickButton", pressed: leftThumbstickButton.isPressed)
+            }
+            if let rightThumbstickButton = gamepad.rightThumbstickButton {
+                pollButton(controllerID: controllerID, buttonName: "rightThumbstickButton", pressed: rightThumbstickButton.isPressed)
+            }
+            pollButton(controllerID: controllerID, buttonName: "dpadUp", pressed: gamepad.dpad.up.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "dpadDown", pressed: gamepad.dpad.down.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "dpadLeft", pressed: gamepad.dpad.left.isPressed)
+            pollButton(controllerID: controllerID, buttonName: "dpadRight", pressed: gamepad.dpad.right.isPressed)
+        }
+    }
+
+    private func pollButton(controllerID: String, buttonName: String, pressed: Bool) {
+        let stateKey = "\(controllerID)::\(buttonName)"
+        let previous = polledButtonStates[stateKey] ?? false
+        guard previous != pressed else {
             return
         }
-        if element === gamepad.buttonX {
-            handleButtonEvent(controllerID: controllerID, buttonName: "x", pressed: gamepad.buttonX.isPressed)
-            return
-        }
-        if element === gamepad.buttonY {
-            handleButtonEvent(controllerID: controllerID, buttonName: "y", pressed: gamepad.buttonY.isPressed)
-            return
-        }
-        if element === gamepad.leftShoulder {
-            handleButtonEvent(controllerID: controllerID, buttonName: "leftShoulder", pressed: gamepad.leftShoulder.isPressed)
-            return
-        }
-        if element === gamepad.rightShoulder {
-            handleButtonEvent(controllerID: controllerID, buttonName: "rightShoulder", pressed: gamepad.rightShoulder.isPressed)
-            return
-        }
-        if element === gamepad.leftTrigger {
-            handleButtonEvent(controllerID: controllerID, buttonName: "leftTrigger", pressed: gamepad.leftTrigger.isPressed)
-            return
-        }
-        if element === gamepad.rightTrigger {
-            handleButtonEvent(controllerID: controllerID, buttonName: "rightTrigger", pressed: gamepad.rightTrigger.isPressed)
-            return
-        }
-        if element === gamepad.buttonMenu {
-            handleButtonEvent(controllerID: controllerID, buttonName: "menu", pressed: gamepad.buttonMenu.isPressed)
-            return
-        }
-        if let buttonOptions = gamepad.buttonOptions, element === buttonOptions {
-            handleButtonEvent(controllerID: controllerID, buttonName: "options", pressed: buttonOptions.isPressed)
-            return
-        }
-        if let leftThumbstickButton = gamepad.leftThumbstickButton, element === leftThumbstickButton {
-            handleButtonEvent(controllerID: controllerID, buttonName: "leftThumbstickButton", pressed: leftThumbstickButton.isPressed)
-            return
-        }
-        if let rightThumbstickButton = gamepad.rightThumbstickButton, element === rightThumbstickButton {
-            handleButtonEvent(controllerID: controllerID, buttonName: "rightThumbstickButton", pressed: rightThumbstickButton.isPressed)
-            return
-        }
-        if element === gamepad.dpad.up {
-            handleButtonEvent(controllerID: controllerID, buttonName: "dpadUp", pressed: gamepad.dpad.up.isPressed)
-            return
-        }
-        if element === gamepad.dpad.down {
-            handleButtonEvent(controllerID: controllerID, buttonName: "dpadDown", pressed: gamepad.dpad.down.isPressed)
-            return
-        }
-        if element === gamepad.dpad.left {
-            handleButtonEvent(controllerID: controllerID, buttonName: "dpadLeft", pressed: gamepad.dpad.left.isPressed)
-            return
-        }
-        if element === gamepad.dpad.right {
-            handleButtonEvent(controllerID: controllerID, buttonName: "dpadRight", pressed: gamepad.dpad.right.isPressed)
-            return
-        }
+
+        polledButtonStates[stateKey] = pressed
+        handleButtonEvent(controllerID: controllerID, buttonName: buttonName, pressed: pressed)
     }
 
     private func promptForAccessibilityPermission() {
