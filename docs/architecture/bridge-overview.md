@@ -10,12 +10,13 @@
 1. Load `config/mappings.json`.
 2. Subscribe to controller connect/disconnect notifications.
 3. Bind button handlers for the extended gamepad profile.
+   - Runtime currently polls button states at 20ms intervals for reliability on Stadia controller.
 4. On each button event:
    - Normalize event (`button`, `pressed`, `timestamp`, `repeat`).
    - Resolve active app profile.
    - Resolve mapping from active profile, then fallback to `default`.
    - Apply safety checks (emergency toggle, profile enabled, debounce).
-   - Execute action (`keystroke`, `shell`, `applescript`) or dry-run log.
+   - Execute action (`keystroke`, `holdKeystroke`, `shell`, `applescript`) or dry-run log.
 
 ## Safety Defaults
 - Dry-run is enabled by default in config.

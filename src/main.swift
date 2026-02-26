@@ -100,6 +100,7 @@ struct ActionConfig: Decodable {
 
 enum ActionType: String, Decodable {
     case keystroke
+    case holdKeystroke
     case shell
     case applescript
 }
@@ -174,6 +175,10 @@ struct ConfigLoader {
                     guard mapping.action.keyCode != nil else {
                         throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' keystroke action requires keyCode")
                     }
+                case .holdKeystroke:
+                    guard mapping.action.keyCode != nil else {
+                        throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' holdKeystroke action requires keyCode")
+                    }
                 case .shell:
                     guard let command = mapping.action.command, !command.isEmpty else {
                         throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' shell action requires command")
@@ -238,6 +243,9 @@ final class ActionExecutor {
             try postKeystroke(keyCode: keyCode, modifiers: flags)
             print("[ACTION] keystroke keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
 
+        case .holdKeystroke:
+            throw BridgeError.actionExecutionFailed("holdKeystroke must be handled as press/release lifecycle")
+
         case .shell:
             guard let command = action.command else {
                 throw BridgeError.actionExecutionFailed("Shell action missing command")
@@ -254,6 +262,52 @@ final class ActionExecutor {
             try runProcess(executable: "/usr/bin/osascript", arguments: ["-e", script])
             print("[ACTION] applescript profile=\(profile) button=\(button)")
         }
+    }
+
+    func beginHold(action: ActionConfig, profile: String, button: String) throws {
+        guard action.type == .holdKeystroke else {
+            throw BridgeError.actionExecutionFailed("beginHold requires holdKeystroke action")
+        }
+        guard let keyCodeValue = action.keyCode else {
+            throw BridgeError.actionExecutionFailed("holdKeystroke action missing keyCode")
+        }
+
+        if dryRun {
+            print("[DRY-RUN] hold-begin profile=\(profile) button=\(button) keyCode=\(keyCodeValue)")
+            return
+        }
+
+        if !AXIsProcessTrusted() {
+            throw BridgeError.actionExecutionFailed("Accessibility permission is required for hold keystroke injection")
+        }
+
+        let keyCode = CGKeyCode(keyCodeValue)
+        let flags = modifierFlags(from: action.modifiers ?? [])
+        try postKeyEvent(keyCode: keyCode, keyDown: true, modifiers: flags)
+        print("[ACTION] hold-begin keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
+    }
+
+    func endHold(action: ActionConfig, profile: String, button: String) throws {
+        guard action.type == .holdKeystroke else {
+            throw BridgeError.actionExecutionFailed("endHold requires holdKeystroke action")
+        }
+        guard let keyCodeValue = action.keyCode else {
+            throw BridgeError.actionExecutionFailed("holdKeystroke action missing keyCode")
+        }
+
+        if dryRun {
+            print("[DRY-RUN] hold-end profile=\(profile) button=\(button) keyCode=\(keyCodeValue)")
+            return
+        }
+
+        if !AXIsProcessTrusted() {
+            throw BridgeError.actionExecutionFailed("Accessibility permission is required for hold keystroke injection")
+        }
+
+        let keyCode = CGKeyCode(keyCodeValue)
+        let flags = modifierFlags(from: action.modifiers ?? [])
+        try postKeyEvent(keyCode: keyCode, keyDown: false, modifiers: flags)
+        print("[ACTION] hold-end keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
     }
 
     private func modifierFlags(from modifiers: [String]) -> CGEventFlags {
@@ -274,17 +328,18 @@ final class ActionExecutor {
     }
 
     private func postKeystroke(keyCode: CGKeyCode, modifiers: CGEventFlags) throws {
+        try postKeyEvent(keyCode: keyCode, keyDown: true, modifiers: modifiers)
+        try postKeyEvent(keyCode: keyCode, keyDown: false, modifiers: modifiers)
+    }
+
+    private func postKeyEvent(keyCode: CGKeyCode, keyDown: Bool, modifiers: CGEventFlags) throws {
         guard let source = CGEventSource(stateID: .hidSystemState),
-              let keyDown = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true),
-              let keyUp = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false) else {
-            throw BridgeError.actionExecutionFailed("Failed to create keyboard events")
+              let event = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: keyDown) else {
+            throw BridgeError.actionExecutionFailed("Failed to create keyboard event")
         }
 
-        keyDown.flags = modifiers
-        keyUp.flags = modifiers
-
-        keyDown.post(tap: .cghidEventTap)
-        keyUp.post(tap: .cghidEventTap)
+        event.flags = modifiers
+        event.post(tap: .cghidEventTap)
     }
 
     private func runProcess(executable: String, arguments: [String]) throws {
@@ -315,6 +370,7 @@ final class ControllerBridge: NSObject {
     private var polledButtonStates: [String: Bool] = [:]
     private var activeGamepads: [String: GCExtendedGamepad] = [:]
     private var pollingTimer: Timer?
+    private var activeHolds: [String: (profileName: String, action: ActionConfig)] = [:]
     private var bridgeEnabled = true
 
     init(config: BridgeConfig, dryRunOverride: Bool?, promptAccessibility: Bool) {
@@ -392,6 +448,7 @@ final class ControllerBridge: NSObject {
         activeGamepads.removeValue(forKey: controllerID)
         buttonStates = buttonStates.filter { !$0.key.hasPrefix("\(controllerID)::") }
         polledButtonStates = polledButtonStates.filter { !$0.key.hasPrefix("\(controllerID)::") }
+        activeHolds = activeHolds.filter { !$0.key.hasPrefix("\(controllerID)::") }
         print("Controller disconnected: \(controllerID)")
     }
 
@@ -488,6 +545,13 @@ final class ControllerBridge: NSObject {
         print("[EVENT] controller=\(event.controllerID) button=\(event.button) pressed=\(event.pressed) repeat=\(event.isRepeat)")
 
         guard event.pressed else {
+            if let held = activeHolds.removeValue(forKey: stateKey) {
+                do {
+                    try actionExecutor.endHold(action: held.action, profile: held.profileName, button: event.button)
+                } catch {
+                    print("[ERROR] hold release failed: \(error.localizedDescription)")
+                }
+            }
             return
         }
 
@@ -514,6 +578,16 @@ final class ControllerBridge: NSObject {
         print("[MAP] profile=\(resolved.profileName) bundle=\(bundleID) button=\(event.button)")
 
         if event.isRepeat && resolved.mapping.edgeTrigger != false {
+            return
+        }
+
+        if resolved.mapping.action.type == .holdKeystroke {
+            do {
+                try actionExecutor.beginHold(action: resolved.mapping.action, profile: resolved.profileName, button: event.button)
+                activeHolds[stateKey] = (resolved.profileName, resolved.mapping.action)
+            } catch {
+                print("[ERROR] hold begin failed: \(error.localizedDescription)")
+            }
             return
         }
 

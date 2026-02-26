@@ -23,8 +23,7 @@ Start with one concrete profile: `ghostty`, plus a safe `default` fallback profi
 Support edge-trigger (press once), hold-repeat (optional), and debounce controls per mapping.
 
 ## Open Questions
-What is the preferred config format for user-edited mappings (`.json` vs `.yaml`)?
-Which button(s) should be reserved as a global emergency disable toggle?
+None for current implementation.
 
 ## Tasks
 - [x] Scaffold Swift CLI app in `src/` with controller connection/disconnection logging and per-button event logging.
@@ -58,6 +57,8 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Implemented first runnable Swift CLI bridge (`Package.swift`, `src/main.swift`) with controller events, profile resolution, debounce, and action execution.
 - 2026-02-26: [DONE] Added starter mappings and safety defaults in `config/mappings.json` (Ghostty + default profiles, dry-run on, emergency toggle button).
 - 2026-02-26: [DONE] Added run/setup docs and script (`scripts/run-bridge.sh`, `docs/architecture/bridge-overview.md`, `docs/references/mappings-schema.md`, `docs/references/setup.md`).
+- 2026-02-26: [DONE] Added robust input polling and background monitoring (`GCController.shouldMonitorBackgroundEvents=true`) to fix missing button events.
+- 2026-02-26: [DONE] Added optional `codex` profile defaults (`com.openai.codex`) including `A` hold-space behavior (`holdKeystroke`) and `B` enter.
 
 ## Next 3 Actions
 1. Run the bridge with controller connected and verify button event logs plus profile resolution in dry-run mode.

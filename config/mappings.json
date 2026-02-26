@@ -1,19 +1,133 @@
 {
   "appProfiles": {
-    "com.mitchellh.ghostty": "ghostty"
+    "com.mitchellh.ghostty": "ghostty",
+    "com.openai.codex": "codex"
   },
   "profiles": {
     "ghostty": {
       "enabled": true,
       "mappings": {
-        "a": {
+        "leftTrigger": {
           "debounceMs": 250,
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
             "keyCode": 2,
             "modifiers": ["command"],
-            "description": "Ghostty split shortcut (Cmd+D by default)"
+            "description": "Ghostty split right (Cmd+D)"
+          }
+        },
+        "rightTrigger": {
+          "debounceMs": 250,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 2,
+            "modifiers": ["command", "shift"],
+            "description": "Ghostty split down (Cmd+Shift+D)"
+          }
+        },
+        "leftShoulder": {
+          "debounceMs": 200,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 33,
+            "modifiers": ["command", "shift"],
+            "description": "Previous tab (Cmd+Shift+[)"
+          }
+        },
+        "rightShoulder": {
+          "debounceMs": 200,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 30,
+            "modifiers": ["command", "shift"],
+            "description": "Next tab (Cmd+Shift+])"
+          }
+        },
+        "dpadUp": {
+          "debounceMs": 150,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 126,
+            "modifiers": ["command", "option"],
+            "description": "Move to split up (Cmd+Opt+Up)"
+          }
+        },
+        "dpadDown": {
+          "debounceMs": 150,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 125,
+            "modifiers": ["command", "option"],
+            "description": "Move to split down (Cmd+Opt+Down)"
+          }
+        },
+        "dpadLeft": {
+          "debounceMs": 150,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 123,
+            "modifiers": ["command", "option"],
+            "description": "Move to split left (Cmd+Opt+Left)"
+          }
+        },
+        "dpadRight": {
+          "debounceMs": 150,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 124,
+            "modifiers": ["command", "option"],
+            "description": "Move to split right (Cmd+Opt+Right)"
+          }
+        }
+      }
+    },
+    "codex": {
+      "enabled": true,
+      "mappings": {
+        "a": {
+          "action": {
+            "type": "holdKeystroke",
+            "keyCode": 49,
+            "modifiers": [],
+            "description": "Hold to mimic Space"
+          }
+        },
+        "b": {
+          "debounceMs": 120,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 36,
+            "modifiers": [],
+            "description": "Send Enter"
+          }
+        },
+        "leftShoulder": {
+          "debounceMs": 200,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 33,
+            "modifiers": ["command", "shift"],
+            "description": "Previous tab (Cmd+Shift+[)"
+          }
+        },
+        "rightShoulder": {
+          "debounceMs": 200,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 30,
+            "modifiers": ["command", "shift"],
+            "description": "Next tab (Cmd+Shift+])"
           }
         }
       }

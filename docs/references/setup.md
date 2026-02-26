@@ -33,7 +33,15 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 
 ## Current Starter Mapping
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
-- Button: `a`
-- Action: `Cmd+D` (keyCode `2` with `command` modifier)
+- App profile: `com.openai.codex` -> `codex`
+- Ghostty defaults:
+  - `L2` (`leftTrigger`): `Cmd+D` split right
+  - `R2` (`rightTrigger`): `Cmd+Shift+D` split down
+  - `L1`/`R1`: previous/next tab
+  - D-pad: split navigation (Cmd+Opt+Arrow)
+- Codex defaults:
+  - `A`: `holdKeystroke` Space (keyCode `49`)
+  - `B`: Enter (keyCode `36`)
+  - `L1`/`R1`: previous/next tab
 
 If your Ghostty split binding differs, edit `config/mappings.json`.

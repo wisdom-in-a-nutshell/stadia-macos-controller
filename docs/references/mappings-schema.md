@@ -17,10 +17,14 @@ The bridge config lives at `config/mappings.json`.
 - `action` (`ActionConfig`): action to execute.
 
 ## ActionConfig
-- `type` (`"keystroke" | "shell" | "applescript"`)
+- `type` (`"keystroke" | "holdKeystroke" | "shell" | "applescript"`)
 - Keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)
+- Hold keystroke fields:
+  - `keyCode` (`int`, required)
+  - `modifiers` (`string[]`, optional)
+  - Behavior: key down on button press, key up on button release.
 - Shell fields:
   - `command` (`string`, required)
 - AppleScript fields:
