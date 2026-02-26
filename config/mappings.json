@@ -19,8 +19,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  key code 36\n  delay 0.08\n  key code 125\n  key code 36\nend tell",
-            "description": "Switch to next Codex model via /model picker"
+            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  key code 36\nend tell",
+            "description": "Open /model popup for manual model selection"
           }
         },
         "a": {
