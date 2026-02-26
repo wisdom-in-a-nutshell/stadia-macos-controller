@@ -45,3 +45,21 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - `L1`/`R1`: previous/next tab
 
 If your Ghostty split binding differs, edit `config/mappings.json`.
+
+## Hot Reload
+- `config/mappings.json` is watched while the bridge is running.
+- Save changes to mappings and the process reloads automatically.
+- Code changes still require a process restart.
+
+## Launchd Service (optional)
+Install as a user LaunchAgent:
+
+```bash
+./scripts/install-launchd-stadia-controller-bridge.sh --mode live
+```
+
+Uninstall:
+
+```bash
+./scripts/uninstall-launchd-stadia-controller-bridge.sh
+```

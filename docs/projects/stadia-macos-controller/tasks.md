@@ -32,12 +32,13 @@ None for current implementation.
 - [x] Implement mapping engine with per-action debounce, edge-trigger semantics, and optional hold behavior.
 - [x] Implement action executors for: keyboard shortcuts, shell commands, and optional AppleScript commands.
 - [x] Add config loader with schema validation for profile mappings in `config/mappings.json`.
-- [ ] Add config file watcher for hot-reload updates without restarting the bridge.
+- [x] Add config file watcher for hot-reload updates without restarting the bridge.
 - [x] Define initial Ghostty profile for high-frequency actions (tab navigation, split/nav, command palette, etc.).
 - [x] Add global safety controls: dry-run mode, per-profile enable/disable, and emergency toggle/hotkey.
 - [x] Add startup/run scripts and setup notes for required permissions (Accessibility/Input Monitoring if required).
 - [ ] Validate end-to-end: focus Ghostty, press mapped buttons, verify expected action fires only once per press.
 - [ ] Validate fallback behavior when frontmost app has no profile (`default` profile applies, no unexpected global action).
+- [ ] Install and validate `launchd` service on both machines using repo-local installer (local machine done; second machine pending).
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (no new repo-local rule needed yet).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -59,8 +60,11 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Added run/setup docs and script (`scripts/run-bridge.sh`, `docs/architecture/bridge-overview.md`, `docs/references/mappings-schema.md`, `docs/references/setup.md`).
 - 2026-02-26: [DONE] Added robust input polling and background monitoring (`GCController.shouldMonitorBackgroundEvents=true`) to fix missing button events.
 - 2026-02-26: [DONE] Added optional `codex` profile defaults (`com.openai.codex`) including `A` hold-space behavior (`holdKeystroke`) and `B` enter.
+- 2026-02-26: [DONE] Implemented config hot-reload on `config/mappings.json` via file modification watch timer.
+- 2026-02-26: [DONE] Added launchd automation scripts and deployment notes (`scripts/install-launchd-stadia-controller-bridge.sh`, `scripts/uninstall-launchd-stadia-controller-bridge.sh`, `docs/references/deployment.md`).
+- 2026-02-26: [DONE] Installed local LaunchAgent `com.$USER.stadia-controller-bridge` and verified `launchctl` state is `running`.
 
 ## Next 3 Actions
-1. Run the bridge with controller connected and verify button event logs plus profile resolution in dry-run mode.
-2. Validate live mode (`--no-dry-run`) with Accessibility permission and confirm Ghostty split action behavior.
-3. Add config hot-reload watcher so mapping edits apply without restarting the process.
+1. Install the launchd service on the second machine and verify `launchctl print gui/$(id -u)/com.$USER.stadia-controller-bridge`.
+2. Validate Ghostty + Codex mappings in live mode on both machines after launchd start.
+3. Finalize preferred default mappings (Codex + Ghostty) after a short usage session.
