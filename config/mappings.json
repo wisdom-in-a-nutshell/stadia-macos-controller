@@ -18,6 +18,14 @@
           }
         },
         "rightTrigger": {
+          "action": {
+            "type": "holdKeystroke",
+            "keyCode": 49,
+            "modifiers": [],
+            "description": "Hold to mimic Space"
+          }
+        },
+        "y": {
           "debounceMs": 250,
           "edgeTrigger": true,
           "action": {
