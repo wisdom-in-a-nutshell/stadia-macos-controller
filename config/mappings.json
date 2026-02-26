@@ -38,8 +38,10 @@
           "debounceMs": 220,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/compact\"\n  delay 0.08\n  key code 36\nend tell",
+            "type": "text",
+            "text": "/compact",
+            "delayMs": 80,
+            "pressEnter": true,
             "description": "Run /compact in Codex session"
           }
         },
@@ -47,8 +49,10 @@
           "debounceMs": 220,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  delay 0.08\n  key code 36\nend tell",
+            "type": "text",
+            "text": "/model",
+            "delayMs": 80,
+            "pressEnter": true,
             "description": "Open /model popup"
           }
         },
@@ -56,8 +60,10 @@
           "debounceMs": 220,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  delay 0.08\n  key code 36\nend tell",
+            "type": "text",
+            "text": "/model",
+            "delayMs": 80,
+            "pressEnter": true,
             "description": "Assistant button: open /model popup"
           }
         },
@@ -65,8 +71,10 @@
           "debounceMs": 220,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\"\n  keystroke \"/compact\"\n  delay 0.08\n  key code 36\nend tell",
+            "type": "text",
+            "text": "/compact",
+            "delayMs": 80,
+            "pressEnter": true,
             "description": "Capture button: run /compact"
           }
         },

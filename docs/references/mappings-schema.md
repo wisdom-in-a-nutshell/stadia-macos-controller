@@ -17,7 +17,7 @@ The bridge config lives at `config/mappings.json`.
 - `action` (`ActionConfig`): action to execute.
 
 ## ActionConfig
-- `type` (`"keystroke" | "holdKeystroke" | "shell" | "applescript"`)
+- `type` (`"keystroke" | "holdKeystroke" | "shell" | "applescript" | "text"`)
 - Keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)
@@ -29,6 +29,10 @@ The bridge config lives at `config/mappings.json`.
   - `command` (`string`, required)
 - AppleScript fields:
   - `script` (`string`, required)
+- Text fields:
+  - `text` (`string`, required)
+  - `pressEnter` (`bool`, optional): if true, press Enter after typing text.
+  - `delayMs` (`int`, optional): delay between typing text and Enter.
 - Optional shared field:
   - `description` (`string`)
 

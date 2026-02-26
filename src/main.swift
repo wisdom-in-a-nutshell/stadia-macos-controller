@@ -95,6 +95,9 @@ struct ActionConfig: Decodable {
     let modifiers: [String]?
     let command: String?
     let script: String?
+    let text: String?
+    let pressEnter: Bool?
+    let delayMs: Int?
     let description: String?
 }
 
@@ -103,6 +106,7 @@ enum ActionType: String, Decodable {
     case holdKeystroke
     case shell
     case applescript
+    case text
 }
 
 struct ControllerEvent {
@@ -187,6 +191,10 @@ struct ConfigLoader {
                     guard let script = mapping.action.script, !script.isEmpty else {
                         throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' applescript action requires script")
                     }
+                case .text:
+                    guard let text = mapping.action.text, !text.isEmpty else {
+                        throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' text action requires text")
+                    }
                 }
             }
         }
@@ -261,6 +269,27 @@ final class ActionExecutor {
 
             try runProcess(executable: "/usr/bin/osascript", arguments: ["-e", script])
             print("[ACTION] applescript profile=\(profile) button=\(button)")
+
+        case .text:
+            guard let text = action.text else {
+                throw BridgeError.actionExecutionFailed("Text action missing text")
+            }
+
+            if !AXIsProcessTrusted() {
+                throw BridgeError.actionExecutionFailed("Accessibility permission is required for typed text injection")
+            }
+
+            try postText(text)
+
+            if let delayMs = action.delayMs, delayMs > 0 {
+                Thread.sleep(forTimeInterval: Double(delayMs) / 1000.0)
+            }
+
+            if action.pressEnter == true {
+                try postKeystroke(keyCode: 36, modifiers: [])
+            }
+
+            print("[ACTION] text profile=\(profile) button=\(button) text=\(text)")
         }
     }
 
@@ -340,6 +369,25 @@ final class ActionExecutor {
 
         event.flags = modifiers
         event.post(tap: .cghidEventTap)
+    }
+
+    private func postText(_ text: String) throws {
+        guard let source = CGEventSource(stateID: .hidSystemState) else {
+            throw BridgeError.actionExecutionFailed("Failed to create keyboard source for text action")
+        }
+
+        for scalar in text.utf16 {
+            var character = scalar
+            guard let keyDown = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: true),
+                  let keyUp = CGEvent(keyboardEventSource: source, virtualKey: 0, keyDown: false) else {
+                throw BridgeError.actionExecutionFailed("Failed to create keyboard event for text action")
+            }
+
+            keyDown.keyboardSetUnicodeString(stringLength: 1, unicodeString: &character)
+            keyUp.keyboardSetUnicodeString(stringLength: 1, unicodeString: &character)
+            keyDown.post(tap: .cghidEventTap)
+            keyUp.post(tap: .cghidEventTap)
+        }
     }
 
     private func runProcess(executable: String, arguments: [String]) throws {
