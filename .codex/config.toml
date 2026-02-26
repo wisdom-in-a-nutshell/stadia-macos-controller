@@ -1,6 +1,5 @@
-# Repo-local Codex config for stadia-macos-controller.
-# This keeps MCP settings scoped to this repository.
-
 [mcp_servers.xcode]
 command = "xcrun"
 args = ["mcpbridge"]
+startup_timeout_sec = 180
+tool_timeout_sec = 120
