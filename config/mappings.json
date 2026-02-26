@@ -150,6 +150,6 @@
   },
   "safety": {
     "dryRun": true,
-    "emergencyToggleButton": "none"
+    "emergencyToggleButton": null
   }
 }
