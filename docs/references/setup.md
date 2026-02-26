@@ -28,9 +28,14 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 
 ## Accessibility Permission (required for keystroke actions)
 1. Open `System Settings` > `Privacy & Security` > `Accessibility`.
-2. Allow this staged bridge binary:
-   - `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`
-3. Keep using a stable signing mode (`--sign-identity adhoc`) to avoid trust churn.
+2. Allow this staged app executable:
+   - `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge`
+3. Keep one stable install identity (`--sign-identity auto` default, with fallback to ad-hoc).
+
+## Stable Names (Both Machines)
+- LaunchAgent label default: `com.stadia-controller-bridge`
+- Bundle identifier/signing identifier default: `com.stadia-controller-bridge`
+- Staged app bundle path: `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`
 
 ## Current Starter Mapping
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
@@ -54,7 +59,7 @@ Install as a user LaunchAgent:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc
+./setup/install-launchd-stadia-controller-bridge.sh --mode live
 ```
 
 Uninstall:
@@ -66,12 +71,12 @@ cd ~/GitHub/scripts
 
 ## Troubleshooting (Recurring Issues)
 - Symptom: controller events appear in logs but no actions fire.
-  - Cause: Accessibility trust missing for staged binary.
-  - Fix: re-enable `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge` in Accessibility.
+  - Cause: Accessibility trust missing for staged app executable.
+  - Fix: re-enable `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge` in Accessibility.
 - Symptom: worked earlier, then broke right after reinstall.
-  - Cause: signing identity changed, or binary was unnecessarily rebuilt/re-signed.
+  - Cause: signing identity changed, or app executable was unnecessarily rebuilt/re-signed.
   - Fix: reinstall with stable signing:
-    - `cd ~/GitHub/scripts && ./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc`
+    - `cd ~/GitHub/scripts && ./setup/install-launchd-stadia-controller-bridge.sh --mode live`
 - Fast status checks:
-  - `launchctl print gui/$(id -u)/com.$USER.stadia-controller-bridge | sed -n '1,90p'`
+  - `launchctl print gui/$(id -u)/com.stadia-controller-bridge | sed -n '1,90p'`
   - `tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log`

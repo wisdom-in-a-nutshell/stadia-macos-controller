@@ -19,7 +19,7 @@ Canonical machine-ops command (recommended) from `~/GitHub/scripts`:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc
+./setup/install-launchd-stadia-controller-bridge.sh --mode live
 ```
 
 Project-local fallback (equivalent):
@@ -37,19 +37,21 @@ cd ~/GitHub/scripts
 ```
 
 What this installer now does:
-- Reuses the staged runtime binary when source files are unchanged (avoids unnecessary re-sign/trust churn).
+- Reuses the staged runtime app bundle when source files are unchanged (avoids unnecessary re-sign/trust churn).
 - Builds a fresh binary (`release` by default) only when source changed or `--force-build` is used.
-- Stages it to a stable runtime path: `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`.
-- Code-signs the staged binary (use `--sign-identity adhoc` for stable cross-machine behavior).
-- Points launchd to that staged path.
+- Stages it to a stable app bundle path: `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`.
+- Uses one stable default LaunchAgent label on both machines: `com.stadia-controller-bridge`.
+- Uses one stable default signing/bundle identifier on both machines: `com.stadia-controller-bridge`.
+- Code-signs the staged app bundle target (`auto` by default with ad-hoc fallback).
+- Points launchd to the staged app executable.
 
 This avoids relying on transient `.build/...` binaries and reduces repeated Accessibility re-approval.
 
-## 4) Accessibility permission (first-time, one stable binary)
-Grant Accessibility to the staged binary path used by launchd:
+## 4) Accessibility permission (first-time, one stable app executable)
+Grant Accessibility to the staged executable path used by launchd:
 - `System Settings > Privacy & Security > Accessibility`
 - Add/enable:
-  - `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`
+  - `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge`
 
 If entries got messy from old runs:
 1. Remove old `stadia-controller-bridge` entries.
@@ -58,12 +60,12 @@ If entries got messy from old runs:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc
+./setup/install-launchd-stadia-controller-bridge.sh --mode live
 ```
 
 ## 5) Validate service state
 ```bash
-launchctl print gui/$(id -u)/com.$USER.stadia-controller-bridge | sed -n '1,90p'
+launchctl print gui/$(id -u)/com.stadia-controller-bridge | sed -n '1,90p'
 ```
 
 Check logs:
@@ -81,19 +83,20 @@ git pull --rebase
 ```
 
 No restart is needed for mapping changes only (hot reload). Restart/reinstall is needed if code or launchd settings change.
+Do not copy built binaries between machines; each machine should run the installer locally so build/signing and launchd registration match local macOS trust state.
 
 ## Troubleshooting (Recovery Runbook)
 If actions stop firing but controller appears connected:
 
 1. Check service + logs:
 ```bash
-launchctl print gui/$(id -u)/com.$USER.stadia-controller-bridge | sed -n '1,90p'
+launchctl print gui/$(id -u)/com.stadia-controller-bridge | sed -n '1,90p'
 tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log
 ```
-2. If logs show Accessibility errors, re-enable staged binary in:
+2. If logs show Accessibility errors, re-enable staged executable in:
    `System Settings > Privacy & Security > Accessibility`
 3. Reconcile install with stable signing:
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc
+./setup/install-launchd-stadia-controller-bridge.sh --mode live
 ```

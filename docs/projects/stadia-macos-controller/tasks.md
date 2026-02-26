@@ -42,10 +42,11 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Validate behavior when frontmost app has no profile (bridge skips actions, no unexpected global action).
 - [x] Install and validate `launchd` service on both machines using repo-local installer.
 - [x] Add canonical machine-ops wrappers in `~/GitHub/scripts/setup/` so launchd install/uninstall is consolidated for both machines.
-- [x] Grant Accessibility permission on second machine for staged bridge binary path (`~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`).
+- [x] Grant Accessibility permission on second machine for staged bridge executable path (`~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge`).
 - [x] Resolve MacBook `leftThumbstickButton` stale runtime mapping and verify it emits `keyCode=2` (split down) in live logs.
+- [x] Standardize launchd label + signing identifier + staged runtime path across both machines to avoid per-machine identity drift.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
-- [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (no new repo-local rule needed yet).
+- [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (stable cross-machine service identity/path now documented).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
 
 ## Validation / Test Plan
@@ -77,6 +78,9 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Hardened installer signing flow: auto-sign now falls back to ad-hoc on failure; machine scheduler reconciliation uses ad-hoc to avoid cross-machine cert mismatch.
 - 2026-02-26: [DONE] Removed `default` profile fallback behavior from runtime/config; non-profiled apps now explicitly no-op (`[SKIP] no active app profile`).
 - 2026-02-26: [DONE] Updated installer to reuse staged binary when source is unchanged (skip rebuild/re-sign) to reduce repeated Accessibility trust churn.
+- 2026-02-26: [DONE] Completed staged runtime migration from loose binary to app bundle (`~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`) and signed bundle target.
+- 2026-02-26: [DONE] Standardized defaults across both machines: launchd label `com.stadia-controller-bridge` and signing identifier `com.stadia-controller-bridge`.
+- 2026-02-26: [DONE] Updated setup/deployment docs and repo guardrails with the stable cross-machine naming/path policy.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.

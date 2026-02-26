@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-LABEL="com.${USER}.stadia-controller-bridge"
+LABEL="com.stadia-controller-bridge"
+LEGACY_LABEL="com.${USER}.stadia-controller-bridge"
 REPO_DIR="${HOME}/GitHub/stadia-macos-controller"
 CONFIG_PATH="config/mappings.json"
 BINARY_PATH=""
@@ -10,8 +11,10 @@ START_INTERVAL=0
 RUN_AT_LOAD=1
 BUILD_CONFIG="release" # release|debug
 RUNTIME_DIR="${HOME}/Library/Application Support/stadia-controller-bridge"
-SIGN_IDENTITY="adhoc"  # auto|adhoc|none|<identity string>
-SIGNING_IDENTIFIER="com.${USER}.stadia-controller-bridge"
+APP_BUNDLE_NAME="StadiaControllerBridge.app"
+APP_EXECUTABLE_NAME="stadia-controller-bridge"
+SIGN_IDENTITY="auto"   # auto|adhoc|none|<identity string>
+SIGNING_IDENTIFIER="com.stadia-controller-bridge"
 FORCE_BUILD=0
 
 PLIST_PATH="${HOME}/Library/LaunchAgents/${LABEL}.plist"
@@ -25,22 +28,23 @@ Usage: $(basename "$0") [options]
 Install/update a launchd job for the Stadia macOS controller bridge.
 
 Options:
-  --label <label>           LaunchAgent label (default: com.<user>.stadia-controller-bridge)
+  --label <label>           LaunchAgent label (default: com.stadia-controller-bridge)
   --repo-dir <path>         Repo path (default: ~/GitHub/stadia-macos-controller)
   --config <path>           Config path relative to repo dir (default: config/mappings.json)
   --binary <path>           Use explicit binary path (skip build/stage pipeline)
   --mode <live|dry-run>     Bridge mode (default: live)
   --build <release|debug>   Build config when --binary is not provided (default: release)
   --force-build             Force rebuild/restage even if staged binary is already fresh
-  --runtime-dir <path>      Stable runtime dir for staged binary (default: ~/Library/Application Support/stadia-controller-bridge)
+  --runtime-dir <path>      Stable runtime dir for staged app bundle (default: ~/Library/Application Support/stadia-controller-bridge)
   --sign-identity <value>   Code-sign identity: auto | adhoc | none | "Apple Development: ..."
-  --signing-id <id>         Code-sign identifier (default: com.<user>.stadia-controller-bridge)
+  --signing-id <id>         Code-sign identifier (default: com.stadia-controller-bridge)
   --start-interval <sec>    Optional restart interval in seconds (0 disables)
   --no-run-at-load          Disable RunAtLoad
   --help                    Show help
 
 Examples:
   ./scripts/install-launchd-stadia-controller-bridge.sh
+  ./scripts/install-launchd-stadia-controller-bridge.sh --sign-identity auto
   ./scripts/install-launchd-stadia-controller-bridge.sh --sign-identity adhoc
   ./scripts/install-launchd-stadia-controller-bridge.sh --sign-identity "Apple Development: Your Name (TEAMID)"
   ./scripts/install-launchd-stadia-controller-bridge.sh --mode dry-run
@@ -50,6 +54,32 @@ USAGE
 
 is_int() {
   [[ "$1" =~ ^[0-9]+$ ]]
+}
+
+write_info_plist() {
+  local plist_path="$1"
+  cat >"$plist_path" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>CFBundleName</key>
+    <string>StadiaControllerBridge</string>
+    <key>CFBundleDisplayName</key>
+    <string>StadiaControllerBridge</string>
+    <key>CFBundleIdentifier</key>
+    <string>${SIGNING_IDENTIFIER}</string>
+    <key>CFBundleExecutable</key>
+    <string>${APP_EXECUTABLE_NAME}</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+  </dict>
+</plist>
+PLIST
 }
 
 while [[ $# -gt 0 ]]; do
@@ -140,9 +170,13 @@ if [[ ! -f "$REPO_DIR/$CONFIG_PATH" ]]; then
   exit 1
 fi
 
-STAGED_DIR="${RUNTIME_DIR}/bin"
-STAGED_BINARY="${STAGED_DIR}/stadia-controller-bridge"
+STAGED_APP_BUNDLE="${RUNTIME_DIR}/${APP_BUNDLE_NAME}"
+STAGED_CONTENTS_DIR="${STAGED_APP_BUNDLE}/Contents"
+STAGED_MACOS_DIR="${STAGED_CONTENTS_DIR}/MacOS"
+STAGED_BINARY="${STAGED_MACOS_DIR}/${APP_EXECUTABLE_NAME}"
+STAGED_INFO_PLIST="${STAGED_CONTENTS_DIR}/Info.plist"
 SKIP_SIGN=0
+SIGN_TARGET=""
 
 if [[ -z "$BINARY_PATH" ]]; then
   NEED_BUILD=1
@@ -162,14 +196,18 @@ if [[ -z "$BINARY_PATH" ]]; then
       exit 1
     fi
 
-    mkdir -p "$STAGED_DIR"
+    mkdir -p "$STAGED_MACOS_DIR"
+    write_info_plist "$STAGED_INFO_PLIST"
     /usr/bin/install -m 0755 "$BUILT_BINARY" "$STAGED_BINARY"
     BINARY_PATH="$STAGED_BINARY"
-    echo "Staged runtime binary at: $BINARY_PATH"
+    SIGN_TARGET="$STAGED_APP_BUNDLE"
+    echo "Staged runtime app bundle at: $STAGED_APP_BUNDLE"
+    echo "Staged executable path: $BINARY_PATH"
   else
     BINARY_PATH="$STAGED_BINARY"
+    SIGN_TARGET="$STAGED_APP_BUNDLE"
     SKIP_SIGN=1
-    echo "Reusing existing staged binary (no source changes detected): $BINARY_PATH"
+    echo "Reusing existing staged app bundle (no source changes detected): $STAGED_APP_BUNDLE"
   fi
 elif [[ "$BINARY_PATH" != /* ]]; then
   BINARY_PATH="${REPO_DIR}/${BINARY_PATH}"
@@ -178,6 +216,14 @@ fi
 if [[ ! -x "$BINARY_PATH" ]]; then
   echo "Bridge binary not executable: $BINARY_PATH" >&2
   exit 1
+fi
+
+if [[ -z "$SIGN_TARGET" ]]; then
+  if [[ "$BINARY_PATH" == "$STAGED_BINARY" ]]; then
+    SIGN_TARGET="$STAGED_APP_BUNDLE"
+  else
+    SIGN_TARGET="$BINARY_PATH"
+  fi
 fi
 
 resolve_identity() {
@@ -215,16 +261,16 @@ resolve_identity() {
 }
 
 if (( SKIP_SIGN == 1 )); then
-  echo "Skipping code-sign step for reused staged binary to preserve existing Accessibility trust."
+  echo "Skipping code-sign step for reused staged app bundle to preserve existing Accessibility trust."
   SELECTED_IDENTITY="(unchanged)"
 else
   SELECTED_IDENTITY="$(resolve_identity "$SIGN_IDENTITY")"
   if [[ -n "$SELECTED_IDENTITY" ]]; then
-    echo "Signing binary with identity: ${SELECTED_IDENTITY}"
-    if ! /usr/bin/codesign --force --sign "$SELECTED_IDENTITY" --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"; then
+    echo "Signing target with identity: ${SELECTED_IDENTITY}"
+    if ! /usr/bin/codesign --force --sign "$SELECTED_IDENTITY" --identifier "$SIGNING_IDENTIFIER" "$SIGN_TARGET"; then
       if [[ "$SIGN_IDENTITY" == "auto" && "$SELECTED_IDENTITY" != "-" ]]; then
         echo "WARN: auto identity signing failed; falling back to ad-hoc signing (-)." >&2
-        /usr/bin/codesign --force --sign - --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"
+        /usr/bin/codesign --force --sign - --identifier "$SIGNING_IDENTIFIER" "$SIGN_TARGET"
         SELECTED_IDENTITY="-"
       else
         echo "ERROR: code signing failed for identity: ${SELECTED_IDENTITY}" >&2
@@ -310,16 +356,25 @@ PLIST
 chmod 0644 "$PLIST_PATH"
 
 DOMAIN="gui/$(id -u)"
+if [[ "$LEGACY_LABEL" != "$LABEL" ]]; then
+  LEGACY_PLIST_PATH="${HOME}/Library/LaunchAgents/${LEGACY_LABEL}.plist"
+  launchctl bootout "$DOMAIN" "$LEGACY_PLIST_PATH" >/dev/null 2>&1 || true
+  launchctl bootout "$DOMAIN/$LEGACY_LABEL" >/dev/null 2>&1 || true
+  rm -f "$LEGACY_PLIST_PATH"
+fi
 launchctl bootout "$DOMAIN" "$PLIST_PATH" >/dev/null 2>&1 || true
 launchctl bootstrap "$DOMAIN" "$PLIST_PATH"
 launchctl kickstart -k "$DOMAIN/$LABEL" >/dev/null 2>&1 || true
 
 echo "Loaded $LABEL from $PLIST_PATH"
 echo "Mode: $MODE"
-echo "Binary: $BINARY_PATH"
+echo "Executable: $BINARY_PATH"
+if [[ -d "$SIGN_TARGET" ]]; then
+  echo "App bundle: $SIGN_TARGET"
+fi
 if [[ -n "${SELECTED_IDENTITY}" ]]; then
   echo "Code signature:"
-  /usr/bin/codesign -dv --verbose=2 "$BINARY_PATH" 2>&1 | sed -n '1,14p'
+  /usr/bin/codesign -dv --verbose=2 "$SIGN_TARGET" 2>&1 | sed -n '1,14p'
 fi
 echo "Logs:"
 echo "  $OUT_LOG"
