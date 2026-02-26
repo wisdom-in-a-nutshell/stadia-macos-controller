@@ -56,7 +56,7 @@ Install as a user LaunchAgent:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto
+./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc
 ```
 
 Uninstall:

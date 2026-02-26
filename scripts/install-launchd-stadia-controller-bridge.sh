@@ -195,7 +195,16 @@ resolve_identity() {
 SELECTED_IDENTITY="$(resolve_identity "$SIGN_IDENTITY")"
 if [[ -n "$SELECTED_IDENTITY" ]]; then
   echo "Signing binary with identity: ${SELECTED_IDENTITY}"
-  /usr/bin/codesign --force --sign "$SELECTED_IDENTITY" --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"
+  if ! /usr/bin/codesign --force --sign "$SELECTED_IDENTITY" --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"; then
+    if [[ "$SIGN_IDENTITY" == "auto" && "$SELECTED_IDENTITY" != "-" ]]; then
+      echo "WARN: auto identity signing failed; falling back to ad-hoc signing (-)." >&2
+      /usr/bin/codesign --force --sign - --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"
+      SELECTED_IDENTITY="-"
+    else
+      echo "ERROR: code signing failed for identity: ${SELECTED_IDENTITY}" >&2
+      exit 1
+    fi
+  fi
 fi
 
 mkdir -p "$(dirname "$PLIST_PATH")"

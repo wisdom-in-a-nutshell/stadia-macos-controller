@@ -74,6 +74,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Reinstalled LaunchAgent in live mode, reconnected controller, and restored stable input handling.
 - 2026-02-26: [DONE] User confirmed controller bridge is working again across mapped buttons.
 - 2026-02-26: [DONE] Consolidated machine-level bridge commands into `~/GitHub/scripts/setup/` wrappers and updated scheduler/health-check integration.
+- 2026-02-26: [DONE] Hardened installer signing flow: auto-sign now falls back to ad-hoc on failure; machine scheduler reconciliation uses ad-hoc to avoid cross-machine cert mismatch.
 
 ## Next 3 Actions
 1. Validate fallback behavior in a non-profiled frontmost app to confirm `default` profile is applied safely.

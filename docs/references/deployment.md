@@ -19,7 +19,7 @@ Canonical machine-ops command (recommended) from `~/GitHub/scripts`:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto
+./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc
 ```
 
 Project-local fallback (equivalent):
@@ -57,7 +57,7 @@ If entries got messy from old runs:
 
 ```bash
 cd ~/GitHub/scripts
-./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto
+./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc
 ```
 
 ## 5) Validate service state
