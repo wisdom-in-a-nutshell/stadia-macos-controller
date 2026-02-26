@@ -93,6 +93,19 @@
             "description": "Send Escape"
           }
         },
+        "x": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 36,
+            "modifiers": [
+              "command",
+              "shift"
+            ],
+            "description": "Toggle split zoom (Ghostty toggle_split_zoom via Cmd+Shift+Enter)"
+          }
+        },
         "leftShoulder": {
           "debounceMs": 200,
           "edgeTrigger": true,

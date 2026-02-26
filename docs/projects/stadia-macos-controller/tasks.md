@@ -48,6 +48,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Add a one-command launchd verifier script and document canonical machine-level verify usage.
 - [x] Move machine-level Stadia wrappers to nested `~/GitHub/scripts/setup/stadia/` as the single canonical path (no compatibility aliases).
 - [x] Simplify Ghostty control layout: `L1` tabs, `R1` split cycle, D-pad Up/Down for model picker, reserve D-pad Left/Right.
+- [x] Map `X` to Ghostty split zoom toggle (maximize/restore focused split) for quick reversible focus.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (stable cross-machine service identity/path now documented).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -88,6 +89,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Reorganized machine-ops Stadia wrappers under `~/GitHub/scripts/setup/stadia/` as the only supported path to keep `setup/` root clean.
 - 2026-02-26: [DONE] Re-verified launchd wiring on both MacBook and Mac mini (`scripts/verify-launchd-stadia-controller-bridge.sh`: PASS on both machines).
 - 2026-02-26: [DONE] Updated Ghostty mappings per user preference: shoulders now split role by context (`L1` tabs, `R1` splits), D-pad Up/Down now handles model picker, and `X/Y` plus D-pad Left/Right are reserved.
+- 2026-02-26: [DONE] Mapped `X` to Ghostty split zoom toggle (`toggle_split_zoom` via `Cmd+Shift+Enter`) and documented rationale.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.
