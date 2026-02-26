@@ -76,6 +76,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Consolidated machine-level bridge commands into `~/GitHub/scripts/setup/` wrappers and updated scheduler/health-check integration.
 - 2026-02-26: [DONE] Hardened installer signing flow: auto-sign now falls back to ad-hoc on failure; machine scheduler reconciliation uses ad-hoc to avoid cross-machine cert mismatch.
 - 2026-02-26: [DONE] Removed `default` profile fallback behavior from runtime/config; non-profiled apps now explicitly no-op (`[SKIP] no active app profile`).
+- 2026-02-26: [DONE] Updated installer to reuse staged binary when source is unchanged (skip rebuild/re-sign) to reduce repeated Accessibility trust churn.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.

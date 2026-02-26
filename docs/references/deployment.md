@@ -37,7 +37,8 @@ cd ~/GitHub/scripts
 ```
 
 What this installer now does:
-- Builds a fresh binary (`release` by default).
+- Reuses the staged runtime binary when source files are unchanged (avoids unnecessary re-sign/trust churn).
+- Builds a fresh binary (`release` by default) only when source changed or `--force-build` is used.
 - Stages it to a stable runtime path: `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`.
 - Code-signs the staged binary (use `--sign-identity adhoc` for stable cross-machine behavior).
 - Points launchd to that staged path.

@@ -69,7 +69,7 @@ cd ~/GitHub/scripts
   - Cause: Accessibility trust missing for staged binary.
   - Fix: re-enable `~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge` in Accessibility.
 - Symptom: worked earlier, then broke right after reinstall.
-  - Cause: signing identity changed, so macOS trust entry no longer matches.
+  - Cause: signing identity changed, or binary was unnecessarily rebuilt/re-signed.
   - Fix: reinstall with stable signing:
     - `cd ~/GitHub/scripts && ./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc`
 - Fast status checks:

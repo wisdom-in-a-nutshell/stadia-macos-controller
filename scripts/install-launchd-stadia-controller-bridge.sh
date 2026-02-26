@@ -12,6 +12,7 @@ BUILD_CONFIG="release" # release|debug
 RUNTIME_DIR="${HOME}/Library/Application Support/stadia-controller-bridge"
 SIGN_IDENTITY="adhoc"  # auto|adhoc|none|<identity string>
 SIGNING_IDENTIFIER="com.${USER}.stadia-controller-bridge"
+FORCE_BUILD=0
 
 PLIST_PATH="${HOME}/Library/LaunchAgents/${LABEL}.plist"
 OUT_LOG="${HOME}/Library/Logs/stadia-controller-bridge.launchd.out.log"
@@ -30,6 +31,7 @@ Options:
   --binary <path>           Use explicit binary path (skip build/stage pipeline)
   --mode <live|dry-run>     Bridge mode (default: live)
   --build <release|debug>   Build config when --binary is not provided (default: release)
+  --force-build             Force rebuild/restage even if staged binary is already fresh
   --runtime-dir <path>      Stable runtime dir for staged binary (default: ~/Library/Application Support/stadia-controller-bridge)
   --sign-identity <value>   Code-sign identity: auto | adhoc | none | "Apple Development: ..."
   --signing-id <id>         Code-sign identifier (default: com.<user>.stadia-controller-bridge)
@@ -72,6 +74,10 @@ while [[ $# -gt 0 ]]; do
     --build)
       BUILD_CONFIG="${2:-}"
       shift 2
+      ;;
+    --force-build)
+      FORCE_BUILD=1
+      shift
       ;;
     --runtime-dir)
       RUNTIME_DIR="${2:-}"
@@ -134,21 +140,37 @@ if [[ ! -f "$REPO_DIR/$CONFIG_PATH" ]]; then
   exit 1
 fi
 
+STAGED_DIR="${RUNTIME_DIR}/bin"
+STAGED_BINARY="${STAGED_DIR}/stadia-controller-bridge"
+SKIP_SIGN=0
+
 if [[ -z "$BINARY_PATH" ]]; then
-  echo "Building ${BUILD_CONFIG} binary..."
-  (cd "$REPO_DIR" && swift build -c "$BUILD_CONFIG" >/dev/null)
-  BIN_DIR="$(cd "$REPO_DIR" && swift build -c "$BUILD_CONFIG" --show-bin-path)"
-  BUILT_BINARY="${BIN_DIR}/stadia-controller-bridge"
-  if [[ ! -x "$BUILT_BINARY" ]]; then
-    echo "Built binary missing: $BUILT_BINARY" >&2
-    exit 1
+  NEED_BUILD=1
+  if (( FORCE_BUILD == 0 )) && [[ -x "$STAGED_BINARY" ]]; then
+    if ! find "$REPO_DIR/Package.swift" "$REPO_DIR/src" -type f -newer "$STAGED_BINARY" -print -quit | grep -q .; then
+      NEED_BUILD=0
+    fi
   fi
 
-  STAGED_DIR="${RUNTIME_DIR}/bin"
-  mkdir -p "$STAGED_DIR"
-  /usr/bin/install -m 0755 "$BUILT_BINARY" "$STAGED_DIR/stadia-controller-bridge"
-  BINARY_PATH="${STAGED_DIR}/stadia-controller-bridge"
-  echo "Staged runtime binary at: $BINARY_PATH"
+  if (( NEED_BUILD == 1 )); then
+    echo "Building ${BUILD_CONFIG} binary..."
+    (cd "$REPO_DIR" && swift build -c "$BUILD_CONFIG" >/dev/null)
+    BIN_DIR="$(cd "$REPO_DIR" && swift build -c "$BUILD_CONFIG" --show-bin-path)"
+    BUILT_BINARY="${BIN_DIR}/stadia-controller-bridge"
+    if [[ ! -x "$BUILT_BINARY" ]]; then
+      echo "Built binary missing: $BUILT_BINARY" >&2
+      exit 1
+    fi
+
+    mkdir -p "$STAGED_DIR"
+    /usr/bin/install -m 0755 "$BUILT_BINARY" "$STAGED_BINARY"
+    BINARY_PATH="$STAGED_BINARY"
+    echo "Staged runtime binary at: $BINARY_PATH"
+  else
+    BINARY_PATH="$STAGED_BINARY"
+    SKIP_SIGN=1
+    echo "Reusing existing staged binary (no source changes detected): $BINARY_PATH"
+  fi
 elif [[ "$BINARY_PATH" != /* ]]; then
   BINARY_PATH="${REPO_DIR}/${BINARY_PATH}"
 fi
@@ -192,18 +214,26 @@ resolve_identity() {
   echo "$requested"
 }
 
-SELECTED_IDENTITY="$(resolve_identity "$SIGN_IDENTITY")"
-if [[ -n "$SELECTED_IDENTITY" ]]; then
-  echo "Signing binary with identity: ${SELECTED_IDENTITY}"
-  if ! /usr/bin/codesign --force --sign "$SELECTED_IDENTITY" --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"; then
-    if [[ "$SIGN_IDENTITY" == "auto" && "$SELECTED_IDENTITY" != "-" ]]; then
-      echo "WARN: auto identity signing failed; falling back to ad-hoc signing (-)." >&2
-      /usr/bin/codesign --force --sign - --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"
-      SELECTED_IDENTITY="-"
-    else
-      echo "ERROR: code signing failed for identity: ${SELECTED_IDENTITY}" >&2
-      exit 1
+if (( SKIP_SIGN == 1 )); then
+  echo "Skipping code-sign step for reused staged binary to preserve existing Accessibility trust."
+  SELECTED_IDENTITY="(unchanged)"
+else
+  SELECTED_IDENTITY="$(resolve_identity "$SIGN_IDENTITY")"
+  if [[ -n "$SELECTED_IDENTITY" ]]; then
+    echo "Signing binary with identity: ${SELECTED_IDENTITY}"
+    if ! /usr/bin/codesign --force --sign "$SELECTED_IDENTITY" --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"; then
+      if [[ "$SIGN_IDENTITY" == "auto" && "$SELECTED_IDENTITY" != "-" ]]; then
+        echo "WARN: auto identity signing failed; falling back to ad-hoc signing (-)." >&2
+        /usr/bin/codesign --force --sign - --identifier "$SIGNING_IDENTIFIER" "$BINARY_PATH"
+        SELECTED_IDENTITY="-"
+      else
+        echo "ERROR: code signing failed for identity: ${SELECTED_IDENTITY}" >&2
+        exit 1
+      fi
     fi
+  else
+    SELECTED_IDENTITY="(none)"
+    echo "Code signing disabled (--sign-identity none)."
   fi
 fi
 
