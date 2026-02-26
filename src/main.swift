@@ -186,11 +186,15 @@ final class ProfileResolver {
     }
 
     func resolveActiveProfile() -> String {
-        guard let bundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier else {
+        guard let bundleID = currentFrontmostBundleID() else {
             return "default"
         }
 
         return appProfiles[bundleID] ?? "default"
+    }
+
+    func currentFrontmostBundleID() -> String? {
+        NSWorkspace.shared.frontmostApplication?.bundleIdentifier
     }
 }
 
@@ -434,6 +438,9 @@ final class ControllerBridge: NSObject {
             return
         }
 
+        let bundleID = profileResolver.currentFrontmostBundleID() ?? "unknown"
+        let activeProfileName = profileResolver.resolveActiveProfile()
+
         if let emergencyButton = config.safety.emergencyToggleButton,
            event.button == emergencyButton {
             bridgeEnabled.toggle()
@@ -446,9 +453,12 @@ final class ControllerBridge: NSObject {
             return
         }
 
-        guard let resolved = resolveMapping(forButton: event.button) else {
+        guard let resolved = resolveMapping(forButton: event.button, activeProfileName: activeProfileName) else {
+            print("[SKIP] no mapping profile=\(activeProfileName) bundle=\(bundleID) button=\(event.button)")
             return
         }
+
+        print("[MAP] profile=\(resolved.profileName) bundle=\(bundleID) button=\(event.button)")
 
         if event.isRepeat && resolved.mapping.edgeTrigger != false {
             return
@@ -473,8 +483,7 @@ final class ControllerBridge: NSObject {
         }
     }
 
-    private func resolveMapping(forButton button: String) -> (profileName: String, mapping: MappingConfig)? {
-        let activeProfileName = profileResolver.resolveActiveProfile()
+    private func resolveMapping(forButton button: String, activeProfileName: String) -> (profileName: String, mapping: MappingConfig)? {
         let defaultProfile = config.profiles["default"]
 
         if let activeProfile = config.profiles[activeProfileName], activeProfile.enabled ?? true,
