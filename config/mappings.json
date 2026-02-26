@@ -52,6 +52,24 @@
             "description": "Open /model popup"
           }
         },
+        "home": {
+          "debounceMs": 220,
+          "edgeTrigger": true,
+          "action": {
+            "type": "applescript",
+            "script": "tell application \"System Events\"\n  keystroke \"/model\"\n  delay 0.08\n  key code 36\nend tell",
+            "description": "Assistant button: open /model popup"
+          }
+        },
+        "share": {
+          "debounceMs": 220,
+          "edgeTrigger": true,
+          "action": {
+            "type": "applescript",
+            "script": "tell application \"System Events\"\n  keystroke \"/compact\"\n  delay 0.08\n  key code 36\nend tell",
+            "description": "Capture button: run /compact"
+          }
+        },
         "leftThumbstickButton": {
           "debounceMs": 180,
           "edgeTrigger": true,

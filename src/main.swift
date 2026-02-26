@@ -372,6 +372,7 @@ final class ControllerBridge: NSObject {
     private var lastTriggeredAt: [String: Date] = [:]
     private var polledButtonStates: [String: Bool] = [:]
     private var activeGamepads: [String: GCExtendedGamepad] = [:]
+    private var activeControllers: [String: GCController] = [:]
     private var pollingTimer: Timer?
     private var configWatchTimer: Timer?
     private var configLastModified: Date?
@@ -459,6 +460,7 @@ final class ControllerBridge: NSObject {
         }
         let controllerID = Self.controllerID(for: controller)
         activeGamepads.removeValue(forKey: controllerID)
+        activeControllers.removeValue(forKey: controllerID)
         buttonStates = buttonStates.filter { !$0.key.hasPrefix("\(controllerID)::") }
         polledButtonStates = polledButtonStates.filter { !$0.key.hasPrefix("\(controllerID)::") }
         activeHolds = activeHolds.filter { !$0.key.hasPrefix("\(controllerID)::") }
@@ -476,6 +478,7 @@ final class ControllerBridge: NSObject {
         }
 
         activeGamepads[controllerID] = gamepad
+        activeControllers[controllerID] = controller
         startPollingIfNeeded()
         print("[INFO] Registered polling for controller id=\(controllerID)")
     }
@@ -567,6 +570,20 @@ final class ControllerBridge: NSObject {
             if let buttonOptions = gamepad.buttonOptions {
                 pollButton(controllerID: controllerID, buttonName: "options", pressed: buttonOptions.isPressed)
             }
+            if let controller = activeControllers[controllerID] {
+                pollPhysicalButton(
+                    controllerID: controllerID,
+                    controller: controller,
+                    elementName: GCInputButtonHome,
+                    mappedButtonName: "home"
+                )
+                pollPhysicalButton(
+                    controllerID: controllerID,
+                    controller: controller,
+                    elementName: GCInputButtonShare,
+                    mappedButtonName: "share"
+                )
+            }
             if let leftThumbstickButton = gamepad.leftThumbstickButton {
                 pollButton(controllerID: controllerID, buttonName: "leftThumbstickButton", pressed: leftThumbstickButton.isPressed)
             }
@@ -578,6 +595,20 @@ final class ControllerBridge: NSObject {
             pollButton(controllerID: controllerID, buttonName: "dpadLeft", pressed: gamepad.dpad.left.isPressed)
             pollButton(controllerID: controllerID, buttonName: "dpadRight", pressed: gamepad.dpad.right.isPressed)
         }
+    }
+
+    private func pollPhysicalButton(
+        controllerID: String,
+        controller: GCController,
+        elementName: String,
+        mappedButtonName: String
+    ) {
+        guard let element = controller.physicalInputProfile.elements[elementName],
+              let button = element as? GCControllerButtonInput else {
+            return
+        }
+
+        pollButton(controllerID: controllerID, buttonName: mappedButtonName, pressed: button.isPressed)
     }
 
     private func pollButton(controllerID: String, buttonName: String, pressed: Bool) {

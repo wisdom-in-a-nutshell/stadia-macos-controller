@@ -42,4 +42,5 @@ The bridge config lives at `config/mappings.json`.
 - `leftTrigger`, `rightTrigger`
 - `dpadUp`, `dpadDown`, `dpadLeft`, `dpadRight`
 - `menu`, `options`
+- `home`, `share` (Assistant/Capture on Stadia controller)
 - `leftThumbstickButton`, `rightThumbstickButton`
