@@ -15,7 +15,14 @@ swift build
 Edit `config/mappings.json` as needed. Hot reload is enabled while the bridge process is running.
 
 ## 3) Install launchd service
-Install/update the LaunchAgent on each machine:
+Canonical machine-ops command (recommended) from `~/GitHub/scripts`:
+
+```bash
+cd ~/GitHub/scripts
+./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto
+```
+
+Project-local fallback (equivalent):
 
 ```bash
 cd ~/GitHub/stadia-macos-controller
@@ -25,7 +32,8 @@ cd ~/GitHub/stadia-macos-controller
 For safer testing first:
 
 ```bash
-./scripts/install-launchd-stadia-controller-bridge.sh --mode dry-run
+cd ~/GitHub/scripts
+./setup/install-launchd-stadia-controller-bridge.sh --mode dry-run
 ```
 
 What this installer now does:
@@ -48,7 +56,8 @@ If entries got messy from old runs:
 3. Re-run installer:
 
 ```bash
-./scripts/install-launchd-stadia-controller-bridge.sh --mode live
+cd ~/GitHub/scripts
+./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto
 ```
 
 ## 5) Validate service state

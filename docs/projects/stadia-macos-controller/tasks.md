@@ -41,6 +41,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Validate end-to-end: focus Ghostty, press mapped buttons, verify expected action fires only once per press.
 - [ ] Validate fallback behavior when frontmost app has no profile (`default` profile applies, no unexpected global action).
 - [x] Install and validate `launchd` service on both machines using repo-local installer.
+- [x] Add canonical machine-ops wrappers in `~/GitHub/scripts/setup/` so launchd install/uninstall is consolidated for both machines.
 - [x] Grant Accessibility permission on second machine for staged bridge binary path (`~/Library/Application Support/stadia-controller-bridge/bin/stadia-controller-bridge`).
 - [x] Resolve MacBook `leftThumbstickButton` stale runtime mapping and verify it emits `keyCode=2` (split down) in live logs.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
@@ -72,6 +73,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Updated `leftThumbstickButton` mapping in config to `Cmd+Shift+D` (`keyCode=2`) and synced config file on both machines.
 - 2026-02-26: [DONE] Reinstalled LaunchAgent in live mode, reconnected controller, and restored stable input handling.
 - 2026-02-26: [DONE] User confirmed controller bridge is working again across mapped buttons.
+- 2026-02-26: [DONE] Consolidated machine-level bridge commands into `~/GitHub/scripts/setup/` wrappers and updated scheduler/health-check integration.
 
 ## Next 3 Actions
 1. Validate fallback behavior in a non-profiled frontmost app to confirm `default` profile is applied safely.

@@ -55,11 +55,13 @@ If your Ghostty split binding differs, edit `config/mappings.json`.
 Install as a user LaunchAgent:
 
 ```bash
-./scripts/install-launchd-stadia-controller-bridge.sh --mode live
+cd ~/GitHub/scripts
+./setup/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto
 ```
 
 Uninstall:
 
 ```bash
-./scripts/uninstall-launchd-stadia-controller-bridge.sh
+cd ~/GitHub/scripts
+./setup/uninstall-launchd-stadia-controller-bridge.sh
 ```
