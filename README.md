@@ -14,36 +14,6 @@ flowchart TD
   K --> G[Ghostty]
 ```
 
-## Simple Flow (ASCII)
-```text
-┌──────────────────────────┐
-│                          │
-│    Stadia Controller     │
-│                          │
-└─────────────┬────────────┘
-              │
-              ▼
-┌──────────────────────────┐
-│                          │
-│ Stadia Controller Bridge │
-│                          │
-└─────────────┬────────────┘
-              │
-              ▼
-┌──────────────────────────┐
-│                          │
-│    Keystroke Actions     │
-│                          │
-└─────────────┬────────────┘
-              │
-              ▼
-┌──────────────────────────┐
-│                          │
-│         Ghostty          │
-│                          │
-└──────────────────────────┘
-```
-
 ## Profile-Aware Flow (Mermaid)
 ```mermaid
 flowchart TD
@@ -59,27 +29,4 @@ flowchart TD
     C --> M --> B --> R
     R -->|Ghostty| G --> A --> H
     R -->|Other app| S
-```
-
-## Profile-Aware Flow (ASCII)
-```text
-Stadia Controller
-  |
-  v
-macOS GameController
-  |
-  v
-Bridge Service (com.stadia-controller-bridge)
-  |
-  v
-Profile Resolver (frontmost app)
-  | Ghostty                    | Other app
-  v                            v
-Ghostty Profile Mappings     Skip No Active Profile
-  |
-  v
-Keystroke Actions
-  |
-  v
-Ghostty
 ```
