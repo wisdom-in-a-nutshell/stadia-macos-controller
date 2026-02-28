@@ -21,10 +21,11 @@
           "action": {
             "type": "keystroke",
             "keyCode": 49,
+            "postKeyCode": 36,
             "modifiers": [
               "option"
             ],
-            "description": "Send Option+Space"
+            "description": "Send Option+Space, then Enter"
           }
         },
         "options": {

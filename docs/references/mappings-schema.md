@@ -25,6 +25,9 @@ Behavior note:
 - Keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)
+  - `postKeyCode` (`int`, optional): send this keystroke once after the primary keystroke.
+  - `postModifiers` (`string[]`, optional): modifiers for `postKeyCode`.
+  - `postDelayMs` (`int`, optional): delay before the post keystroke.
 - Hold keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)

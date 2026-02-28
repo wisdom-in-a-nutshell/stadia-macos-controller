@@ -47,7 +47,7 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
 - Ghostty defaults:
   - `R2` (`rightTrigger`): hold Space, then send Enter on release
-  - `L2` (`leftTrigger`): send `Option+Space`
+  - `L2` (`leftTrigger`): send `Option+Space`, then Enter
   - `Options`: close focused split surface (`Cmd+W`)
   - `Menu`: open `/model`
   - `X`: toggle split zoom (maximize/restore focused split)
