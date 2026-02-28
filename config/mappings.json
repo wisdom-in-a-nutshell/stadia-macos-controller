@@ -8,11 +8,11 @@
       "analog": {
         "leftStickVerticalScroll": {
           "enabled": true,
-          "deadzone": 0.26,
-          "intervalMs": 65,
+          "deadzone": 0.20,
+          "intervalMs": 50,
           "minLinesPerTick": 1,
-          "maxLinesPerTick": 4,
-          "responseExponent": 2.0,
+          "maxLinesPerTick": 8,
+          "responseExponent": 2.6,
           "invert": false
         }
       },
