@@ -20,8 +20,9 @@
           "action": {
             "type": "keystroke",
             "keyCode": 54,
+            "repeatCount": 2,
             "modifiers": [],
-            "description": "Tap Right Command"
+            "description": "Double-tap Right Command"
           }
         },
         "options": {

@@ -93,6 +93,7 @@ struct ActionConfig: Decodable {
     let type: ActionType
     let keyCode: Int?
     let modifiers: [String]?
+    let repeatCount: Int?
     let command: String?
     let script: String?
     let text: String?
@@ -186,6 +187,9 @@ struct ConfigLoader {
                     guard mapping.action.keyCode != nil else {
                         throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' keystroke action requires keyCode")
                     }
+                    if let repeatCount = mapping.action.repeatCount, repeatCount < 1 {
+                        throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' keystroke action repeatCount must be >= 1")
+                    }
                 case .holdKeystroke:
                     guard mapping.action.keyCode != nil else {
                         throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' holdKeystroke action requires keyCode")
@@ -255,8 +259,11 @@ final class ActionExecutor {
 
             let keyCode = CGKeyCode(keyCodeValue)
             let flags = modifierFlags(from: action.modifiers ?? [])
-            try postKeystroke(keyCode: keyCode, modifiers: flags)
-            print("[ACTION] keystroke keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
+            let repeatCount = max(1, action.repeatCount ?? 1)
+            for _ in 0..<repeatCount {
+                try postKeystroke(keyCode: keyCode, modifiers: flags)
+            }
+            print("[ACTION] keystroke keyCode=\(keyCodeValue) repeatCount=\(repeatCount) profile=\(profile) button=\(button)")
 
         case .holdKeystroke:
             throw BridgeError.actionExecutionFailed("holdKeystroke must be handled as press/release lifecycle")
