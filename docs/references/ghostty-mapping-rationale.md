@@ -4,12 +4,13 @@
 Reduce cognitive load while using dictation + controller together by making button roles easy to remember.
 
 ## Layout Decisions
-- `L1` (`leftShoulder`): tab cycle only.
-- `R1` (`rightShoulder`): split-focus cycle only (within current tab, `goto_split:next` / `Cmd+]`).
+- `L1` (`leftShoulder`): split-focus cycle only (within current tab, `goto_split:next` / `Cmd+]`).
+- `R1` (`rightShoulder`): tab cycle only.
 - `Options`: close focused split only (`close_surface` / `Cmd+W`), not whole tab.
 - `X`: toggle split zoom (temporary maximize/restore for focused split).
 - `D-pad Up/Down`: model picker up/down.
-- `D-pad Left/Right`: intentionally unassigned for now.
+- `D-pad Left`: intentionally unassigned for now.
+- `D-pad Right`: `Cmd+Shift+G`.
 - `Y`: intentionally unassigned for now.
 
 ## Why This Layout

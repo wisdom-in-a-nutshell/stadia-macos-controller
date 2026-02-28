@@ -50,10 +50,11 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - `Options`: close focused split surface (`Cmd+W`)
   - `Menu`: open `/model`
   - `X`: toggle split zoom (maximize/restore focused split)
-  - `L1` (`leftShoulder`): cycle tabs (next tab)
-  - `R1` (`rightShoulder`): cycle split focus in current tab
+  - `L1` (`leftShoulder`): cycle split focus in current tab
+  - `R1` (`rightShoulder`): cycle tabs (next tab)
   - D-pad `Up/Down`: model picker up/down
-  - D-pad `Left/Right`: currently unassigned (reserved for future)
+  - D-pad `Left`: currently unassigned (reserved for future)
+  - D-pad `Right`: send `Cmd+Shift+G`
 
 Non-profiled apps:
 - If frontmost app is not mapped in `appProfiles`, bridge logs `[SKIP] no active app profile` and executes nothing.

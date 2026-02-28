@@ -114,10 +114,9 @@
             "type": "keystroke",
             "keyCode": 30,
             "modifiers": [
-              "command",
-              "shift"
+              "command"
             ],
-            "description": "Cycle tabs (next tab, Cmd+Shift+])"
+            "description": "Cycle splits within current tab (Ghostty goto_split:next via Cmd+])"
           }
         },
         "rightShoulder": {
@@ -127,9 +126,10 @@
             "type": "keystroke",
             "keyCode": 30,
             "modifiers": [
-              "command"
+              "command",
+              "shift"
             ],
-            "description": "Cycle splits within current tab (Ghostty goto_split:next via Cmd+])"
+            "description": "Cycle tabs (next tab, Cmd+Shift+])"
           }
         },
         "dpadUp": {
@@ -150,6 +150,19 @@
             "keyCode": 125,
             "modifiers": [],
             "description": "Model picker move down"
+          }
+        },
+        "dpadRight": {
+          "debounceMs": 160,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 5,
+            "modifiers": [
+              "command",
+              "shift"
+            ],
+            "description": "Send Cmd+Shift+G"
           }
         }
       }
