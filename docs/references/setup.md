@@ -46,7 +46,7 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 ## Current Starter Mapping
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
 - Ghostty defaults:
-  - `R2` (`rightTrigger`): hold Space, then send Enter on release
+  - `R2` (`rightTrigger`): hold Space, then send Enter on release (900ms delay)
   - `L2` (`leftTrigger`): send `Option+Space`, then Enter
   - `Options`: close focused split surface (`Cmd+W`)
   - `Menu`: open `/model`
