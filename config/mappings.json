@@ -19,10 +19,11 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 54,
-            "repeatCount": 2,
-            "modifiers": [],
-            "description": "Double-tap Right Command"
+            "keyCode": 49,
+            "modifiers": [
+              "option"
+            ],
+            "description": "Send Option+Space"
           }
         },
         "options": {
