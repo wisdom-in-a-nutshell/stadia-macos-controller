@@ -93,6 +93,11 @@ cd ~/GitHub/scripts
 - Symptom: controller events appear in logs but no actions fire.
   - Cause: Accessibility trust missing for staged app executable.
   - Fix: re-enable `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge` in Accessibility.
+- Symptom: `menu`/`options`/`share` events appear, but `home` never appears in logs even after repeated presses.
+  - Cause: likely input exposure limitation for current controller mode/connection; some APIs do not surface Assistant/Home on Stadia.
+  - Fix: treat `home` as unavailable on that setup; map other confirmed buttons instead.
+  - Quick check:
+    - `rg -n "button=home|button=share|button=menu|button=options" ~/Library/Logs/stadia-controller-bridge.launchd.out.log -S`
 - Symptom: worked earlier, then broke right after reinstall.
   - Cause: signing identity changed, or app executable was unnecessarily rebuilt/re-signed.
   - Fix: reinstall with stable signing:
@@ -100,3 +105,6 @@ cd ~/GitHub/scripts
 - Fast status checks:
   - `launchctl print gui/$(id -u)/com.stadia-controller-bridge | sed -n '1,90p'`
   - `tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log`
+
+External context:
+- Google Chrome team notes Stadia Assistant/Capture are outside the standard gamepad set and need lower-level access (`WebHID`) in browsers: https://developer.chrome.com/blog/stadia
