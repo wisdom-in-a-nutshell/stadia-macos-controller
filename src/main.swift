@@ -419,6 +419,9 @@ final class ActionExecutor {
             throw BridgeError.actionExecutionFailed("Failed to create scroll event")
         }
 
+        // Route scroll to the current pointer location to reduce focus drift after tab/context switches.
+        let pointerLocation = NSEvent.mouseLocation
+        scrollEvent.location = pointerLocation
         scrollEvent.post(tap: .cghidEventTap)
         print("[ACTION] scroll profile=\(profile) source=\(source) lines=\(lines)")
     }
