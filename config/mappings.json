@@ -6,7 +6,7 @@
     "ghostty": {
       "enabled": true,
       "analog": {
-        "rightStickVerticalScroll": {
+        "leftStickVerticalScroll": {
           "enabled": true,
           "deadzone": 0.20,
           "intervalMs": 50,
@@ -14,6 +14,16 @@
           "maxLinesPerTick": 8,
           "responseExponent": 2.6,
           "invert": false
+        },
+        "rightStickPointer": {
+          "enabled": true,
+          "deadzone": 0.18,
+          "intervalMs": 16,
+          "minPixelsPerTick": 1,
+          "maxPixelsPerTick": 26,
+          "responseExponent": 1.7,
+          "invertX": false,
+          "invertY": false
         }
       },
       "mappings": {

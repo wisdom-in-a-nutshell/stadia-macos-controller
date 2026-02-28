@@ -82,6 +82,7 @@ struct ProfileConfig: Decodable {
 struct AnalogConfig: Decodable {
     let leftStickVerticalScroll: StickVerticalScrollConfig?
     let rightStickVerticalScroll: StickVerticalScrollConfig?
+    let rightStickPointer: StickPointerConfig?
 }
 
 struct StickVerticalScrollConfig: Decodable {
@@ -92,6 +93,17 @@ struct StickVerticalScrollConfig: Decodable {
     let maxLinesPerTick: Int?
     let responseExponent: Double?
     let invert: Bool?
+}
+
+struct StickPointerConfig: Decodable {
+    let enabled: Bool?
+    let deadzone: Double?
+    let intervalMs: Int?
+    let minPixelsPerTick: Int?
+    let maxPixelsPerTick: Int?
+    let responseExponent: Double?
+    let invertX: Bool?
+    let invertY: Bool?
 }
 
 struct MappingConfig: Decodable {
@@ -228,6 +240,9 @@ struct ConfigLoader {
                 if let right = analogConfig.rightStickVerticalScroll {
                     try validateVerticalScrollConfig(right, profileName: profileName, configName: "rightStickVerticalScroll")
                 }
+                if let pointer = analogConfig.rightStickPointer {
+                    try validateStickPointerConfig(pointer, profileName: profileName, configName: "rightStickPointer")
+                }
             }
         }
     }
@@ -255,6 +270,33 @@ struct ConfigLoader {
             throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) maxLinesPerTick must be >= minLinesPerTick")
         }
         if let responseExponent = analog.responseExponent, responseExponent <= 0 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) responseExponent must be > 0")
+        }
+    }
+
+    private static func validateStickPointerConfig(
+        _ pointer: StickPointerConfig,
+        profileName: String,
+        configName: String
+    ) throws {
+        if let deadzone = pointer.deadzone, deadzone < 0 || deadzone >= 1 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) deadzone must be >= 0 and < 1")
+        }
+        if let intervalMs = pointer.intervalMs, intervalMs < 1 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) intervalMs must be >= 1")
+        }
+        if let minPixels = pointer.minPixelsPerTick, minPixels < 1 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) minPixelsPerTick must be >= 1")
+        }
+        if let maxPixels = pointer.maxPixelsPerTick, maxPixels < 1 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) maxPixelsPerTick must be >= 1")
+        }
+        if let minPixels = pointer.minPixelsPerTick,
+           let maxPixels = pointer.maxPixelsPerTick,
+           maxPixels < minPixels {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) maxPixelsPerTick must be >= minPixelsPerTick")
+        }
+        if let responseExponent = pointer.responseExponent, responseExponent <= 0 {
             throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) responseExponent must be > 0")
         }
     }
@@ -435,6 +477,37 @@ final class ActionExecutor {
 
         scrollEvent.post(tap: .cghidEventTap)
         print("[ACTION] scroll profile=\(profile) source=\(source) lines=\(lines)")
+    }
+
+    func movePointerRelative(dx: Int, dy: Int, profile: String, source: String) throws {
+        guard dx != 0 || dy != 0 else {
+            return
+        }
+
+        if dryRun {
+            print("[DRY-RUN] pointer profile=\(profile) source=\(source) dx=\(dx) dy=\(dy)")
+            return
+        }
+
+        if !AXIsProcessTrusted() {
+            throw BridgeError.actionExecutionFailed("Accessibility permission is required for pointer injection")
+        }
+
+        let current = NSEvent.mouseLocation
+        let target = CGPoint(x: current.x + CGFloat(dx), y: current.y + CGFloat(dy))
+
+        guard let eventSource = CGEventSource(stateID: .hidSystemState),
+              let moveEvent = CGEvent(
+                mouseEventSource: eventSource,
+                mouseType: .mouseMoved,
+                mouseCursorPosition: target,
+                mouseButton: .left
+              ) else {
+            throw BridgeError.actionExecutionFailed("Failed to create pointer move event")
+        }
+
+        moveEvent.post(tap: .cghidEventTap)
+        print("[ACTION] pointer profile=\(profile) source=\(source) dx=\(dx) dy=\(dy)")
     }
 
     private func modifierFlags(from modifiers: [String]) -> CGEventFlags {
@@ -744,6 +817,7 @@ final class ControllerBridge: NSObject {
             pollButton(controllerID: controllerID, buttonName: "dpadLeft", pressed: gamepad.dpad.left.isPressed)
             pollButton(controllerID: controllerID, buttonName: "dpadRight", pressed: gamepad.dpad.right.isPressed)
             pollConfiguredVerticalScroll(controllerID: controllerID, gamepad: gamepad)
+            pollConfiguredPointerMove(controllerID: controllerID, gamepad: gamepad)
         }
     }
 
@@ -854,6 +928,73 @@ final class ControllerBridge: NSObject {
             lastAnalogScrollAt[throttleKey] = now
         } catch {
             print("[ERROR] analog scroll failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func pollConfiguredPointerMove(controllerID: String, gamepad: GCExtendedGamepad) {
+        guard bridgeEnabled else {
+            return
+        }
+
+        guard let activeProfileName = profileResolver.resolveActiveProfile(),
+              let profile = config.profiles[activeProfileName],
+              profile.enabled ?? true,
+              let pointer = profile.analog?.rightStickPointer,
+              pointer.enabled ?? true else {
+            return
+        }
+
+        let rawX = Double(gamepad.rightThumbstick.xAxis.value)
+        let rawY = Double(gamepad.rightThumbstick.yAxis.value)
+        let deadzone = min(max(pointer.deadzone ?? 0.16, 0.0), 0.99)
+
+        let magnitudeX = abs(rawX)
+        let magnitudeY = abs(rawY)
+        guard magnitudeX > deadzone || magnitudeY > deadzone else {
+            return
+        }
+
+        let intervalMs = max(1, pointer.intervalMs ?? 16)
+        let throttleKey = "\(controllerID)::\(activeProfileName)::rightStickPointer"
+        let now = Date()
+        if let last = lastAnalogScrollAt[throttleKey] {
+            let deltaMs = Int(now.timeIntervalSince(last) * 1000)
+            if deltaMs < intervalMs {
+                return
+            }
+        }
+
+        let minPixels = max(1, pointer.minPixelsPerTick ?? 1)
+        let maxPixels = max(minPixels, pointer.maxPixelsPerTick ?? 24)
+        let responseExponent = max(0.1, pointer.responseExponent ?? 1.6)
+
+        func scaledDelta(_ raw: Double, invert: Bool) -> Int {
+            let magnitude = abs(raw)
+            guard magnitude > deadzone else { return 0 }
+            let normalized = min(1.0, max(0.0, (magnitude - deadzone) / max(0.001, 1.0 - deadzone)))
+            let curved = pow(normalized, responseExponent)
+            let scaled = Double(minPixels) + curved * Double(maxPixels - minPixels)
+            let pixels = max(1, Int(round(scaled)))
+            let direction = raw >= 0 ? 1 : -1
+            return (invert ? -direction : direction) * pixels
+        }
+
+        let dx = scaledDelta(rawX, invert: pointer.invertX == true)
+        let dy = scaledDelta(rawY, invert: pointer.invertY == true)
+        guard dx != 0 || dy != 0 else {
+            return
+        }
+
+        do {
+            try actionExecutor.movePointerRelative(
+                dx: dx,
+                dy: dy,
+                profile: activeProfileName,
+                source: "rightStick"
+            )
+            lastAnalogScrollAt[throttleKey] = now
+        } catch {
+            print("[ERROR] analog pointer failed: \(error.localizedDescription)")
         }
     }
 

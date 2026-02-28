@@ -19,6 +19,7 @@ Behavior note:
 ## AnalogConfig
 - `leftStickVerticalScroll` (`StickVerticalScrollConfig`, optional): map left stick `Y` axis to vertical scrolling.
 - `rightStickVerticalScroll` (`StickVerticalScrollConfig`, optional): map right stick `Y` axis to vertical scrolling.
+- `rightStickPointer` (`StickPointerConfig`, optional): map right stick `X/Y` axes to mouse pointer movement.
 
 ## StickVerticalScrollConfig
 - `enabled` (`bool`, optional, default `true`)
@@ -28,6 +29,16 @@ Behavior note:
 - `maxLinesPerTick` (`int`, optional, default `8`): fastest scroll step at full tilt.
 - `responseExponent` (`double`, optional, default `1.8`): acceleration curve shape (`> 1` is smoother/finer near center, `< 1` is more aggressive).
 - `invert` (`bool`, optional, default `false`): invert axis direction.
+
+## StickPointerConfig
+- `enabled` (`bool`, optional, default `true`)
+- `deadzone` (`double`, optional, default `0.16`): ignore small right-stick drift (`>= 0`, `< 1`).
+- `intervalMs` (`int`, optional, default `16`): minimum time between pointer move ticks.
+- `minPixelsPerTick` (`int`, optional, default `1`): slowest pointer step outside deadzone.
+- `maxPixelsPerTick` (`int`, optional, default `24`): fastest pointer step at full tilt.
+- `responseExponent` (`double`, optional, default `1.6`): acceleration curve (`> 1` gives finer center control).
+- `invertX` (`bool`, optional, default `false`): invert horizontal direction.
+- `invertY` (`bool`, optional, default `false`): invert vertical direction.
 
 ## MappingConfig
 - `debounceMs` (`int`, optional): minimum interval between triggers.

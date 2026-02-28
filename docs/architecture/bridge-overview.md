@@ -11,7 +11,7 @@
 2. Subscribe to controller connect/disconnect notifications.
 3. Bind button handlers for the extended gamepad profile.
    - Runtime currently polls button states at 20ms intervals for reliability on Stadia controller.
-   - Runtime also samples configured analog axes (currently left/right stick vertical scroll, profile-configurable) in the same polling loop.
+   - Runtime also samples configured analog axes (stick vertical scroll and right-stick pointer, profile-configurable) in the same polling loop.
 4. On each button event:
    - Normalize event (`button`, `pressed`, `timestamp`, `repeat`).
    - Resolve active app profile.
