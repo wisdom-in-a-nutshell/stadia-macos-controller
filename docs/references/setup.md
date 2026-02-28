@@ -46,8 +46,8 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 ## Current Starter Mapping
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
 - Ghostty defaults:
-  - `R2` (`rightTrigger`): currently unassigned
-  - `L2` (`leftTrigger`): send `Option+Space`
+  - `R2` (`rightTrigger`): hold Space (`holdKeystroke`)
+  - `L2` (`leftTrigger`): currently unassigned
   - `Options`: close focused split surface (`Cmd+W`)
   - `Menu`: open `/model`
   - `X`: toggle split zoom (maximize/restore focused split)
@@ -60,7 +60,7 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 Dictation stability note:
 - Auto-submit-on-release behavior is intentionally not configured for triggers.
 - Reason: dictation completion timing is asynchronous, so automatic `Enter` can submit partial/previous text.
-- Recommended pattern: keep trigger and submit separate (for example, trigger on `L2`, submit with a dedicated button).
+- Recommended pattern: keep trigger and submit separate (for example, trigger on `R2`, submit with a dedicated button).
 
 Non-profiled apps:
 - If frontmost app is not mapped in `appProfiles`, bridge logs `[SKIP] no active app profile` and executes nothing.
