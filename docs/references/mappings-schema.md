@@ -25,6 +25,7 @@ Behavior note:
 - `intervalMs` (`int`, optional, default `45`): minimum time between scroll ticks.
 - `minLinesPerTick` (`int`, optional, default `1`): slowest scroll step when just outside deadzone.
 - `maxLinesPerTick` (`int`, optional, default `8`): fastest scroll step at full tilt.
+- `responseExponent` (`double`, optional, default `1.8`): acceleration curve shape (`> 1` is smoother/finer near center, `< 1` is more aggressive).
 - `invert` (`bool`, optional, default `false`): invert axis direction.
 
 ## MappingConfig

@@ -89,6 +89,7 @@ struct LeftStickVerticalScrollConfig: Decodable {
     let intervalMs: Int?
     let minLinesPerTick: Int?
     let maxLinesPerTick: Int?
+    let responseExponent: Double?
     let invert: Bool?
 }
 
@@ -236,6 +237,9 @@ struct ConfigLoader {
                    let maxLines = analog.maxLinesPerTick,
                    maxLines < minLines {
                     throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll maxLinesPerTick must be >= minLinesPerTick")
+                }
+                if let responseExponent = analog.responseExponent, responseExponent <= 0 {
+                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll responseExponent must be > 0")
                 }
             }
         }
@@ -785,9 +789,11 @@ final class ControllerBridge: NSObject {
         }
 
         let normalized = min(1.0, max(0.0, (magnitude - deadzone) / max(0.001, 1.0 - deadzone)))
+        let responseExponent = max(0.1, scroll.responseExponent ?? 1.8)
+        let curved = pow(normalized, responseExponent)
         let minLines = max(1, scroll.minLinesPerTick ?? 1)
         let maxLines = max(minLines, scroll.maxLinesPerTick ?? 8)
-        let scaledLines = Double(minLines) + normalized * Double(maxLines - minLines)
+        let scaledLines = Double(minLines) + curved * Double(maxLines - minLines)
         let linesPerTick = max(1, Int(round(scaledLines)))
 
         let direction = rawY >= 0 ? 1 : -1
