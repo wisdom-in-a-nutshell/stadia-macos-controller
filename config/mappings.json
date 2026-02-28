@@ -17,11 +17,11 @@
         },
         "rightStickPointer": {
           "enabled": true,
-          "deadzone": 0.18,
-          "intervalMs": 16,
+          "deadzone": 0.24,
+          "intervalMs": 20,
           "minPixelsPerTick": 1,
-          "maxPixelsPerTick": 26,
-          "responseExponent": 1.7,
+          "maxPixelsPerTick": 14,
+          "responseExponent": 2.2,
           "invertX": false,
           "invertY": false
         }

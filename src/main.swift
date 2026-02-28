@@ -944,13 +944,12 @@ final class ControllerBridge: NSObject {
             return
         }
 
-        let rawX = Double(gamepad.rightThumbstick.xAxis.value)
-        let rawY = Double(gamepad.rightThumbstick.yAxis.value)
+        let rawX = Double(gamepad.rightThumbstick.xAxis.value) * (pointer.invertX == true ? -1.0 : 1.0)
+        let rawY = Double(gamepad.rightThumbstick.yAxis.value) * (pointer.invertY == true ? -1.0 : 1.0)
         let deadzone = min(max(pointer.deadzone ?? 0.16, 0.0), 0.99)
+        let magnitude = sqrt((rawX * rawX) + (rawY * rawY))
 
-        let magnitudeX = abs(rawX)
-        let magnitudeY = abs(rawY)
-        guard magnitudeX > deadzone || magnitudeY > deadzone else {
+        guard magnitude > deadzone else {
             return
         }
 
@@ -967,20 +966,21 @@ final class ControllerBridge: NSObject {
         let minPixels = max(1, pointer.minPixelsPerTick ?? 1)
         let maxPixels = max(minPixels, pointer.maxPixelsPerTick ?? 24)
         let responseExponent = max(0.1, pointer.responseExponent ?? 1.6)
+        let normalizedMagnitude = min(1.0, max(0.0, (magnitude - deadzone) / max(0.001, 1.0 - deadzone)))
+        let curvedMagnitude = pow(normalizedMagnitude, responseExponent)
+        let pixels = max(1.0, Double(minPixels) + curvedMagnitude * Double(maxPixels - minPixels))
 
-        func scaledDelta(_ raw: Double, invert: Bool) -> Int {
-            let magnitude = abs(raw)
-            guard magnitude > deadzone else { return 0 }
-            let normalized = min(1.0, max(0.0, (magnitude - deadzone) / max(0.001, 1.0 - deadzone)))
-            let curved = pow(normalized, responseExponent)
-            let scaled = Double(minPixels) + curved * Double(maxPixels - minPixels)
-            let pixels = max(1, Int(round(scaled)))
-            let direction = raw >= 0 ? 1 : -1
-            return (invert ? -direction : direction) * pixels
+        let unitX = rawX / max(magnitude, 0.0001)
+        let unitY = rawY / max(magnitude, 0.0001)
+        var dx = Int(round(unitX * pixels))
+        var dy = Int(round(unitY * pixels))
+
+        if dx == 0 && abs(rawX) > deadzone {
+            dx = rawX >= 0 ? 1 : -1
         }
-
-        let dx = scaledDelta(rawX, invert: pointer.invertX == true)
-        let dy = scaledDelta(rawY, invert: pointer.invertY == true)
+        if dy == 0 && abs(rawY) > deadzone {
+            dy = rawY >= 0 ? 1 : -1
+        }
         guard dx != 0 || dy != 0 else {
             return
         }
