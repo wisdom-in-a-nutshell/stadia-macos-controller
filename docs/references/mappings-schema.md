@@ -25,7 +25,6 @@ Behavior note:
 - Keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)
-  - `repeatCount` (`int`, optional, default `1`): number of times to emit the keystroke per trigger.
 - Hold keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)
