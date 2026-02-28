@@ -11,7 +11,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `D-pad Up/Down`: model picker up/down.
 - `D-pad Left`: intentionally unassigned for now.
 - `D-pad Right`: `Cmd+Shift+G`.
-- `Y`: intentionally unassigned for now.
+- `Y`: reverse navigation (`Shift+Tab`).
 
 ## Why This Layout
 - Shoulder buttons become role-based instead of direction-based:

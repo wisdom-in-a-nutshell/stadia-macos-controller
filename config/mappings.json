@@ -5,6 +5,16 @@
   "profiles": {
     "ghostty": {
       "enabled": true,
+      "analog": {
+        "leftStickVerticalScroll": {
+          "enabled": true,
+          "deadzone": 0.22,
+          "intervalMs": 45,
+          "minLinesPerTick": 1,
+          "maxLinesPerTick": 8,
+          "invert": false
+        }
+      },
       "mappings": {
         "rightTrigger": {
           "action": {
@@ -105,6 +115,18 @@
               "shift"
             ],
             "description": "Toggle split zoom (Ghostty toggle_split_zoom via Cmd+Shift+Enter)"
+          }
+        },
+        "y": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 48,
+            "modifiers": [
+              "shift"
+            ],
+            "description": "Reverse navigation with Shift+Tab"
           }
         },
         "leftShoulder": {

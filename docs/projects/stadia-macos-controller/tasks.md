@@ -49,6 +49,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Move machine-level Stadia wrappers to nested `~/GitHub/scripts/setup/stadia/` as the single canonical path (no compatibility aliases).
 - [x] Simplify Ghostty control layout: `L1` tabs, `R1` split cycle, D-pad Up/Down for model picker, reserve D-pad Left/Right.
 - [x] Map `X` to Ghostty split zoom toggle (maximize/restore focused split) for quick reversible focus.
+- [x] Add profile-scoped left-stick vertical analog scrolling with deadzone/rate limiting.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (stable cross-machine service identity/path now documented).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -92,6 +93,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Mapped `X` to Ghostty split zoom toggle (`toggle_split_zoom` via `Cmd+Shift+Enter`) and documented rationale.
 - 2026-02-28: [DONE] Updated Ghostty mapping: swapped `L1/R1` roles and mapped `D-pad Right` to `Cmd+Shift+G`.
 - 2026-02-28: [DONE] Documented known limitation: `home` (Assistant) may not emit in macOS `GameController` even when `menu`/`options`/`share` emit; treat as unavailable unless runtime logs confirm `button=home`.
+- 2026-02-28: [DONE] Added profile-level left-stick vertical scroll (`analog.leftStickVerticalScroll`) with deadzone/speed/rate controls and enabled it for Ghostty.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.

@@ -13,7 +13,19 @@ Behavior note:
 
 ## ProfileConfig
 - `enabled` (`bool`, optional, default `true`): disable an entire profile.
+- `analog` (`AnalogConfig`, optional): analog-axis behaviors for this profile.
 - `mappings` (`object<string, MappingConfig>`): button name -> mapping.
+
+## AnalogConfig
+- `leftStickVerticalScroll` (`LeftStickVerticalScrollConfig`, optional): map left stick `Y` axis to vertical scrolling.
+
+## LeftStickVerticalScrollConfig
+- `enabled` (`bool`, optional, default `true`)
+- `deadzone` (`double`, optional, default `0.22`): ignore small stick drift (`>= 0`, `< 1`).
+- `intervalMs` (`int`, optional, default `45`): minimum time between scroll ticks.
+- `minLinesPerTick` (`int`, optional, default `1`): slowest scroll step when just outside deadzone.
+- `maxLinesPerTick` (`int`, optional, default `8`): fastest scroll step at full tilt.
+- `invert` (`bool`, optional, default `false`): invert axis direction.
 
 ## MappingConfig
 - `debounceMs` (`int`, optional): minimum interval between triggers.

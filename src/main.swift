@@ -75,7 +75,21 @@ struct BridgeConfig: Decodable {
 
 struct ProfileConfig: Decodable {
     let enabled: Bool?
+    let analog: AnalogConfig?
     let mappings: [String: MappingConfig]
+}
+
+struct AnalogConfig: Decodable {
+    let leftStickVerticalScroll: LeftStickVerticalScrollConfig?
+}
+
+struct LeftStickVerticalScrollConfig: Decodable {
+    let enabled: Bool?
+    let deadzone: Double?
+    let intervalMs: Int?
+    let minLinesPerTick: Int?
+    let maxLinesPerTick: Int?
+    let invert: Bool?
 }
 
 struct MappingConfig: Decodable {
@@ -203,6 +217,26 @@ struct ConfigLoader {
                 throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' text action requires text")
             }
         }
+            }
+
+            if let analog = profile.analog?.leftStickVerticalScroll {
+                if let deadzone = analog.deadzone, deadzone < 0 || deadzone >= 1 {
+                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll deadzone must be >= 0 and < 1")
+                }
+                if let intervalMs = analog.intervalMs, intervalMs < 1 {
+                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll intervalMs must be >= 1")
+                }
+                if let minLines = analog.minLinesPerTick, minLines < 1 {
+                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll minLinesPerTick must be >= 1")
+                }
+                if let maxLines = analog.maxLinesPerTick, maxLines < 1 {
+                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll maxLinesPerTick must be >= 1")
+                }
+                if let minLines = analog.minLinesPerTick,
+                   let maxLines = analog.maxLinesPerTick,
+                   maxLines < minLines {
+                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll maxLinesPerTick must be >= minLinesPerTick")
+                }
             }
         }
     }
@@ -355,6 +389,36 @@ final class ActionExecutor {
         print("[ACTION] hold-end keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
     }
 
+    func scrollVertical(lines: Int, profile: String, source: String) throws {
+        guard lines != 0 else {
+            return
+        }
+
+        if dryRun {
+            print("[DRY-RUN] scroll profile=\(profile) source=\(source) lines=\(lines)")
+            return
+        }
+
+        if !AXIsProcessTrusted() {
+            throw BridgeError.actionExecutionFailed("Accessibility permission is required for scroll injection")
+        }
+
+        guard let eventSource = CGEventSource(stateID: .hidSystemState),
+              let scrollEvent = CGEvent(
+                scrollWheelEvent2Source: eventSource,
+                units: .line,
+                wheelCount: 1,
+                wheel1: Int32(lines),
+                wheel2: 0,
+                wheel3: 0
+              ) else {
+            throw BridgeError.actionExecutionFailed("Failed to create scroll event")
+        }
+
+        scrollEvent.post(tap: .cghidEventTap)
+        print("[ACTION] scroll profile=\(profile) source=\(source) lines=\(lines)")
+    }
+
     private func modifierFlags(from modifiers: [String]) -> CGEventFlags {
         modifiers.reduce(CGEventFlags()) { partial, modifier in
             switch modifier.lowercased() {
@@ -435,6 +499,7 @@ final class ControllerBridge: NSObject {
 
     private var buttonStates: [String: Bool] = [:]
     private var lastTriggeredAt: [String: Date] = [:]
+    private var lastAnalogScrollAt: [String: Date] = [:]
     private var polledButtonStates: [String: Bool] = [:]
     private var activeGamepads: [String: GCExtendedGamepad] = [:]
     private var activeControllers: [String: GCController] = [:]
@@ -527,6 +592,7 @@ final class ControllerBridge: NSObject {
         activeGamepads.removeValue(forKey: controllerID)
         activeControllers.removeValue(forKey: controllerID)
         buttonStates = buttonStates.filter { !$0.key.hasPrefix("\(controllerID)::") }
+        lastAnalogScrollAt = lastAnalogScrollAt.filter { !$0.key.hasPrefix("\(controllerID)::") }
         polledButtonStates = polledButtonStates.filter { !$0.key.hasPrefix("\(controllerID)::") }
         activeHolds = activeHolds.filter { !$0.key.hasPrefix("\(controllerID)::") }
         print("Controller disconnected: \(controllerID)")
@@ -659,6 +725,7 @@ final class ControllerBridge: NSObject {
             pollButton(controllerID: controllerID, buttonName: "dpadDown", pressed: gamepad.dpad.down.isPressed)
             pollButton(controllerID: controllerID, buttonName: "dpadLeft", pressed: gamepad.dpad.left.isPressed)
             pollButton(controllerID: controllerID, buttonName: "dpadRight", pressed: gamepad.dpad.right.isPressed)
+            pollLeftStickVerticalScroll(controllerID: controllerID, gamepad: gamepad)
         }
     }
 
@@ -685,6 +752,60 @@ final class ControllerBridge: NSObject {
 
         polledButtonStates[stateKey] = pressed
         handleButtonEvent(controllerID: controllerID, buttonName: buttonName, pressed: pressed)
+    }
+
+    private func pollLeftStickVerticalScroll(controllerID: String, gamepad: GCExtendedGamepad) {
+        guard bridgeEnabled else {
+            return
+        }
+
+        guard let activeProfileName = profileResolver.resolveActiveProfile(),
+              let profile = config.profiles[activeProfileName],
+              profile.enabled ?? true,
+              let scroll = profile.analog?.leftStickVerticalScroll,
+              scroll.enabled ?? true else {
+            return
+        }
+
+        let rawY = Double(gamepad.leftThumbstick.yAxis.value)
+        let deadzone = min(max(scroll.deadzone ?? 0.22, 0.0), 0.99)
+        let magnitude = abs(rawY)
+        guard magnitude > deadzone else {
+            return
+        }
+
+        let intervalMs = max(1, scroll.intervalMs ?? 45)
+        let throttleKey = "\(controllerID)::\(activeProfileName)::leftStickVerticalScroll"
+        let now = Date()
+        if let last = lastAnalogScrollAt[throttleKey] {
+            let deltaMs = Int(now.timeIntervalSince(last) * 1000)
+            if deltaMs < intervalMs {
+                return
+            }
+        }
+
+        let normalized = min(1.0, max(0.0, (magnitude - deadzone) / max(0.001, 1.0 - deadzone)))
+        let minLines = max(1, scroll.minLinesPerTick ?? 1)
+        let maxLines = max(minLines, scroll.maxLinesPerTick ?? 8)
+        let scaledLines = Double(minLines) + normalized * Double(maxLines - minLines)
+        let linesPerTick = max(1, Int(round(scaledLines)))
+
+        let direction = rawY >= 0 ? 1 : -1
+        let signedLines = (scroll.invert == true ? -direction : direction) * linesPerTick
+        guard signedLines != 0 else {
+            return
+        }
+
+        do {
+            try actionExecutor.scrollVertical(
+                lines: signedLines,
+                profile: activeProfileName,
+                source: "leftStickY"
+            )
+            lastAnalogScrollAt[throttleKey] = now
+        } catch {
+            print("[ERROR] analog scroll failed: \(error.localizedDescription)")
+        }
     }
 
     private func promptForAccessibilityPermission() {
