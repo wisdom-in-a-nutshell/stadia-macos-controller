@@ -90,6 +90,8 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-26: [DONE] Re-verified launchd wiring on both MacBook and Mac mini (`scripts/verify-launchd-stadia-controller-bridge.sh`: PASS on both machines).
 - 2026-02-26: [DONE] Updated Ghostty mappings per user preference: shoulders now split role by context (`L1` tabs, `R1` splits), D-pad Up/Down now handles model picker, and `X/Y` plus D-pad Left/Right are reserved.
 - 2026-02-26: [DONE] Mapped `X` to Ghostty split zoom toggle (`toggle_split_zoom` via `Cmd+Shift+Enter`) and documented rationale.
+- 2026-02-28: [DONE] Updated Ghostty mapping: swapped `L1/R1` roles and mapped `D-pad Right` to `Cmd+Shift+G`.
+- 2026-02-28: [DONE] Documented known limitation: `home` (Assistant) may not emit in macOS `GameController` even when `menu`/`options`/`share` emit; treat as unavailable unless runtime logs confirm `button=home`.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.
