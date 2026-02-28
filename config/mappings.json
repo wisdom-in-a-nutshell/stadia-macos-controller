@@ -9,9 +9,9 @@
         "rightTrigger": {
           "action": {
             "type": "holdKeystroke",
-            "keyCode": 49,
+            "keyCode": 105,
             "modifiers": [],
-            "description": "Hold to mimic Space"
+            "description": "Hold to mimic F13"
           }
         },
         "options": {
