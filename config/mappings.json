@@ -14,6 +14,16 @@
             "description": "Hold to mimic Space"
           }
         },
+        "leftTrigger": {
+          "debounceMs": 140,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 54,
+            "modifiers": [],
+            "description": "Tap Right Command"
+          }
+        },
         "options": {
           "debounceMs": 220,
           "edgeTrigger": true,
