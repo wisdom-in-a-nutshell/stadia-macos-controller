@@ -10,8 +10,9 @@
           "action": {
             "type": "holdKeystroke",
             "keyCode": 49,
+            "onReleaseKeyCode": 36,
             "modifiers": [],
-            "description": "Hold to mimic Space"
+            "description": "Hold Space, then press Enter on release"
           }
         },
         "leftTrigger": {

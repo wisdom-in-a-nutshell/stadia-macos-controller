@@ -28,6 +28,9 @@ Behavior note:
 - Hold keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)
+  - `onReleaseKeyCode` (`int`, optional): send this keystroke once when the hold button is released.
+  - `onReleaseModifiers` (`string[]`, optional): modifiers for `onReleaseKeyCode`.
+  - `onReleaseDelayMs` (`int`, optional): delay before the release keystroke.
   - Behavior: key down on button press, key up on button release.
 - Shell fields:
   - `command` (`string`, required)

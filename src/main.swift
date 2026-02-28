@@ -93,6 +93,9 @@ struct ActionConfig: Decodable {
     let type: ActionType
     let keyCode: Int?
     let modifiers: [String]?
+    let onReleaseKeyCode: Int?
+    let onReleaseModifiers: [String]?
+    let onReleaseDelayMs: Int?
     let command: String?
     let script: String?
     let text: String?
@@ -189,6 +192,16 @@ struct ConfigLoader {
                 case .holdKeystroke:
                     guard mapping.action.keyCode != nil else {
                         throw BridgeError.configValidationFailed("Profile '\(profileName)' button '\(button)' holdKeystroke action requires keyCode")
+                    }
+                    if mapping.action.onReleaseModifiers != nil && mapping.action.onReleaseKeyCode == nil {
+                        throw BridgeError.configValidationFailed(
+                            "Profile '\(profileName)' button '\(button)' holdKeystroke action onReleaseModifiers requires onReleaseKeyCode"
+                        )
+                    }
+                    if let onReleaseDelayMs = mapping.action.onReleaseDelayMs, onReleaseDelayMs < 0 {
+                        throw BridgeError.configValidationFailed(
+                            "Profile '\(profileName)' button '\(button)' holdKeystroke action onReleaseDelayMs must be >= 0"
+                        )
                     }
                 case .shell:
                     guard let command = mapping.action.command, !command.isEmpty else {
@@ -342,6 +355,9 @@ final class ActionExecutor {
 
         if dryRun {
             print("[DRY-RUN] hold-end profile=\(profile) button=\(button) keyCode=\(keyCodeValue)")
+            if let onReleaseKeyCodeValue = action.onReleaseKeyCode {
+                print("[DRY-RUN] hold-release-keystroke profile=\(profile) button=\(button) keyCode=\(onReleaseKeyCodeValue)")
+            }
             return
         }
 
@@ -353,6 +369,16 @@ final class ActionExecutor {
         let flags = modifierFlags(from: action.modifiers ?? [])
         try postKeyEvent(keyCode: keyCode, keyDown: false, modifiers: flags)
         print("[ACTION] hold-end keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
+
+        if let onReleaseDelayMs = action.onReleaseDelayMs, onReleaseDelayMs > 0 {
+            Thread.sleep(forTimeInterval: Double(onReleaseDelayMs) / 1000.0)
+        }
+
+        if let onReleaseKeyCodeValue = action.onReleaseKeyCode {
+            let releaseFlags = modifierFlags(from: action.onReleaseModifiers ?? [])
+            try postKeystroke(keyCode: CGKeyCode(onReleaseKeyCodeValue), modifiers: releaseFlags)
+            print("[ACTION] hold-release-keystroke keyCode=\(onReleaseKeyCodeValue) profile=\(profile) button=\(button)")
+        }
     }
 
     private func modifierFlags(from modifiers: [String]) -> CGEventFlags {
