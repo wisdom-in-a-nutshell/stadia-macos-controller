@@ -80,10 +80,11 @@ struct ProfileConfig: Decodable {
 }
 
 struct AnalogConfig: Decodable {
-    let leftStickVerticalScroll: LeftStickVerticalScrollConfig?
+    let leftStickVerticalScroll: StickVerticalScrollConfig?
+    let rightStickVerticalScroll: StickVerticalScrollConfig?
 }
 
-struct LeftStickVerticalScrollConfig: Decodable {
+struct StickVerticalScrollConfig: Decodable {
     let enabled: Bool?
     let deadzone: Double?
     let intervalMs: Int?
@@ -220,28 +221,41 @@ struct ConfigLoader {
         }
             }
 
-            if let analog = profile.analog?.leftStickVerticalScroll {
-                if let deadzone = analog.deadzone, deadzone < 0 || deadzone >= 1 {
-                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll deadzone must be >= 0 and < 1")
+            if let analogConfig = profile.analog {
+                if let left = analogConfig.leftStickVerticalScroll {
+                    try validateVerticalScrollConfig(left, profileName: profileName, configName: "leftStickVerticalScroll")
                 }
-                if let intervalMs = analog.intervalMs, intervalMs < 1 {
-                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll intervalMs must be >= 1")
-                }
-                if let minLines = analog.minLinesPerTick, minLines < 1 {
-                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll minLinesPerTick must be >= 1")
-                }
-                if let maxLines = analog.maxLinesPerTick, maxLines < 1 {
-                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll maxLinesPerTick must be >= 1")
-                }
-                if let minLines = analog.minLinesPerTick,
-                   let maxLines = analog.maxLinesPerTick,
-                   maxLines < minLines {
-                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll maxLinesPerTick must be >= minLinesPerTick")
-                }
-                if let responseExponent = analog.responseExponent, responseExponent <= 0 {
-                    throw BridgeError.configValidationFailed("Profile '\(profileName)' leftStickVerticalScroll responseExponent must be > 0")
+                if let right = analogConfig.rightStickVerticalScroll {
+                    try validateVerticalScrollConfig(right, profileName: profileName, configName: "rightStickVerticalScroll")
                 }
             }
+        }
+    }
+
+    private static func validateVerticalScrollConfig(
+        _ analog: StickVerticalScrollConfig,
+        profileName: String,
+        configName: String
+    ) throws {
+        if let deadzone = analog.deadzone, deadzone < 0 || deadzone >= 1 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) deadzone must be >= 0 and < 1")
+        }
+        if let intervalMs = analog.intervalMs, intervalMs < 1 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) intervalMs must be >= 1")
+        }
+        if let minLines = analog.minLinesPerTick, minLines < 1 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) minLinesPerTick must be >= 1")
+        }
+        if let maxLines = analog.maxLinesPerTick, maxLines < 1 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) maxLinesPerTick must be >= 1")
+        }
+        if let minLines = analog.minLinesPerTick,
+           let maxLines = analog.maxLinesPerTick,
+           maxLines < minLines {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) maxLinesPerTick must be >= minLinesPerTick")
+        }
+        if let responseExponent = analog.responseExponent, responseExponent <= 0 {
+            throw BridgeError.configValidationFailed("Profile '\(profileName)' \(configName) responseExponent must be > 0")
         }
     }
 }
@@ -419,9 +433,6 @@ final class ActionExecutor {
             throw BridgeError.actionExecutionFailed("Failed to create scroll event")
         }
 
-        // Route scroll to the current pointer location to reduce focus drift after tab/context switches.
-        let pointerLocation = NSEvent.mouseLocation
-        scrollEvent.location = pointerLocation
         scrollEvent.post(tap: .cghidEventTap)
         print("[ACTION] scroll profile=\(profile) source=\(source) lines=\(lines)")
     }
@@ -732,7 +743,7 @@ final class ControllerBridge: NSObject {
             pollButton(controllerID: controllerID, buttonName: "dpadDown", pressed: gamepad.dpad.down.isPressed)
             pollButton(controllerID: controllerID, buttonName: "dpadLeft", pressed: gamepad.dpad.left.isPressed)
             pollButton(controllerID: controllerID, buttonName: "dpadRight", pressed: gamepad.dpad.right.isPressed)
-            pollLeftStickVerticalScroll(controllerID: controllerID, gamepad: gamepad)
+            pollConfiguredVerticalScroll(controllerID: controllerID, gamepad: gamepad)
         }
     }
 
@@ -761,7 +772,7 @@ final class ControllerBridge: NSObject {
         handleButtonEvent(controllerID: controllerID, buttonName: buttonName, pressed: pressed)
     }
 
-    private func pollLeftStickVerticalScroll(controllerID: String, gamepad: GCExtendedGamepad) {
+    private func pollConfiguredVerticalScroll(controllerID: String, gamepad: GCExtendedGamepad) {
         guard bridgeEnabled else {
             return
         }
@@ -769,12 +780,41 @@ final class ControllerBridge: NSObject {
         guard let activeProfileName = profileResolver.resolveActiveProfile(),
               let profile = config.profiles[activeProfileName],
               profile.enabled ?? true,
-              let scroll = profile.analog?.leftStickVerticalScroll,
-              scroll.enabled ?? true else {
+              let analog = profile.analog else {
             return
         }
 
-        let rawY = Double(gamepad.leftThumbstick.yAxis.value)
+        if let rightScroll = analog.rightStickVerticalScroll, rightScroll.enabled ?? true {
+            processVerticalScroll(
+                controllerID: controllerID,
+                profileName: activeProfileName,
+                configName: "rightStickVerticalScroll",
+                source: "rightStickY",
+                rawY: Double(gamepad.rightThumbstick.yAxis.value),
+                config: rightScroll
+            )
+        }
+
+        if let leftScroll = analog.leftStickVerticalScroll, leftScroll.enabled ?? true {
+            processVerticalScroll(
+                controllerID: controllerID,
+                profileName: activeProfileName,
+                configName: "leftStickVerticalScroll",
+                source: "leftStickY",
+                rawY: Double(gamepad.leftThumbstick.yAxis.value),
+                config: leftScroll
+            )
+        }
+    }
+
+    private func processVerticalScroll(
+        controllerID: String,
+        profileName: String,
+        configName: String,
+        source: String,
+        rawY: Double,
+        config scroll: StickVerticalScrollConfig
+    ) {
         let deadzone = min(max(scroll.deadzone ?? 0.22, 0.0), 0.99)
         let magnitude = abs(rawY)
         guard magnitude > deadzone else {
@@ -782,7 +822,7 @@ final class ControllerBridge: NSObject {
         }
 
         let intervalMs = max(1, scroll.intervalMs ?? 45)
-        let throttleKey = "\(controllerID)::\(activeProfileName)::leftStickVerticalScroll"
+        let throttleKey = "\(controllerID)::\(profileName)::\(configName)"
         let now = Date()
         if let last = lastAnalogScrollAt[throttleKey] {
             let deltaMs = Int(now.timeIntervalSince(last) * 1000)
@@ -808,8 +848,8 @@ final class ControllerBridge: NSObject {
         do {
             try actionExecutor.scrollVertical(
                 lines: signedLines,
-                profile: activeProfileName,
-                source: "leftStickY"
+                profile: profileName,
+                source: source
             )
             lastAnalogScrollAt[throttleKey] = now
         } catch {

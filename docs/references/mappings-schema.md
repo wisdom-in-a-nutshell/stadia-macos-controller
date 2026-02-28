@@ -17,9 +17,10 @@ Behavior note:
 - `mappings` (`object<string, MappingConfig>`): button name -> mapping.
 
 ## AnalogConfig
-- `leftStickVerticalScroll` (`LeftStickVerticalScrollConfig`, optional): map left stick `Y` axis to vertical scrolling.
+- `leftStickVerticalScroll` (`StickVerticalScrollConfig`, optional): map left stick `Y` axis to vertical scrolling.
+- `rightStickVerticalScroll` (`StickVerticalScrollConfig`, optional): map right stick `Y` axis to vertical scrolling.
 
-## LeftStickVerticalScrollConfig
+## StickVerticalScrollConfig
 - `enabled` (`bool`, optional, default `true`)
 - `deadzone` (`double`, optional, default `0.22`): ignore small stick drift (`>= 0`, `< 1`).
 - `intervalMs` (`int`, optional, default `45`): minimum time between scroll ticks.

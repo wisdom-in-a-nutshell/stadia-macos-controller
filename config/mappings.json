@@ -6,7 +6,7 @@
     "ghostty": {
       "enabled": true,
       "analog": {
-        "leftStickVerticalScroll": {
+        "rightStickVerticalScroll": {
           "enabled": true,
           "deadzone": 0.20,
           "intervalMs": 50,
