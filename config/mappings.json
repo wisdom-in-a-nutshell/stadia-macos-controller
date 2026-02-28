@@ -10,10 +10,8 @@
           "action": {
             "type": "holdKeystroke",
             "keyCode": 49,
-            "onReleaseKeyCode": 36,
-            "onReleaseDelayMs": 900,
             "modifiers": [],
-            "description": "Hold Space, then press Enter on release (900ms delay)"
+            "description": "Hold to mimic Space"
           }
         },
         "leftTrigger": {
@@ -22,12 +20,10 @@
           "action": {
             "type": "keystroke",
             "keyCode": 49,
-            "postKeyCode": 36,
-            "postDelayMs": 350,
             "modifiers": [
               "option"
             ],
-            "description": "Send Option+Space, then Enter (350ms delay)"
+            "description": "Send Option+Space"
           }
         },
         "options": {
