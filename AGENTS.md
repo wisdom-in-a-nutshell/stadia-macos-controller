@@ -9,8 +9,10 @@ Build a local bridge that maps Stadia controller inputs to macOS actions and app
 - Keep mappings configurable (do not hardcode behavior in multiple places).
 - Keep machine-level install/reconcile entrypoints in `~/GitHub/scripts/setup/` (project repo keeps bridge code/config as source of truth).
 - Use explicit app profile mapping only; do not add global fallback profile behavior unless explicitly requested.
+- Run `scripts/check-fast.sh` before handoff to catch conflict markers and package parse issues.
 
 ## Documentation
+- Use `docs/AGENTS.md` as the docs routing entrypoint.
 - Keep architecture notes in `docs/architecture/`.
 - Keep stable lookup/config details in `docs/references/`.
 - Track active work in `docs/projects/stadia-macos-controller/tasks.md`.
