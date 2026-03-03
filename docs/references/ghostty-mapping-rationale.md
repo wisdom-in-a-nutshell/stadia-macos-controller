@@ -10,8 +10,8 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `X`: toggle split zoom (temporary maximize/restore for focused split).
 - `D-pad Up/Down`: model picker up/down.
 - `D-pad Left`: send slash (`/`).
-- `D-pad Right`: `Cmd+Shift+G`.
-- `Y`: reverse navigation (`Shift+Tab`).
+- `D-pad Right`: send dollar sign (`$`).
+- `Y`: `Cmd+Shift+G`.
 
 ## Why This Layout
 - Shoulder buttons become role-based instead of direction-based:

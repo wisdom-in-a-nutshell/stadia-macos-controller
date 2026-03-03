@@ -129,15 +129,16 @@
           }
         },
         "y": {
-          "debounceMs": 180,
+          "debounceMs": 160,
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 48,
+            "keyCode": 5,
             "modifiers": [
+              "command",
               "shift"
             ],
-            "description": "Reverse navigation with Shift+Tab"
+            "description": "Send Cmd+Shift+G"
           }
         },
         "leftShoulder": {
@@ -199,13 +200,9 @@
           "debounceMs": 160,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 5,
-            "modifiers": [
-              "command",
-              "shift"
-            ],
-            "description": "Send Cmd+Shift+G"
+            "type": "text",
+            "text": "$",
+            "description": "Send dollar sign"
           }
         }
       }
