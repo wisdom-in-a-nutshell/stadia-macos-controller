@@ -185,6 +185,16 @@
             "description": "Model picker move down"
           }
         },
+        "dpadLeft": {
+          "debounceMs": 160,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 42,
+            "modifiers": [],
+            "description": "Send backslash"
+          }
+        },
         "dpadRight": {
           "debounceMs": 160,
           "edgeTrigger": true,

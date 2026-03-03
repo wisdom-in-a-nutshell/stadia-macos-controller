@@ -9,7 +9,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `Options`: close focused split only (`close_surface` / `Cmd+W`), not whole tab.
 - `X`: toggle split zoom (temporary maximize/restore for focused split).
 - `D-pad Up/Down`: model picker up/down.
-- `D-pad Left`: intentionally unassigned for now.
+- `D-pad Left`: send backslash (`\`).
 - `D-pad Right`: `Cmd+Shift+G`.
 - `Y`: reverse navigation (`Shift+Tab`).
 
@@ -18,7 +18,7 @@ Reduce cognitive load while using dictation + controller together by making butt
   - one shoulder for tabs, one shoulder for splits.
 - `X` is a safe high-value action (reversible, no close/delete side effects).
 - Up/down movement uses the literal directional input (D-pad), improving legibility.
-- Unassigned buttons are preserved as future capacity instead of forcing low-value mappings now.
+- Left/right D-pad keep punctuation/navigation helpers on one cluster.
 
 ## Notes
 - Mapping changes hot-reload from `config/mappings.json`; restart is not required for config-only changes.
