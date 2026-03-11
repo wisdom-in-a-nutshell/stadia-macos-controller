@@ -52,7 +52,7 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - Right stick: currently unassigned
   - `Options`: close focused split surface (`Cmd+W`)
   - `Menu`: open `/model`
-  - `X`: send `Tab` (`L2` + `X` behaves like `Cmd+Tab` if the held modifier is recognized)
+  - `X`: send `Tab` (`L2` + `X` behaves like `Cmd+Tab`)
   - `Y`: send `Cmd+Shift+G`
   - `L1` (`leftShoulder`): cycle split focus in current tab
   - `R1` (`rightShoulder`): cycle tabs (next tab)

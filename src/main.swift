@@ -368,6 +368,7 @@ final class ProfileResolver {
 
 final class ActionExecutor {
     private let dryRun: Bool
+    private var activeHeldModifierFlags = CGEventFlags()
 
     init(dryRun: Bool) {
         self.dryRun = dryRun
@@ -392,7 +393,7 @@ final class ActionExecutor {
             }
 
             let keyCode = CGKeyCode(keyCodeValue)
-            let flags = modifierFlags(from: action.modifiers ?? [])
+            let flags = effectiveModifierFlags(from: action.modifiers ?? [])
             try postKeystroke(keyCode: keyCode, modifiers: flags)
             print("[ACTION] keystroke keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
 
@@ -467,6 +468,9 @@ final class ActionExecutor {
         let keyCode = CGKeyCode(keyCodeValue)
         let flags = modifierFlags(from: action.modifiers ?? [])
         try postKeyEvent(keyCode: keyCode, keyDown: true, modifiers: flags)
+        if let heldFlag = modifierFlag(forHeldKeyCode: keyCode) {
+            activeHeldModifierFlags.formUnion(heldFlag)
+        }
         print("[ACTION] hold-begin keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
     }
 
@@ -488,6 +492,9 @@ final class ActionExecutor {
         }
 
         let keyCode = CGKeyCode(keyCodeValue)
+        if let heldFlag = modifierFlag(forHeldKeyCode: keyCode) {
+            activeHeldModifierFlags.remove(heldFlag)
+        }
         let flags = modifierFlags(from: action.modifiers ?? [])
         try postKeyEvent(keyCode: keyCode, keyDown: false, modifiers: flags)
         print("[ACTION] hold-end keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
@@ -568,6 +575,25 @@ final class ActionExecutor {
             default:
                 return partial
             }
+        }
+    }
+
+    private func effectiveModifierFlags(from modifiers: [String]) -> CGEventFlags {
+        activeHeldModifierFlags.union(modifierFlags(from: modifiers))
+    }
+
+    private func modifierFlag(forHeldKeyCode keyCode: CGKeyCode) -> CGEventFlags? {
+        switch keyCode {
+        case 54, 55:
+            return .maskCommand
+        case 56, 60:
+            return .maskShift
+        case 58, 61:
+            return .maskAlternate
+        case 59, 62:
+            return .maskControl
+        default:
+            return nil
         }
     }
 
