@@ -16,7 +16,7 @@
           "invert": false
         },
         "rightStickHorizontalActions": {
-          "enabled": true,
+          "enabled": false,
           "deadzone": 0.62,
           "edgeTrigger": true,
           "leftAction": {

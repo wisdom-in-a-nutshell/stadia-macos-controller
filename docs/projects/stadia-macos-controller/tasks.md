@@ -51,7 +51,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Map `X` to Ghostty split zoom toggle (maximize/restore focused split) for quick reversible focus.
 - [x] Map `D-pad Left` to slash (`/`) for quick slash command entry.
 - [x] Add profile-scoped analog stick controls (vertical scrolling and right-stick pointer) with deadzone/rate limiting.
-- [x] Replace the Ghostty right-stick pointer default with configurable horizontal right-stick actions for macOS workspace switching.
+- [x] Add configurable horizontal right-stick actions so the stick can be reassigned without code changes.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (stable cross-machine service identity/path now documented).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -97,7 +97,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-02-28: [DONE] Documented known limitation: `home` (Assistant) may not emit in macOS `GameController` even when `menu`/`options`/`share` emit; treat as unavailable unless runtime logs confirm `button=home`.
 - 2026-02-28: [DONE] Added profile-level analog stick controls with deadzone/speed/rate controls; active Ghostty default now uses `leftStickVerticalScroll` for scrolling and `rightStickPointer` for cursor movement.
 - 2026-03-03: [DONE] Corrected `dpadLeft` mapping to send slash (`keyCode=44`) and updated Ghostty layout rationale.
-- 2026-03-11: [DONE] Replaced Ghostty right-stick pointer movement with configurable horizontal analog actions; default mapping now sends `Control` + left/right arrow to hop macOS workspaces one space per tilt.
+- 2026-03-11: [DONE] Added configurable horizontal analog actions for the right stick; attempted default workspace switching via `Control` + left/right arrow was disabled after live validation showed macOS ignored synthetic Space-switch key events on this machine.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.

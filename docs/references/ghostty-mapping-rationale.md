@@ -12,7 +12,6 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `D-pad Left`: send slash (`/`).
 - `D-pad Right`: send dollar sign (`$`).
 - `Y`: `Cmd+Shift+G`.
-- Right stick `Left/Right`: move macOS workspaces with `Control` + left/right arrow.
 
 ## Why This Layout
 - Shoulder buttons become role-based instead of direction-based:
@@ -20,7 +19,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `X` is a safe high-value action (reversible, no close/delete side effects).
 - Up/down movement uses the literal directional input (D-pad), improving legibility.
 - Left/right D-pad keep punctuation/navigation helpers on one cluster.
-- Right-stick horizontal movement is a better fit for desktop-to-desktop navigation than cursor movement inside Ghostty, and the one-hop tilt behavior keeps it predictable.
+- The right stick is currently reserved until there is a reliable, low-risk use for it on macOS.
 
 ## Notes
 - Mapping changes hot-reload from `config/mappings.json`; restart is not required for config-only changes.
