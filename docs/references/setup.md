@@ -50,6 +50,7 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - `L2` (`leftTrigger`): hold `Command`
   - `X`: send `Tab` (`L2` + `X` behaves like `Cmd+Tab`)
   - Left stick `Y`: vertical scroll (analog; deadzone/rate-limited)
+  - D-pad `Up/Down/Left/Right`: send arrow keys
 - Ghostty defaults:
   - Right stick: currently unassigned
   - `Options`: close focused split surface (`Cmd+W`)
@@ -57,9 +58,6 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - `Y`: send `Cmd+Shift+G`
   - `L1` (`leftShoulder`): cycle split focus in current tab
   - `R1` (`rightShoulder`): cycle tabs (next tab)
-  - D-pad `Up/Down`: model picker up/down
-  - D-pad `Left`: send slash (`/`)
-  - D-pad `Right`: send dollar sign (`$`)
 
 Dictation stability note:
 - Auto-submit-on-release behavior is intentionally not configured for triggers.

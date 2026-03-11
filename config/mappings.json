@@ -40,6 +40,46 @@
           "modifiers": [],
           "description": "Send Tab (L2 + X behaves like Cmd+Tab)"
         }
+      },
+      "dpadUp": {
+        "debounceMs": 140,
+        "edgeTrigger": true,
+        "action": {
+          "type": "keystroke",
+          "keyCode": 126,
+          "modifiers": [],
+          "description": "Send Up Arrow"
+        }
+      },
+      "dpadDown": {
+        "debounceMs": 140,
+        "edgeTrigger": true,
+        "action": {
+          "type": "keystroke",
+          "keyCode": 125,
+          "modifiers": [],
+          "description": "Send Down Arrow"
+        }
+      },
+      "dpadLeft": {
+        "debounceMs": 140,
+        "edgeTrigger": true,
+        "action": {
+          "type": "keystroke",
+          "keyCode": 123,
+          "modifiers": [],
+          "description": "Send Left Arrow"
+        }
+      },
+      "dpadRight": {
+        "debounceMs": 140,
+        "edgeTrigger": true,
+        "action": {
+          "type": "keystroke",
+          "keyCode": 124,
+          "modifiers": [],
+          "description": "Send Right Arrow"
+        }
       }
     }
   },
@@ -186,45 +226,6 @@
               "shift"
             ],
             "description": "Cycle tabs (next tab, Cmd+Shift+])"
-          }
-        },
-        "dpadUp": {
-          "debounceMs": 140,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 126,
-            "modifiers": [],
-            "description": "Model picker move up"
-          }
-        },
-        "dpadDown": {
-          "debounceMs": 140,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 125,
-            "modifiers": [],
-            "description": "Model picker move down"
-          }
-        },
-        "dpadLeft": {
-          "debounceMs": 160,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 44,
-            "modifiers": [],
-            "description": "Send slash"
-          }
-        },
-        "dpadRight": {
-          "debounceMs": 160,
-          "edgeTrigger": true,
-          "action": {
-            "type": "text",
-            "text": "$",
-            "description": "Send dollar sign"
           }
         }
       }

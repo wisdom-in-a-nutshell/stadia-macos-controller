@@ -9,9 +9,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `Options`: close focused split only (`close_surface` / `Cmd+W`), not whole tab.
 - `L2` (`leftTrigger`): hold `Command` as a modifier chord.
 - `X`: send `Tab`, primarily as the `L2` companion for app switching (`Cmd+Tab`).
-- `D-pad Up/Down`: model picker up/down.
-- `D-pad Left`: send slash (`/`).
-- `D-pad Right`: send dollar sign (`$`).
+- D-pad `Up/Down/Left/Right`: global arrow-key navigation via `alwaysOn`.
 - `Y`: `Cmd+Shift+G`.
 
 ## Why This Layout
@@ -19,11 +17,10 @@ Reduce cognitive load while using dictation + controller together by making butt
   - one shoulder for tabs, one shoulder for splits.
 - `X` becomes a lightweight companion key instead of a destructive or layout-changing action.
 - `L2` + `X` is a low-risk modifier experiment because it uses a held modifier with a discrete button, not an analog stick.
-- Up/down movement uses the literal directional input (D-pad), improving legibility.
-- Left/right D-pad keep punctuation/navigation helpers on one cluster.
+- The D-pad is better spent on universal navigation than Ghostty-only punctuation/model-picker helpers.
 - The right stick is currently reserved until there is a reliable, low-risk use for it on macOS.
 
 ## Notes
-- `L2`, `X`, `R2`, and left-stick vertical scroll are configured in the top-level `alwaysOn` section, not inside the Ghostty profile.
+- `L2`, `X`, `R2`, D-pad arrows, and left-stick vertical scroll are configured in the top-level `alwaysOn` section, not inside the Ghostty profile.
 - Mapping changes hot-reload from `config/mappings.json`; restart is not required for config-only changes.
 - If Ghostty keybindings change, update descriptions and keycodes together in `config/mappings.json`.

@@ -101,6 +101,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-03-11: [DONE] Added configurable horizontal analog actions for the right stick; attempted default workspace switching via `Control` + left/right arrow was disabled after live validation showed macOS ignored synthetic Space-switch key events on this machine.
 - 2026-03-11: [DONE] Remapped `L2` to held `Command` and `X` to `Tab` as a lower-risk `Cmd+Tab` experiment using a discrete button chord instead of the right stick.
 - 2026-03-11: [DONE] Added a top-level `alwaysOn` config section so `L2`, `X`, `R2`, and left-stick vertical scroll can remain active across apps while the rest of the layout stays explicitly app-scoped.
+- 2026-03-11: [DONE] Moved the D-pad to explicit always-on arrow-key navigation and removed the Ghostty-specific D-pad overrides for model picker and punctuation.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.
