@@ -52,6 +52,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Map `D-pad Left` to slash (`/`) for quick slash command entry.
 - [x] Add profile-scoped analog stick controls (vertical scrolling and right-stick pointer) with deadzone/rate limiting.
 - [x] Add configurable horizontal right-stick actions so the stick can be reassigned without code changes.
+- [x] Add an explicit `alwaysOn` control set for selected buttons/analog behaviors that should bypass app matching without reintroducing a full fallback profile.
 - [ ] Capture Phase 2 backlog for Codex-specific profile behavior after Ghostty flow is stable.
 - [x] Review `AGENTS.md` and update if new repeatable implementation patterns were introduced (stable cross-machine service identity/path now documented).
 - [ ] Archive project notes to `docs/projects/archive/stadia-macos-controller/` when the user confirms completion.
@@ -99,6 +100,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-03-03: [DONE] Corrected `dpadLeft` mapping to send slash (`keyCode=44`) and updated Ghostty layout rationale.
 - 2026-03-11: [DONE] Added configurable horizontal analog actions for the right stick; attempted default workspace switching via `Control` + left/right arrow was disabled after live validation showed macOS ignored synthetic Space-switch key events on this machine.
 - 2026-03-11: [DONE] Remapped `L2` to held `Command` and `X` to `Tab` as a lower-risk `Cmd+Tab` experiment using a discrete button chord instead of the right stick.
+- 2026-03-11: [DONE] Added a top-level `alwaysOn` config section so `L2`, `X`, `R2`, and left-stick vertical scroll can remain active across apps while the rest of the layout stays explicitly app-scoped.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.

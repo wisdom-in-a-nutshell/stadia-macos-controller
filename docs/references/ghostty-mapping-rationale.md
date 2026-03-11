@@ -24,5 +24,6 @@ Reduce cognitive load while using dictation + controller together by making butt
 - The right stick is currently reserved until there is a reliable, low-risk use for it on macOS.
 
 ## Notes
+- `L2`, `X`, `R2`, and left-stick vertical scroll are configured in the top-level `alwaysOn` section, not inside the Ghostty profile.
 - Mapping changes hot-reload from `config/mappings.json`; restart is not required for config-only changes.
 - If Ghostty keybindings change, update descriptions and keycodes together in `config/mappings.json`.

@@ -70,7 +70,13 @@ struct CLIOptions {
 struct BridgeConfig: Decodable {
     let appProfiles: [String: String]
     let profiles: [String: ProfileConfig]
+    let alwaysOn: AlwaysOnConfig?
     let safety: SafetyConfig
+}
+
+struct AlwaysOnConfig: Decodable {
+    let analog: AnalogConfig?
+    let mappings: [String: MappingConfig]?
 }
 
 struct ProfileConfig: Decodable {
@@ -236,6 +242,33 @@ struct ConfigLoader {
                     try validateStickHorizontalActionConfig(
                         horizontalActions,
                         profileName: profileName,
+                        configName: "rightStickHorizontalActions"
+                    )
+                }
+            }
+        }
+
+        if let alwaysOn = config.alwaysOn {
+            if let mappings = alwaysOn.mappings {
+                for (button, mapping) in mappings {
+                    try validateAction(mapping.action, context: "alwaysOn button '\(button)'")
+                }
+            }
+
+            if let analogConfig = alwaysOn.analog {
+                if let left = analogConfig.leftStickVerticalScroll {
+                    try validateVerticalScrollConfig(left, profileName: "alwaysOn", configName: "leftStickVerticalScroll")
+                }
+                if let right = analogConfig.rightStickVerticalScroll {
+                    try validateVerticalScrollConfig(right, profileName: "alwaysOn", configName: "rightStickVerticalScroll")
+                }
+                if let pointer = analogConfig.rightStickPointer {
+                    try validateStickPointerConfig(pointer, profileName: "alwaysOn", configName: "rightStickPointer")
+                }
+                if let horizontalActions = analogConfig.rightStickHorizontalActions {
+                    try validateStickHorizontalActionConfig(
+                        horizontalActions,
+                        profileName: "alwaysOn",
                         configName: "rightStickHorizontalActions"
                     )
                 }
@@ -929,14 +962,23 @@ final class ControllerBridge: NSObject {
             return
         }
 
-        guard let activeProfileName = profileResolver.resolveActiveProfile(),
-              let profile = config.profiles[activeProfileName],
-              profile.enabled ?? true,
-              let analog = profile.analog else {
-            return
-        }
+        let activeProfileName = profileResolver.resolveActiveProfile()
+        let activeProfile = activeProfileName.flatMap { config.profiles[$0] }
 
-        if let rightScroll = analog.rightStickVerticalScroll, rightScroll.enabled ?? true {
+        if let rightScroll = config.alwaysOn?.analog?.rightStickVerticalScroll, rightScroll.enabled ?? true {
+            processVerticalScroll(
+                controllerID: controllerID,
+                profileName: "alwaysOn",
+                configName: "rightStickVerticalScroll",
+                source: "rightStickY",
+                rawY: Double(gamepad.rightThumbstick.yAxis.value),
+                config: rightScroll
+            )
+        } else if let activeProfileName,
+                  let profile = activeProfile,
+                  profile.enabled ?? true,
+                  let rightScroll = profile.analog?.rightStickVerticalScroll,
+                  rightScroll.enabled ?? true {
             processVerticalScroll(
                 controllerID: controllerID,
                 profileName: activeProfileName,
@@ -947,7 +989,20 @@ final class ControllerBridge: NSObject {
             )
         }
 
-        if let leftScroll = analog.leftStickVerticalScroll, leftScroll.enabled ?? true {
+        if let leftScroll = config.alwaysOn?.analog?.leftStickVerticalScroll, leftScroll.enabled ?? true {
+            processVerticalScroll(
+                controllerID: controllerID,
+                profileName: "alwaysOn",
+                configName: "leftStickVerticalScroll",
+                source: "leftStickY",
+                rawY: Double(gamepad.leftThumbstick.yAxis.value),
+                config: leftScroll
+            )
+        } else if let activeProfileName,
+                  let profile = activeProfile,
+                  profile.enabled ?? true,
+                  let leftScroll = profile.analog?.leftStickVerticalScroll,
+                  leftScroll.enabled ?? true {
             processVerticalScroll(
                 controllerID: controllerID,
                 profileName: activeProfileName,
@@ -1014,13 +1069,26 @@ final class ControllerBridge: NSObject {
             return
         }
 
-        guard let activeProfileName = profileResolver.resolveActiveProfile(),
-              let profile = config.profiles[activeProfileName],
-              profile.enabled ?? true,
-              let pointer = profile.analog?.rightStickPointer,
-              pointer.enabled ?? true else {
+        let activeProfileName = profileResolver.resolveActiveProfile()
+        let activeProfile = activeProfileName.flatMap { config.profiles[$0] }
+        let pointerSource: (profileName: String, config: StickPointerConfig)?
+        if let globalPointer = config.alwaysOn?.analog?.rightStickPointer, globalPointer.enabled ?? true {
+            pointerSource = ("alwaysOn", globalPointer)
+        } else if let activeProfileName,
+                  let profile = activeProfile,
+                  profile.enabled ?? true,
+                  let profilePointer = profile.analog?.rightStickPointer,
+                  profilePointer.enabled ?? true {
+            pointerSource = (activeProfileName, profilePointer)
+        } else {
+            pointerSource = nil
+        }
+
+        guard let pointerSource else {
             return
         }
+
+        let pointer = pointerSource.config
 
         let rawX = Double(gamepad.rightThumbstick.xAxis.value) * (pointer.invertX == true ? -1.0 : 1.0)
         let rawY = Double(gamepad.rightThumbstick.yAxis.value) * (pointer.invertY == true ? -1.0 : 1.0)
@@ -1032,7 +1100,7 @@ final class ControllerBridge: NSObject {
         }
 
         let intervalMs = max(1, pointer.intervalMs ?? 16)
-        let throttleKey = "\(controllerID)::\(activeProfileName)::rightStickPointer"
+        let throttleKey = "\(controllerID)::\(pointerSource.profileName)::rightStickPointer"
         let now = Date()
         if let last = lastAnalogScrollAt[throttleKey] {
             let deltaMs = Int(now.timeIntervalSince(last) * 1000)
@@ -1067,7 +1135,7 @@ final class ControllerBridge: NSObject {
             try actionExecutor.movePointerRelative(
                 dx: dx,
                 dy: dy,
-                profile: activeProfileName,
+                profile: pointerSource.profileName,
                 source: "rightStick"
             )
             lastAnalogScrollAt[throttleKey] = now
@@ -1085,20 +1153,32 @@ final class ControllerBridge: NSObject {
             return
         }
 
-        guard let activeProfileName = profileResolver.resolveActiveProfile(),
-              let profile = config.profiles[activeProfileName],
-              profile.enabled ?? true,
-              let horizontalActions = profile.analog?.rightStickHorizontalActions,
-              horizontalActions.enabled ?? true else {
+        let activeProfileName = profileResolver.resolveActiveProfile()
+        let activeProfile = activeProfileName.flatMap { config.profiles[$0] }
+        let horizontalSource: (profileName: String, config: StickHorizontalActionConfig)?
+        if let globalHorizontal = config.alwaysOn?.analog?.rightStickHorizontalActions,
+           globalHorizontal.enabled ?? true {
+            horizontalSource = ("alwaysOn", globalHorizontal)
+        } else if let activeProfileName,
+                  let profile = activeProfile,
+                  profile.enabled ?? true,
+                  let profileHorizontal = profile.analog?.rightStickHorizontalActions,
+                  profileHorizontal.enabled ?? true {
+            horizontalSource = (activeProfileName, profileHorizontal)
+        } else {
+            horizontalSource = nil
+        }
+
+        guard let horizontalSource else {
             analogDirectionStates[stateKey] = 0
             return
         }
 
         processHorizontalActions(
             controllerID: controllerID,
-            profileName: activeProfileName,
+            profileName: horizontalSource.profileName,
             rawX: rawX,
-            config: horizontalActions
+            config: horizontalSource.config
         )
     }
 
@@ -1204,13 +1284,14 @@ final class ControllerBridge: NSObject {
             return
         }
 
-        guard let activeProfileName = profileResolver.resolveActiveProfile() else {
-            print("[SKIP] no active app profile bundle=\(bundleID) button=\(event.button)")
-            return
-        }
+        let activeProfileName = profileResolver.resolveActiveProfile()
 
         guard let resolved = resolveMapping(forButton: event.button, activeProfileName: activeProfileName) else {
-            print("[SKIP] no mapping profile=\(activeProfileName) bundle=\(bundleID) button=\(event.button)")
+            if let activeProfileName {
+                print("[SKIP] no mapping profile=\(activeProfileName) bundle=\(bundleID) button=\(event.button)")
+            } else {
+                print("[SKIP] no active app profile bundle=\(bundleID) button=\(event.button)")
+            }
             return
         }
 
@@ -1249,10 +1330,16 @@ final class ControllerBridge: NSObject {
         }
     }
 
-    private func resolveMapping(forButton button: String, activeProfileName: String) -> (profileName: String, mapping: MappingConfig)? {
-        if let activeProfile = config.profiles[activeProfileName], activeProfile.enabled ?? true,
+    private func resolveMapping(forButton button: String, activeProfileName: String?) -> (profileName: String, mapping: MappingConfig)? {
+        if let activeProfileName,
+           let activeProfile = config.profiles[activeProfileName],
+           activeProfile.enabled ?? true,
            let mapping = activeProfile.mappings[button] {
             return (activeProfileName, mapping)
+        }
+
+        if let mapping = config.alwaysOn?.mappings?[button] {
+            return ("alwaysOn", mapping)
         }
 
         return nil

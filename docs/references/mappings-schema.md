@@ -4,12 +4,18 @@ The bridge config lives at `config/mappings.json`.
 
 ## Top-level fields
 - `appProfiles` (`object<string,string>`): map macOS bundle ID -> profile name.
+- `alwaysOn` (`AlwaysOnConfig`, optional): explicit controls that bypass frontmost-app matching and remain active across apps.
 - `profiles` (`object<string, ProfileConfig>`): named profile definitions.
 - `safety` (`SafetyConfig`): runtime safety defaults.
 
 Behavior note:
 - The bridge does not use a global fallback profile.
-- If the frontmost app bundle ID is not present in `appProfiles`, button events are ignored.
+- `alwaysOn` is not a fallback profile. It is a narrow explicit list of controls that always remain active.
+- If the frontmost app bundle ID is not present in `appProfiles`, only controls listed in `alwaysOn` can still fire.
+
+## AlwaysOnConfig
+- `analog` (`AnalogConfig`, optional): analog-axis behaviors that stay active across apps.
+- `mappings` (`object<string, MappingConfig>`, optional): button mappings that stay active across apps.
 
 ## ProfileConfig
 - `enabled` (`bool`, optional, default `true`): disable an entire profile.

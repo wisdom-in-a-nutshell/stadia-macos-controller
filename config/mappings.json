@@ -2,19 +2,51 @@
   "appProfiles": {
     "com.mitchellh.ghostty": "ghostty"
   },
+  "alwaysOn": {
+    "analog": {
+      "leftStickVerticalScroll": {
+        "enabled": true,
+        "deadzone": 0.20,
+        "intervalMs": 50,
+        "minLinesPerTick": 1,
+        "maxLinesPerTick": 8,
+        "responseExponent": 2.6,
+        "invert": false
+      }
+    },
+    "mappings": {
+      "rightTrigger": {
+        "action": {
+          "type": "holdKeystroke",
+          "keyCode": 111,
+          "modifiers": [],
+          "description": "Hold to mimic F12"
+        }
+      },
+      "leftTrigger": {
+        "action": {
+          "type": "holdKeystroke",
+          "keyCode": 55,
+          "modifiers": [],
+          "description": "Hold Command modifier"
+        }
+      },
+      "x": {
+        "debounceMs": 180,
+        "edgeTrigger": true,
+        "action": {
+          "type": "keystroke",
+          "keyCode": 48,
+          "modifiers": [],
+          "description": "Send Tab (L2 + X behaves like Cmd+Tab)"
+        }
+      }
+    }
+  },
   "profiles": {
     "ghostty": {
       "enabled": true,
       "analog": {
-        "leftStickVerticalScroll": {
-          "enabled": true,
-          "deadzone": 0.20,
-          "intervalMs": 50,
-          "minLinesPerTick": 1,
-          "maxLinesPerTick": 8,
-          "responseExponent": 2.6,
-          "invert": false
-        },
         "rightStickHorizontalActions": {
           "enabled": false,
           "deadzone": 0.62,
@@ -38,22 +70,6 @@
         }
       },
       "mappings": {
-        "rightTrigger": {
-          "action": {
-            "type": "holdKeystroke",
-            "keyCode": 111,
-            "modifiers": [],
-            "description": "Hold to mimic F12"
-          }
-        },
-        "leftTrigger": {
-          "action": {
-            "type": "holdKeystroke",
-            "keyCode": 55,
-            "modifiers": [],
-            "description": "Hold Command modifier"
-          }
-        },
         "options": {
           "debounceMs": 220,
           "edgeTrigger": true,
@@ -132,16 +148,6 @@
             "keyCode": 53,
             "modifiers": [],
             "description": "Send Escape"
-          }
-        },
-        "x": {
-          "debounceMs": 180,
-          "edgeTrigger": true,
-          "action": {
-            "type": "keystroke",
-            "keyCode": 48,
-            "modifiers": [],
-            "description": "Send Tab (pairs with L2 hold Command for Cmd+Tab)"
           }
         },
         "y": {

@@ -45,14 +45,15 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 
 ## Current Starter Mapping
 - App profile: `com.mitchellh.ghostty` -> `ghostty`
-- Ghostty defaults:
+- Always-on controls:
   - `R2` (`rightTrigger`): hold `F12` (`holdKeystroke`)
   - `L2` (`leftTrigger`): hold `Command`
+  - `X`: send `Tab` (`L2` + `X` behaves like `Cmd+Tab`)
   - Left stick `Y`: vertical scroll (analog; deadzone/rate-limited)
+- Ghostty defaults:
   - Right stick: currently unassigned
   - `Options`: close focused split surface (`Cmd+W`)
   - `Menu`: open `/model`
-  - `X`: send `Tab` (`L2` + `X` behaves like `Cmd+Tab`)
   - `Y`: send `Cmd+Shift+G`
   - `L1` (`leftShoulder`): cycle split focus in current tab
   - `R1` (`rightShoulder`): cycle tabs (next tab)
@@ -66,7 +67,8 @@ Dictation stability note:
 - Recommended pattern: keep trigger and submit separate (for example, trigger on `R2`, submit with a dedicated button).
 
 Non-profiled apps:
-- If frontmost app is not mapped in `appProfiles`, bridge logs `[SKIP] no active app profile` and executes nothing.
+- If frontmost app is not mapped in `appProfiles`, only controls listed in `alwaysOn` still execute.
+- All other controls log `[SKIP] no active app profile`.
 
 If your Ghostty split binding differs, edit `config/mappings.json`.
 For design intent behind the current layout, see `docs/references/ghostty-mapping-rationale.md`.
