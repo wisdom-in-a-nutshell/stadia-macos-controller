@@ -109,6 +109,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-03-12: [DONE] Added a dedicated `ghosttyAction` action type and migrated the obvious Ghostty-first controls (`Options`, right thumbstick click, `L1`, `R1`) away from macOS keystroke injection to Ghostty native actions.
 - 2026-03-12: [DONE] Added discrete right-stick vertical actions and moved `/model` from the `menu` button to right-stick up so the Codex-specific prompt lives on the analog stick instead of a dedicated face/menu control.
 - 2026-03-12: [DONE] Refreshed architecture docs to explain the Ghostty boundary more clearly and documented the intentional AppleScript dependency plus the reinstall requirement for runtime/schema changes.
+- 2026-03-12: [DONE] Updated left-stick scroll so Ghostty frontmost scrolling targets Ghostty's focused terminal directly, avoiding stale mouse-cursor position when switching tabs, splits, or windows.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.

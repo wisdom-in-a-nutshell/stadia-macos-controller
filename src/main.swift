@@ -463,6 +463,7 @@ final class ProfileResolver {
 final class ActionExecutor {
     private let dryRun: Bool
     private var activeHeldModifierFlags = CGEventFlags()
+    private let ghosttyBundleID = "com.mitchellh.ghostty"
 
     init(dryRun: Bool) {
         self.dryRun = dryRun
@@ -617,6 +618,16 @@ final class ActionExecutor {
         if dryRun {
             print("[DRY-RUN] scroll profile=\(profile) source=\(source) lines=\(lines)")
             return
+        }
+
+        if currentFrontmostBundleID() == ghosttyBundleID {
+            do {
+                try executeGhosttyScroll(y: lines)
+                print("[ACTION] ghostty-scroll profile=\(profile) source=\(source) lines=\(lines)")
+                return
+            } catch {
+                print("[WARN] ghostty-scroll fallback to system scroll: \(error.localizedDescription)")
+            }
         }
 
         if !AXIsProcessTrusted() {
@@ -812,6 +823,19 @@ final class ActionExecutor {
         end tell
         """
         try runProcess(executable: "/usr/bin/osascript", arguments: ["-e", script])
+    }
+
+    private func executeGhosttyScroll(y: Int) throws {
+        let script = """
+        tell application "Ghostty"
+          send mouse scroll y \(y) to focused terminal of selected tab of front window
+        end tell
+        """
+        try runProcess(executable: "/usr/bin/osascript", arguments: ["-e", script])
+    }
+
+    private func currentFrontmostBundleID() -> String? {
+        NSWorkspace.shared.frontmostApplication?.bundleIdentifier
     }
 
     private func runProcess(executable: String, arguments: [String]) throws {

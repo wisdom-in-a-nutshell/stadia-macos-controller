@@ -51,6 +51,7 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - `X`: send `Tab` (`L2` + `X` behaves like `Cmd+Tab`)
   - Left thumbstick click: unassigned
   - Left stick `Y`: vertical scroll (analog; deadzone/rate-limited)
+    - when Ghostty is frontmost, scroll is sent to Ghostty's focused terminal directly so it follows tab/split focus instead of mouse cursor position
   - D-pad `Up/Down/Left/Right`: send arrow keys
 - Ghostty defaults:
   - Right stick up: open `/model` popup

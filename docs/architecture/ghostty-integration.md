@@ -43,6 +43,8 @@ flowchart TD
   - `Y` -> current-terminal jump picker
   - right stick up -> `/model`
   - right stick left/right -> `/` and `$`
+- Ghostty-targeted scrolling:
+  - left stick vertical scroll now prefers Ghostty's focused terminal directly when Ghostty is frontmost, so scrolling follows tab/split focus instead of depending on OS cursor location
 
 ## Why AppleScript Is Acceptable Here
 
@@ -53,6 +55,7 @@ The tradeoff is acceptable here because:
 - the behavior works in live use
 - it is narrow in scope
 - the bridge keeps simple actions on Ghostty-native actions instead of moving everything to AppleScript
+- for scroll behavior, targeting Ghostty's focused terminal is more robust than trying to move the OS cursor to split-specific screen coordinates that Ghostty does not expose
 
 ## Operational Note
 
