@@ -112,12 +112,9 @@
           "debounceMs": 220,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 13,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Close focused split surface (Ghostty close_surface via Cmd+W)"
+            "type": "ghosttyAction",
+            "ghosttyAction": "close_surface",
+            "description": "Close focused split surface via Ghostty native action"
           }
         },
         "menu": {
@@ -144,12 +141,9 @@
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 2,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Split right (Cmd+D)"
+            "type": "ghosttyAction",
+            "ghosttyAction": "new_split:right",
+            "description": "Split right via Ghostty native action"
           }
         },
         "a": {
@@ -189,25 +183,18 @@
           "debounceMs": 200,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 30,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Cycle splits within current tab (Ghostty goto_split:next via Cmd+])"
+            "type": "ghosttyAction",
+            "ghosttyAction": "goto_split:next",
+            "description": "Cycle splits within current tab via Ghostty native action"
           }
         },
         "rightShoulder": {
           "debounceMs": 200,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 30,
-            "modifiers": [
-              "command",
-              "shift"
-            ],
-            "description": "Cycle tabs (next tab, Cmd+Shift+])"
+            "type": "ghosttyAction",
+            "ghosttyAction": "next_tab",
+            "description": "Cycle tabs via Ghostty native action"
           }
         }
       }

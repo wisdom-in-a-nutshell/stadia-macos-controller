@@ -61,7 +61,7 @@ Behavior note:
 - `action` (`ActionConfig`): action to execute.
 
 ## ActionConfig
-- `type` (`"keystroke" | "holdKeystroke" | "shell" | "applescript" | "text" | "mouseClick"`)
+- `type` (`"keystroke" | "holdKeystroke" | "shell" | "applescript" | "ghosttyAction" | "text" | "mouseClick"`)
 - Keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)
@@ -73,6 +73,8 @@ Behavior note:
   - `command` (`string`, required)
 - AppleScript fields:
   - `script` (`string`, required)
+- Ghostty native action fields:
+  - `ghosttyAction` (`string`, required): Ghostty action string executed through Ghostty's native macOS AppleScript bridge against the focused terminal in the selected tab of the front window.
 - Text fields:
   - `text` (`string`, required)
   - `preKeyCode` (`int`, optional): keystroke to send before typing text.

@@ -3,7 +3,7 @@
 ## What This Does (Simple)
 - Reads Stadia controller input on macOS.
 - Runs a local bridge service.
-- Converts mapped button presses into keystroke actions.
+- Converts mapped button presses into keystrokes, Ghostty native actions, or other configured actions.
 - Sends those actions to Ghostty.
 
 ## Simple Flow (Mermaid)

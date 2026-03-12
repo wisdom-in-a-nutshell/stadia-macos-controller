@@ -139,6 +139,7 @@ struct ActionConfig: Decodable {
     let modifiers: [String]?
     let command: String?
     let script: String?
+    let ghosttyAction: String?
     let text: String?
     let mouseButton: String?
     let pressEnter: Bool?
@@ -154,6 +155,7 @@ enum ActionType: String, Decodable {
     case holdKeystroke
     case shell
     case applescript
+    case ghosttyAction
     case text
     case mouseClick
 }
@@ -295,6 +297,10 @@ struct ConfigLoader {
         case .applescript:
             guard let script = action.script, !script.isEmpty else {
                 throw BridgeError.configValidationFailed("\(context) applescript action requires script")
+            }
+        case .ghosttyAction:
+            guard let ghosttyAction = action.ghosttyAction, !ghosttyAction.isEmpty else {
+                throw BridgeError.configValidationFailed("\(context) ghosttyAction action requires ghosttyAction")
             }
         case .text:
             guard let text = action.text, !text.isEmpty else {
@@ -457,6 +463,14 @@ final class ActionExecutor {
 
             try runProcess(executable: "/usr/bin/osascript", arguments: ["-e", script])
             print("[ACTION] applescript profile=\(profile) button=\(button)")
+
+        case .ghosttyAction:
+            guard let ghosttyAction = action.ghosttyAction else {
+                throw BridgeError.actionExecutionFailed("ghosttyAction action missing ghosttyAction")
+            }
+
+            try executeGhosttyAction(ghosttyAction)
+            print("[ACTION] ghostty-action action=\(ghosttyAction) profile=\(profile) button=\(button)")
 
         case .text:
             guard let text = action.text else {
@@ -740,6 +754,18 @@ final class ActionExecutor {
             keyDown.post(tap: .cghidEventTap)
             keyUp.post(tap: .cghidEventTap)
         }
+    }
+
+    private func executeGhosttyAction(_ action: String) throws {
+        let escapedAction = action
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+        let script = """
+        tell application "Ghostty"
+          perform action "\(escapedAction)" on focused terminal of selected tab of front window
+        end tell
+        """
+        try runProcess(executable: "/usr/bin/osascript", arguments: ["-e", script])
     }
 
     private func runProcess(executable: String, arguments: [String]) throws {

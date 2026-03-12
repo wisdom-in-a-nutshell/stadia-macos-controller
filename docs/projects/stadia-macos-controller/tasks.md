@@ -32,7 +32,7 @@ Keep Ghostty global behavior and machine bootstrap logic in `~/GitHub/scripts`; 
 - [x] Add input event normalization layer (`button`, `state`, `timestamp`, `repeat`) so mapping logic is controller-model agnostic.
 - [x] Build profile resolver that tracks frontmost app bundle identifier and selects active mapped profile (`ghostty`).
 - [x] Implement mapping engine with per-action debounce, edge-trigger semantics, and optional hold behavior.
-- [x] Implement action executors for: keyboard shortcuts, shell commands, and optional AppleScript commands.
+- [x] Implement action executors for: keyboard shortcuts, shell commands, optional AppleScript commands, and Ghostty native action dispatch.
 - [x] Add config loader with schema validation for profile mappings in `config/mappings.json`.
 - [x] Add config file watcher for hot-reload updates without restarting the bridge.
 - [x] Define initial Ghostty profile for high-frequency actions (tab navigation, split/nav, command palette, etc.).
@@ -106,6 +106,7 @@ Run in dry-run mode first to inspect resolved profile + action logs before enabl
 - 2026-03-11: [DONE] Added native `mouseClick` action support, tested left thumbstick click as an always-on left mouse click, then removed that mapping after live use showed click-plus-scroll on the same stick felt noisy.
 - 2026-03-11: [DONE] Reassigned Ghostty right-stick horizontal tilt from the failed macOS Spaces experiment to punctuation shortcuts: `Left` sends `/`, `Right` sends `$`.
 - 2026-03-12: [DONE] Switched Ghostty `share` from plain `Cmd+T` injection to Ghostty `1.3.0` AppleScript `new tab` with a custom surface configuration so new tabs launch `codex_jump` immediately, while split actions keep their inherited working directory behavior.
+- 2026-03-12: [DONE] Added a dedicated `ghosttyAction` action type and migrated the obvious Ghostty-first controls (`Options`, right thumbstick click, `L1`, `R1`) away from macOS keystroke injection to Ghostty native actions.
 
 ## Next 3 Actions
 1. Capture Phase 2 backlog for Codex-specific profile behavior now that Ghostty flow is stable.

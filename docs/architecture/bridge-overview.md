@@ -19,7 +19,7 @@
    - Resolve mapping from the active profile first, then from the explicit `alwaysOn` set.
    - If neither applies, skip action execution.
    - Apply safety checks (emergency toggle, profile enabled, debounce).
-   - Execute action (`keystroke`, `holdKeystroke`, `shell`, `applescript`, `text`, `mouseClick`) or dry-run log.
+   - Execute action (`keystroke`, `holdKeystroke`, `shell`, `applescript`, `ghosttyAction`, `text`, `mouseClick`) or dry-run log.
 5. On each configured analog sample:
    - Apply deadzone and direction/rate rules from `alwaysOn` config first, then from the active profile for features not overridden globally.
    - Translate analog motion into scroll, pointer move, or synthetic left/right action triggers.

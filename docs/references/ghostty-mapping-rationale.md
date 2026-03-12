@@ -14,6 +14,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - Right stick horizontal tilt: Ghostty-only punctuation shortcuts (`Left` = `/`, `Right` = `$`).
 - `Share`: Ghostty AppleScript `new tab` with a custom surface configuration so the new tab opens directly into the Codex jump picker.
 - `Y`: manual Codex jump picker for the current terminal (`Cmd+Shift+G`).
+- `Options`, right thumbstick click, `L1`, and `R1` now use Ghostty native actions instead of synthetic macOS keystrokes.
 
 ## Why This Layout
 - Shoulder buttons become role-based instead of direction-based:
@@ -26,6 +27,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - New tabs and splits now intentionally diverge:
   - new tab means "start somewhere else" and should open the repo chooser immediately.
   - split means "stay in this workspace" and should inherit the current directory.
+- Core Ghostty navigation/management buttons now target Ghostty actions directly so they do not depend on separate keybinding definitions staying in sync.
 
 ## Notes
 - `L2`, `X`, `R2`, D-pad arrows, and left-stick vertical scroll are configured in the top-level `alwaysOn` section.

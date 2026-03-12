@@ -54,13 +54,13 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - D-pad `Up/Down/Left/Right`: send arrow keys
 - Ghostty defaults:
   - Right stick horizontal tilt: `Left` sends `/`, `Right` sends `$`
-  - `Options`: close focused split surface (`Cmd+W`)
+  - `Options`: close focused split surface via Ghostty native action
   - `Menu`: open `/model`
   - `Share`: open a new tab and immediately launch the Codex repo picker (`Ghostty` AppleScript; requires Ghostty `1.3.0+`)
   - `Y`: open the Codex jump picker in the current terminal (`Cmd+Shift+G`)
-  - Right thumbstick click: split right (`Cmd+D`) and inherit the current directory
-  - `L1` (`leftShoulder`): cycle split focus in current tab
-  - `R1` (`rightShoulder`): cycle tabs (next tab)
+  - Right thumbstick click: split right via Ghostty native action and inherit the current directory
+  - `L1` (`leftShoulder`): cycle split focus in current tab via Ghostty native action
+  - `R1` (`rightShoulder`): cycle tabs (next tab) via Ghostty native action
 
 Dictation stability note:
 - Auto-submit-on-release behavior is intentionally not configured for triggers.
