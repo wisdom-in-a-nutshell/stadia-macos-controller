@@ -133,9 +133,9 @@
           "debounceMs": 500,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"Ghostty\"\n  set launchConfig to new surface configuration\n  set environment variables of launchConfig to {\"CODEX_DISABLE_AUTOSTART=1\"}\n  set command of launchConfig to \"/bin/zsh -l\"\n  set initial input of launchConfig to \"codex_jump\\n\"\n  if (count windows) = 0 then\n    new window with configuration launchConfig\n  else\n    new tab in front window with configuration launchConfig\n  end if\nend tell",
-            "description": "Capture button: open a new Ghostty tab and immediately launch the Codex repo picker"
+            "type": "shell",
+            "command": "$HOME/.agents/codex/scripts/open-ghostty-codex-picker-tab.sh",
+            "description": "Capture button: open a new Ghostty picker tab via the shared Codex helper"
           }
         },
         "rightThumbstickButton": {

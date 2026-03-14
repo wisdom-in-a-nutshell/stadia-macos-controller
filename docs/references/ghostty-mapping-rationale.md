@@ -13,7 +13,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - D-pad `Up/Down/Left/Right`: global arrow-key navigation via `alwaysOn`.
 - Right stick up: open `/model`.
 - Right stick horizontal tilt: Ghostty-only punctuation shortcuts (`Left` = `/`, `Right` = `$`).
-- `Share`: Ghostty AppleScript `new tab` with a custom surface configuration so the new tab opens directly into the Codex jump picker.
+- `Share`: run the shared Ghostty picker-tab helper so the new tab opens directly into the Codex jump picker.
 - `Y`: manual Codex jump picker for the current terminal (`Cmd+Shift+G`).
 - `Options`, right thumbstick click, `L1`, and `R1` now use Ghostty native actions instead of synthetic macOS keystrokes.
 
@@ -36,5 +36,5 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `L2`, `X`, `R2`, D-pad arrows, and left-stick vertical scroll are configured in the top-level `alwaysOn` section.
 - Mapping changes hot-reload from `config/mappings.json`; restart is not required for config-only changes.
 - If Ghostty keybindings change, update descriptions and keycodes together in `config/mappings.json`.
-- The `Share` behavior depends on Ghostty `1.3.0+` native AppleScript support and currently uses Ghostty's preview scripting API.
+- The `Share` behavior depends on Ghostty `1.3.0+` native AppleScript support and currently uses Ghostty's preview scripting API through a shared helper script.
 - We intentionally accept that dependency because Ghostty-native actions cover the simple terminal structure controls, while AppleScript is reserved for the richer new-tab startup flow.

@@ -8,6 +8,7 @@ flowchart TD
     Bridge[Swift Bridge]
     Keystroke[macOS Keystroke Injection]
     GhosttyAction[Ghostty Native Action]
+    Shell[Shell Helper]
     AppleScript[Ghostty AppleScript]
     CodexShell[Codex Shell / codex_jump]
     Ghostty[Ghostty Terminal UI]
@@ -15,7 +16,8 @@ flowchart TD
     Button --> Bridge
     Bridge --> Keystroke
     Bridge --> GhosttyAction
-    Bridge --> AppleScript
+    Bridge --> Shell
+    Shell --> AppleScript
     AppleScript --> CodexShell
     Keystroke --> Ghostty
     GhosttyAction --> Ghostty
@@ -25,7 +27,7 @@ flowchart TD
 ## Current Strategy
 
 - Use `ghosttyAction` when Ghostty already has a first-class terminal action.
-- Use Ghostty AppleScript when a controller action needs richer tab startup behavior.
+- Use a shell helper plus Ghostty AppleScript when a controller action should trigger richer tab startup behavior.
 - Keep plain keystrokes only for actions that are really just terminal input, not Ghostty structure.
 
 ## What Uses What Today
@@ -35,8 +37,8 @@ flowchart TD
   - right thumbstick click -> `new_split:right`
   - `L1` -> `goto_split:next`
   - `R1` -> `next_tab`
-- Ghostty AppleScript:
-  - `Share` -> open a new tab with custom startup config and immediately run `codex_jump`
+- Ghostty AppleScript via shell helper:
+  - `Share` -> run the shared helper that opens a new tab with custom startup config and immediately runs `codex_jump`
 - Plain terminal input:
   - `A` -> `Enter`
   - `B` -> `Escape`
