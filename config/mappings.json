@@ -97,6 +97,12 @@
             "delayMs": 80,
             "pressEnter": true,
             "description": "Open /model popup from right stick up"
+          },
+          "downAction": {
+            "type": "keystroke",
+            "keyCode": 42,
+            "modifiers": [],
+            "description": "Send backslash (\\) from right stick down"
           }
         },
         "rightStickHorizontalActions": {
