@@ -1,3 +1,9 @@
 .build/
 .swiftpm/
 .DS_Store
+
+# Local env files
+.env*
+!.envrc
+!.env.example
+!*.env.example
