@@ -1,6 +1,7 @@
 # Stadia macOS Controller
 
-This is the only `AGENTS.md` in this repo. Do not expect nested `AGENTS.md` files or any `CLAUDE.md` files to exist or auto-load when working in subdirectories.
+This root `AGENTS.md` applies repo-wide. Keep scoped detail in the linked docs instead of adding
+nested `AGENTS.md` or `CLAUDE.md` files.
 
 ## Goal
 - Build a local bridge that maps Stadia controller inputs to macOS actions and app-specific shortcuts, starting with Ghostty.
