@@ -58,7 +58,7 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - `Options`: close focused split surface via Ghostty native action
   - `Share`: open a new tab and immediately launch the Codex repo picker through the shared helper script (`Ghostty` AppleScript; requires Ghostty `1.3.0+`)
   - Left thumbstick click: open a right split and immediately launch the Codex repo picker through the shared helper script
-  - Right thumbstick click: split right via Ghostty native action and inherit the current directory
+  - Right thumbstick click: open a right split and start Codex in the inherited current directory
   - `Y`: send `Backspace`
   - `Menu`: send `Shift+Tab` to toggle Codex Plan mode
   - `L1` (`leftShoulder`): cycle split focus in current tab via Ghostty native action
@@ -89,6 +89,7 @@ If Ghostty AppleScript is disabled or you are on Ghostty older than `1.3.0`, the
 - Current AppleScript usage is narrow:
   - `Share` creates a new tab with custom startup behavior and immediately runs `codex_jump`.
   - Left thumbstick click creates a right split with custom startup behavior and immediately runs `codex_jump`.
+  - Right thumbstick click creates a right split with custom startup behavior and immediately runs `codex`.
   - `ghosttyAction` dispatches Ghostty-native terminal actions through Ghostty's AppleScript bridge.
 - Ghostty marks AppleScript as a preview API in `1.3.x`, but this is currently the cleanest way to express tab-level startup behavior and has been validated in live use.
 

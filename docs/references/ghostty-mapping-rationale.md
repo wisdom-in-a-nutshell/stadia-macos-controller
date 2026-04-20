@@ -11,12 +11,13 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `X`: send `Tab`, primarily as the `L2` companion for app switching (`Cmd+Tab`).
 - `Y`: send `Backspace` in Ghostty as a quick correction key while typing.
 - `Menu`: send `Shift+Tab` in Ghostty to toggle Codex Plan mode without typing `/plan`.
-- Left thumbstick click: intentionally unassigned for now because click-plus-scroll on the same stick felt noisy in practice.
+- Left thumbstick click: open a right split with the Codex repo picker (`codex_jump`).
+- Right thumbstick click: open a right split and start Codex in the inherited current directory.
 - D-pad `Up/Down/Left/Right`: global arrow-key navigation via `alwaysOn`.
 - Right stick up: open `/model`.
 - Right stick horizontal tilt: Ghostty-only punctuation shortcuts (`Left` = `/`, `Right` = `$`).
 - `Share`: run the shared Ghostty picker-tab helper so the new tab opens directly into the Codex jump picker.
-- `Options`, right thumbstick click, `L1`, and `R1` now use Ghostty native actions instead of synthetic macOS keystrokes.
+- `Options`, `L1`, and `R1` use Ghostty native actions instead of synthetic macOS keystrokes.
 
 ## Why This Layout
 - Shoulder buttons become role-based instead of direction-based:
@@ -31,7 +32,8 @@ Reduce cognitive load while using dictation + controller together by making butt
   - horizontal tilt is punctuation
 - New tabs and splits now intentionally diverge:
   - new tab means "start somewhere else" and should open the repo chooser immediately.
-  - split means "stay in this workspace" and should inherit the current directory.
+  - left thumbstick split means "choose a repo in a neighboring pane".
+  - right thumbstick split means "stay in this workspace" and should start Codex in the inherited current directory.
 - Core Ghostty navigation/management buttons now target Ghostty actions directly so they do not depend on separate keybinding definitions staying in sync.
 
 ## Notes

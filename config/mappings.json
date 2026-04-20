@@ -158,12 +158,12 @@
           }
         },
         "rightThumbstickButton": {
-          "debounceMs": 180,
+          "debounceMs": 220,
           "edgeTrigger": true,
           "action": {
-            "type": "ghosttyAction",
-            "ghosttyAction": "new_split:right",
-            "description": "Split right via Ghostty native action"
+            "type": "shell",
+            "command": "$HOME/.agents/codex/scripts/open-ghostty-codex-split.sh --direction right",
+            "description": "Split right and start Codex in the inherited current directory"
           }
         },
         "leftThumbstickButton": {

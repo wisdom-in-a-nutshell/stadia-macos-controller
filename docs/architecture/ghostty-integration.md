@@ -34,12 +34,12 @@ flowchart TD
 
 - Ghostty native actions:
   - `Options` -> `close_surface`
-  - right thumbstick click -> `new_split:right`
   - `L1` -> `goto_split:next`
   - `R1` -> `next_tab`
 - Ghostty AppleScript via shell helper:
   - `Share` -> run the shared helper that opens a new tab with custom startup config and immediately runs `codex_jump`
   - left thumbstick click -> run the shared helper that opens a right split with custom startup config and immediately runs `codex_jump`
+  - right thumbstick click -> run the shared helper that opens a right split and starts `codex` in the inherited cwd
 - Plain terminal input:
   - `A` -> `Enter`
   - `B` -> `Escape`
