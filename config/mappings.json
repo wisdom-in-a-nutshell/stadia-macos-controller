@@ -145,6 +145,18 @@
             "description": "Capture button: open a new Ghostty picker tab via the shared Codex helper"
           }
         },
+        "menu": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 48,
+            "modifiers": [
+              "shift"
+            ],
+            "description": "Toggle Codex Plan mode with Shift+Tab"
+          }
+        },
         "rightThumbstickButton": {
           "debounceMs": 180,
           "edgeTrigger": true,

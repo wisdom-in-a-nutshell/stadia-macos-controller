@@ -10,6 +10,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `L2` (`leftTrigger`): hold `Command` as a modifier chord.
 - `X`: send `Tab`, primarily as the `L2` companion for app switching (`Cmd+Tab`).
 - `Y`: send `Backspace` in Ghostty as a quick correction key while typing.
+- `Menu`: send `Shift+Tab` in Ghostty to toggle Codex Plan mode without typing `/plan`.
 - Left thumbstick click: intentionally unassigned for now because click-plus-scroll on the same stick felt noisy in practice.
 - D-pad `Up/Down/Left/Right`: global arrow-key navigation via `alwaysOn`.
 - Right stick up: open `/model`.
@@ -22,6 +23,7 @@ Reduce cognitive load while using dictation + controller together by making butt
   - one shoulder for tabs, one shoulder for splits.
 - `X` becomes a lightweight companion key instead of a destructive or layout-changing action.
 - `Y` is reserved for text correction because Backspace is common during dictated terminal input.
+- `Menu` toggles Codex Plan mode through its native keyboard shortcut instead of injecting slash-command text into the composer.
 - `L2` + `X` is a low-risk modifier experiment because it uses a held modifier with a discrete button, not an analog stick.
 - The D-pad is reserved for consistent global navigation across apps.
 - The right stick now carries the quick Codex-specific prompts without consuming face buttons:

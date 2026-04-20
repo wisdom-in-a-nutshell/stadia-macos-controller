@@ -60,6 +60,7 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
   - Left thumbstick click: open a right split and immediately launch the Codex repo picker through the shared helper script
   - Right thumbstick click: split right via Ghostty native action and inherit the current directory
   - `Y`: send `Backspace`
+  - `Menu`: send `Shift+Tab` to toggle Codex Plan mode
   - `L1` (`leftShoulder`): cycle split focus in current tab via Ghostty native action
   - `R1` (`rightShoulder`): cycle tabs (next tab) via Ghostty native action
 
