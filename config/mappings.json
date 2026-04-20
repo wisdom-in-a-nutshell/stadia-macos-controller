@@ -23,24 +23,6 @@
           "description": "Hold to mimic F12"
         }
       },
-      "leftTrigger": {
-        "action": {
-          "type": "holdKeystroke",
-          "keyCode": 55,
-          "modifiers": [],
-          "description": "Hold Command modifier"
-        }
-      },
-      "x": {
-        "debounceMs": 180,
-        "edgeTrigger": true,
-        "action": {
-          "type": "keystroke",
-          "keyCode": 48,
-          "modifiers": [],
-          "description": "Send Tab (L2 + X behaves like Cmd+Tab)"
-        }
-      },
       "dpadUp": {
         "debounceMs": 140,
         "edgeTrigger": true,
@@ -135,6 +117,18 @@
               "shift"
             ],
             "description": "Toggle Codex Plan mode with Shift+Tab"
+          }
+        },
+        "x": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 8,
+            "modifiers": [
+              "control"
+            ],
+            "description": "Send Ctrl+C interrupt"
           }
         },
         "dpadLeft": {
