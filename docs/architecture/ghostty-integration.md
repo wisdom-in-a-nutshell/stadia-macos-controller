@@ -43,6 +43,7 @@ flowchart TD
 - Plain terminal input:
   - `A` -> `Enter`
   - `B` -> `Escape`
+  - `Y` -> `Backspace`
   - right stick up -> `/model`
   - right stick left/right -> `/` and `$`
 - Ghostty-targeted scrolling:

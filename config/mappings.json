@@ -183,6 +183,16 @@
             "description": "Send Escape"
           }
         },
+        "y": {
+          "debounceMs": 120,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 51,
+            "modifiers": [],
+            "description": "Send Backspace"
+          }
+        },
         "leftShoulder": {
           "debounceMs": 200,
           "edgeTrigger": true,
