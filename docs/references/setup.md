@@ -43,27 +43,14 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 - `--sign-identity "Apple Development: ..."`: pin one explicit cert for maximum consistency.
 - `--sign-identity none`: skip signing (not recommended).
 
-## Current Starter Mapping
-- App profile: `com.mitchellh.ghostty` -> `ghostty`
-- Always-on controls:
-  - `R2` (`rightTrigger`): hold `F12` (`holdKeystroke`)
-  - `L2` (`leftTrigger`): hold `Command`
-  - `X`: send `Tab` (`L2` + `X` behaves like `Cmd+Tab`)
-  - Left stick `Y`: vertical scroll (analog; deadzone/rate-limited)
-    - when Ghostty is frontmost, scroll is sent to Ghostty's focused terminal directly so it follows tab/split focus instead of mouse cursor position
-  - D-pad `Up/Down`: send arrow keys
-- Ghostty defaults:
-  - Right stick up: open `/model` popup
-  - Right stick horizontal tilt: `Left` sends `/`, `Right` sends `$`
-  - D-pad `Left/Right`: zoom out/in
-  - `Options`: close focused split surface via Ghostty native action
-  - `Share`: open a new tab and immediately launch the Codex repo picker through the shared helper script (`Ghostty` AppleScript; requires Ghostty `1.3.0+`)
-  - Left thumbstick click: open a right split and immediately launch the Codex repo picker through the shared helper script
-  - Right thumbstick click: open a right split and start Codex in the inherited current directory
-  - `Y`: send `Backspace`
-  - `Menu`: send `Shift+Tab` to toggle Codex Plan mode
-  - `L1` (`leftShoulder`): cycle split focus in current tab via Ghostty native action
-  - `R1` (`rightShoulder`): cycle tabs (next tab) via Ghostty native action
+## Current Mapping
+`config/mappings.json` is the source of truth for the live controller layout, including keycodes, modifiers, Ghostty actions, helper commands, debounce settings, and descriptions.
+
+Operational notes:
+- `alwaysOn` controls remain active outside Ghostty.
+- Ghostty profile controls only fire when `com.mitchellh.ghostty` is frontmost.
+- Left-stick vertical scroll is configured in `alwaysOn`; when Ghostty is frontmost, the bridge targets Ghostty's focused terminal directly so scrolling follows tab/split focus instead of mouse cursor position.
+- Keep exact button-to-action documentation in `config/mappings.json`, not in this setup guide.
 
 Dictation stability note:
 - Auto-submit-on-release behavior is intentionally not configured for triggers.
@@ -76,7 +63,7 @@ Non-profiled apps:
 
 If your Ghostty split binding differs, edit `config/mappings.json`.
 For design intent behind the current layout, see `docs/references/ghostty-mapping-rationale.md`.
-If Ghostty AppleScript is disabled or you are on Ghostty older than `1.3.0`, the `share` mapping must be changed back to a plain keystroke or another supported action type.
+If Ghostty AppleScript is disabled or you are on Ghostty older than `1.3.0`, mappings that depend on Ghostty AppleScript helpers must be changed back to plain keystrokes, `ghosttyAction`, or another supported action type.
 
 ## Hot Reload
 - `config/mappings.json` is watched while the bridge is running.
@@ -87,10 +74,8 @@ If Ghostty AppleScript is disabled or you are on Ghostty older than `1.3.0`, the
 
 ## Ghostty AppleScript Note
 - This repo intentionally builds part of the Ghostty flow on top of Ghostty's native AppleScript support.
-- Current AppleScript usage is narrow:
-  - `Share` creates a new tab with custom startup behavior and immediately runs `codex_jump`.
-  - Left thumbstick click creates a right split with custom startup behavior and immediately runs `codex_jump`.
-  - Right thumbstick click creates a right split with custom startup behavior and immediately runs `codex`.
+- Current AppleScript usage is intentionally narrow:
+  - shell helpers create Codex/Ghostty surfaces with custom startup behavior.
   - `ghosttyAction` dispatches Ghostty-native terminal actions through Ghostty's AppleScript bridge.
 - Ghostty marks AppleScript as a preview API in `1.3.x`, but this is currently the cleanest way to express tab-level startup behavior and has been validated in live use.
 

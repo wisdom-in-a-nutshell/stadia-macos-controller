@@ -30,26 +30,15 @@ flowchart TD
 - Use a shell helper plus Ghostty AppleScript when a controller action should trigger richer tab startup behavior.
 - Keep plain keystrokes only for actions that are really just terminal input, not Ghostty structure.
 
-## What Uses What Today
+## Current Mappings
 
-- Ghostty native actions:
-  - `Options` -> `close_surface`
-  - `L1` -> `goto_split:next`
-  - `R1` -> `next_tab`
-- Ghostty AppleScript via shell helper:
-  - `Share` -> run the shared helper that opens a new tab with custom startup config and immediately runs `codex_jump`
-  - left thumbstick click -> run the shared helper that opens a right split with custom startup config and immediately runs `codex_jump`
-  - right thumbstick click -> run the shared helper that opens a right split and starts `codex` in the inherited cwd
-- Plain terminal input:
-  - `A` -> `Enter`
-  - `B` -> `Escape`
-  - `Y` -> `Backspace`
-  - `Menu` -> `Shift+Tab` for Codex Plan mode
-  - D-pad left/right -> Ghostty zoom out/in
-  - right stick up -> `/model`
-  - right stick left/right -> `/` and `$`
-- Ghostty-targeted scrolling:
-  - left stick vertical scroll now prefers Ghostty's focused terminal directly when Ghostty is frontmost, so scrolling follows tab/split focus instead of depending on OS cursor location
+`config/mappings.json` is the source of truth for the current button layout, keycodes, helper commands, and descriptions. Do not duplicate the live mapping table here; update the config descriptions instead.
+
+The stable integration roles are:
+- `ghosttyAction` for simple Ghostty terminal structure actions.
+- Shell helpers for richer Codex/Ghostty surface startup flows.
+- Plain keystrokes or text actions for terminal input.
+- Ghostty-targeted scroll for focused-terminal scrolling when Ghostty is frontmost.
 
 ## Why AppleScript Is Acceptable Here
 
