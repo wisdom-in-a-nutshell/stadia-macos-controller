@@ -13,7 +13,8 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `Menu`: send `Shift+Tab` in Ghostty to toggle Codex Plan mode without typing `/plan`.
 - Left thumbstick click: open a right split with the Codex repo picker (`codex_jump`).
 - Right thumbstick click: open a right split and start Codex in the inherited current directory.
-- D-pad `Up/Down/Left/Right`: global arrow-key navigation via `alwaysOn`.
+- D-pad `Up/Down`: global arrow-key navigation via `alwaysOn`.
+- D-pad `Left/Right`: Ghostty-only zoom out/in.
 - Right stick up: open `/model`.
 - Right stick horizontal tilt: Ghostty-only punctuation shortcuts (`Left` = `/`, `Right` = `$`).
 - `Share`: run the shared Ghostty picker-tab helper so the new tab opens directly into the Codex jump picker.
@@ -26,7 +27,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - `Y` is reserved for text correction because Backspace is common during dictated terminal input.
 - `Menu` toggles Codex Plan mode through its native keyboard shortcut instead of injecting slash-command text into the composer.
 - `L2` + `X` is a low-risk modifier experiment because it uses a held modifier with a discrete button, not an analog stick.
-- The D-pad is reserved for consistent global navigation across apps.
+- The D-pad keeps high-value global vertical navigation while using the low-use horizontal directions for Ghostty zoom.
 - The right stick now carries the quick Codex-specific prompts without consuming face buttons:
   - up is `/model`
   - horizontal tilt is punctuation
@@ -37,7 +38,7 @@ Reduce cognitive load while using dictation + controller together by making butt
 - Core Ghostty navigation/management buttons now target Ghostty actions directly so they do not depend on separate keybinding definitions staying in sync.
 
 ## Notes
-- `L2`, `X`, `R2`, D-pad arrows, and left-stick vertical scroll are configured in the top-level `alwaysOn` section.
+- `L2`, `X`, `R2`, D-pad up/down arrows, and left-stick vertical scroll are configured in the top-level `alwaysOn` section.
 - Mapping changes hot-reload from `config/mappings.json`; restart is not required for config-only changes.
 - If Ghostty keybindings change, update descriptions and keycodes together in `config/mappings.json`.
 - The `Share` behavior depends on Ghostty `1.3.0+` native AppleScript support and currently uses Ghostty's preview scripting API through a shared helper script.

@@ -60,26 +60,6 @@
           "modifiers": [],
           "description": "Send Down Arrow"
         }
-      },
-      "dpadLeft": {
-        "debounceMs": 140,
-        "edgeTrigger": true,
-        "action": {
-          "type": "keystroke",
-          "keyCode": 123,
-          "modifiers": [],
-          "description": "Send Left Arrow"
-        }
-      },
-      "dpadRight": {
-        "debounceMs": 140,
-        "edgeTrigger": true,
-        "action": {
-          "type": "keystroke",
-          "keyCode": 124,
-          "modifiers": [],
-          "description": "Send Right Arrow"
-        }
       }
     }
   },
@@ -155,6 +135,30 @@
               "shift"
             ],
             "description": "Toggle Codex Plan mode with Shift+Tab"
+          }
+        },
+        "dpadLeft": {
+          "debounceMs": 140,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 27,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Zoom out in Ghostty with Cmd+-"
+          }
+        },
+        "dpadRight": {
+          "debounceMs": 140,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 24,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Zoom in Ghostty with Cmd+="
           }
         },
         "rightThumbstickButton": {
