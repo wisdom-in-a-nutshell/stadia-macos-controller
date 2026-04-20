@@ -45,6 +45,7 @@ flowchart TD
   - `B` -> `Escape`
   - `Y` -> `Backspace`
   - `Menu` -> `Shift+Tab` for Codex Plan mode
+  - D-pad left/right -> Ghostty zoom out/in
   - right stick up -> `/model`
   - right stick left/right -> `/` and `$`
 - Ghostty-targeted scrolling:
