@@ -170,6 +170,11 @@ enum ActionType: String, Decodable {
     case mouseClick
 }
 
+struct ProcessResult {
+    let stdout: String
+    let stderr: String
+}
+
 struct ControllerEvent {
     let controllerID: String
     let button: String
@@ -838,10 +843,15 @@ final class ActionExecutor {
         NSWorkspace.shared.frontmostApplication?.bundleIdentifier
     }
 
-    private func runProcess(executable: String, arguments: [String]) throws {
+    @discardableResult
+    private func runProcess(executable: String, arguments: [String]) throws -> ProcessResult {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: executable)
         process.arguments = arguments
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
 
         do {
             try process.run()
@@ -850,9 +860,20 @@ final class ActionExecutor {
             throw BridgeError.actionExecutionFailed("Process failed to start: \(error.localizedDescription)")
         }
 
+        let stdoutData = stdoutPipe.fileHandleForReading.readDataToEndOfFile()
+        let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+        let stdout = String(data: stdoutData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let stderr = String(data: stderrData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
         guard process.terminationStatus == 0 else {
-            throw BridgeError.actionExecutionFailed("Process exited with status \(process.terminationStatus)")
+            let detail = [stderr, stdout]
+                .filter { !$0.isEmpty }
+                .joined(separator: "\n")
+            let output = detail.isEmpty ? "" : ": \(detail)"
+            throw BridgeError.actionExecutionFailed("Process exited with status \(process.terminationStatus)\(output)")
         }
+
+        return ProcessResult(stdout: stdout, stderr: stderr)
     }
 }
 

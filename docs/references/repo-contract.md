@@ -31,6 +31,7 @@ Use this page for repo-level commands, file map notes, and runtime contracts.
 - Do not introduce per-machine launchd labels or staged runtime paths unless explicitly requested.
 - `config/mappings.json` hot-reloads while the bridge process is running.
 - Changes that add a new runtime action type, CLI behavior, or config schema require reinstalling the staged launchd app so launchd stops running the old binary.
+- Shell and AppleScript helper stdout/stderr are captured by the bridge; failed helper actions should surface captured output in the bridge log instead of leaking raw subprocess lines to launchd stderr.
 
 ## Mapping Contract
 - Use explicit `appProfiles` matching only.
