@@ -43,6 +43,26 @@
           "modifiers": [],
           "description": "Send Down Arrow"
         }
+      },
+      "dpadLeft": {
+        "debounceMs": 140,
+        "edgeTrigger": true,
+        "action": {
+          "type": "keystroke",
+          "keyCode": 123,
+          "modifiers": [],
+          "description": "Send Left Arrow"
+        }
+      },
+      "dpadRight": {
+        "debounceMs": 140,
+        "edgeTrigger": true,
+        "action": {
+          "type": "keystroke",
+          "keyCode": 124,
+          "modifiers": [],
+          "description": "Send Right Arrow"
+        }
       }
     }
   },
@@ -267,6 +287,30 @@
         }
       },
       "mappings": {
+        "options": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 38,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Toggle Codex app terminal with Cmd+J"
+          }
+        },
+        "share": {
+          "debounceMs": 500,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 45,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Open a new Codex chat with Cmd+N"
+          }
+        },
         "menu": {
           "debounceMs": 180,
           "edgeTrigger": true,
@@ -319,6 +363,32 @@
             "keyCode": 51,
             "modifiers": [],
             "description": "Send Backspace in Codex app"
+          }
+        },
+        "leftShoulder": {
+          "debounceMs": 200,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 33,
+            "modifiers": [
+              "command",
+              "shift"
+            ],
+            "description": "Switch to previous Codex chat with Shift+Cmd+["
+          }
+        },
+        "rightShoulder": {
+          "debounceMs": 200,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 30,
+            "modifiers": [
+              "command",
+              "shift"
+            ],
+            "description": "Switch to next Codex chat with Shift+Cmd+]"
           }
         }
       }
