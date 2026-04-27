@@ -365,6 +365,31 @@
             "description": "Send Backspace in Codex app"
           }
         },
+        "dpadLeft": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 11,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Toggle Codex app left sidebar with Cmd+B"
+          }
+        },
+        "dpadRight": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 11,
+            "modifiers": [
+              "command",
+              "option"
+            ],
+            "description": "Toggle Codex app right diff panel with Option+Cmd+B"
+          }
+        },
         "leftShoulder": {
           "debounceMs": 200,
           "edgeTrigger": true,
