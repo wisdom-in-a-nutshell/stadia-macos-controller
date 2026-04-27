@@ -1,6 +1,7 @@
 {
   "appProfiles": {
-    "com.mitchellh.ghostty": "ghostty"
+    "com.mitchellh.ghostty": "ghostty",
+    "com.openai.codex": "codexApp"
   },
   "alwaysOn": {
     "analog": {
@@ -219,6 +220,105 @@
             "type": "ghosttyAction",
             "ghosttyAction": "next_tab",
             "description": "Cycle tabs via Ghostty native action"
+          }
+        }
+      }
+    },
+    "codexApp": {
+      "enabled": true,
+      "analog": {
+        "rightStickVerticalActions": {
+          "enabled": true,
+          "deadzone": 0.66,
+          "edgeTrigger": true,
+          "upAction": {
+            "type": "text",
+            "text": "/model",
+            "delayMs": 80,
+            "pressEnter": true,
+            "description": "Open /model popup from right stick up in Codex app"
+          },
+          "downAction": {
+            "type": "text",
+            "text": "/fast",
+            "delayMs": 80,
+            "pressEnter": true,
+            "description": "Open /fast from right stick down in Codex app"
+          }
+        },
+        "rightStickHorizontalActions": {
+          "enabled": true,
+          "deadzone": 0.62,
+          "edgeTrigger": true,
+          "leftAction": {
+            "type": "keystroke",
+            "keyCode": 44,
+            "modifiers": [],
+            "description": "Send slash (/) in Codex app"
+          },
+          "rightAction": {
+            "type": "keystroke",
+            "keyCode": 21,
+            "modifiers": [
+              "shift"
+            ],
+            "description": "Send dollar sign ($) in Codex app"
+          }
+        }
+      },
+      "mappings": {
+        "menu": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 48,
+            "modifiers": [
+              "shift"
+            ],
+            "description": "Toggle Codex Plan mode with Shift+Tab in Codex app"
+          }
+        },
+        "x": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 8,
+            "modifiers": [
+              "control"
+            ],
+            "description": "Send Ctrl+C in Codex app"
+          }
+        },
+        "a": {
+          "debounceMs": 120,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 36,
+            "modifiers": [],
+            "description": "Send Enter in Codex app"
+          }
+        },
+        "b": {
+          "debounceMs": 120,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 53,
+            "modifiers": [],
+            "description": "Send Escape in Codex app"
+          }
+        },
+        "y": {
+          "debounceMs": 120,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 51,
+            "modifiers": [],
+            "description": "Send Backspace in Codex app"
           }
         }
       }

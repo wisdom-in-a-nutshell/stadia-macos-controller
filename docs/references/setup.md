@@ -49,7 +49,9 @@ swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --
 Operational notes:
 - `alwaysOn` controls remain active outside Ghostty.
 - Ghostty profile controls only fire when `com.mitchellh.ghostty` is frontmost.
+- Codex app profile controls only fire when `com.openai.codex` is frontmost.
 - Left-stick vertical scroll is configured in `alwaysOn`; when Ghostty is frontmost, the bridge targets Ghostty's focused terminal directly so scrolling follows tab/split focus instead of mouse cursor position.
+- In Codex app, the profile keeps high-frequency text-entry controls available without enabling Ghostty-only tab, split, or surface-management actions.
 - Keep exact button-to-action documentation in `config/mappings.json`, not in this setup guide.
 
 Dictation stability note:
