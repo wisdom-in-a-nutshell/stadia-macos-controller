@@ -253,10 +253,10 @@
           "edgeTrigger": true,
           "upAction": {
             "type": "text",
-            "text": "/model",
+            "text": "/reasoning",
             "delayMs": 80,
             "pressEnter": true,
-            "description": "Open /model popup from right stick up in Codex app"
+            "description": "Open /reasoning popup from right stick up in Codex app"
           },
           "downAction": {
             "type": "text",
