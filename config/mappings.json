@@ -288,15 +288,16 @@
       },
       "mappings": {
         "options": {
-          "debounceMs": 180,
+          "debounceMs": 500,
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 38,
+            "keyCode": 0,
             "modifiers": [
-              "command"
+              "command",
+              "shift"
             ],
-            "description": "Toggle Codex app terminal with Cmd+J"
+            "description": "Archive current Codex chat with Cmd+Shift+A"
           }
         },
         "share": {
