@@ -391,6 +391,30 @@
             "description": "Toggle Codex app right diff panel with Option+Cmd+B"
           }
         },
+        "leftThumbstickButton": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 27,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Zoom out in Codex app with Cmd+-"
+          }
+        },
+        "rightThumbstickButton": {
+          "debounceMs": 180,
+          "edgeTrigger": true,
+          "action": {
+            "type": "keystroke",
+            "keyCode": 24,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Zoom in Codex app with Cmd+="
+          }
+        },
         "leftShoulder": {
           "debounceMs": 200,
           "edgeTrigger": true,
