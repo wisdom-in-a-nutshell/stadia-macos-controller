@@ -329,12 +329,11 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 0,
+            "keyCode": 8,
             "modifiers": [
-              "command",
-              "shift"
+              "control"
             ],
-            "description": "Archive current Codex thread with Cmd+Shift+A"
+            "description": "Send Ctrl+C in Codex app"
           }
         },
         "a": {
