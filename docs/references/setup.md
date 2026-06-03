@@ -113,6 +113,12 @@ cd ~/GitHub/scripts
   - Fix: treat `home` as unavailable on that setup; map other confirmed buttons instead.
   - Quick check:
     - `rg -n "button=home|button=share|button=menu|button=options" ~/Library/Logs/stadia-controller-bridge.launchd.out.log -S`
+- Symptom: Apple Games, Game Center, Game Overlay, or Launchpad opens when pressing controller system/share buttons.
+  - Cause: macOS Game Controller system shortcuts are handling the same physical buttons before or alongside the bridge.
+  - Fix: turn off the shortcuts in `System Settings` > `Game Controllers` for the connected controller, or run:
+    - `defaults write com.apple.GameController bluetoothPrefsMenuLongPressAction -integer 0`
+    - `defaults write com.apple.GameController bluetoothPrefsShareLongPressSystemGestureMode -integer -1`
+  - Apply: disconnect and reconnect the controller; if macOS still opens the Apple UI, log out and back in once.
 - Symptom: worked earlier, then broke right after reinstall.
   - Cause: signing identity changed, or app executable was unnecessarily rebuilt/re-signed.
   - Fix: reinstall with stable signing:

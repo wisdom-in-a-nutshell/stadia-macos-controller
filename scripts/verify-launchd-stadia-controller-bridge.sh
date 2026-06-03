@@ -8,6 +8,8 @@ RUNTIME_DIR="${HOME}/Library/Application Support/stadia-controller-bridge"
 APP_BUNDLE_NAME="StadiaControllerBridge.app"
 APP_EXECUTABLE_NAME="stadia-controller-bridge"
 EXPECTED_SIGNING_IDENTIFIER="com.stadia-controller-bridge"
+EXPECTED_MENU_LONG_PRESS_ACTION=0
+EXPECTED_SHARE_LONG_PRESS_SYSTEM_GESTURE_MODE=-1
 TAIL_LINES=120
 
 OUT_LOG="${HOME}/Library/Logs/stadia-controller-bridge.launchd.out.log"
@@ -82,6 +84,10 @@ warn() {
   echo "WARN: $*"
 }
 
+read_game_controller_default() {
+  defaults read com.apple.GameController "$1" 2>/dev/null || true
+}
+
 echo "Verifying label: ${LABEL}"
 echo "Expected program: ${EXPECTED_PROGRAM}"
 
@@ -128,6 +134,20 @@ if [[ -d "$EXPECTED_APP_BUNDLE" ]]; then
   fi
 else
   fail "Expected app bundle missing: ${EXPECTED_APP_BUNDLE}"
+fi
+
+menu_long_press_action="$(read_game_controller_default bluetoothPrefsMenuLongPressAction)"
+if [[ "$menu_long_press_action" != "$EXPECTED_MENU_LONG_PRESS_ACTION" ]]; then
+  fail "macOS controller menu long-press action is ${menu_long_press_action:-missing}; expected ${EXPECTED_MENU_LONG_PRESS_ACTION}"
+else
+  note "macOS controller menu long-press shortcut is disabled"
+fi
+
+share_system_gesture_mode="$(read_game_controller_default bluetoothPrefsShareLongPressSystemGestureMode)"
+if [[ "$share_system_gesture_mode" != "$EXPECTED_SHARE_LONG_PRESS_SYSTEM_GESTURE_MODE" ]]; then
+  fail "macOS controller share long-press gesture mode is ${share_system_gesture_mode:-missing}; expected ${EXPECTED_SHARE_LONG_PRESS_SYSTEM_GESTURE_MODE}"
+else
+  note "macOS controller share long-press shortcut is disabled"
 fi
 
 log_chunk=""

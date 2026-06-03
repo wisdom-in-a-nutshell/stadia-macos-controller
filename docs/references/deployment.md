@@ -48,6 +48,7 @@ What this installer now does:
 - Uses one stable default LaunchAgent label on both machines: `com.stadia-controller-bridge`.
 - Uses one stable default signing/bundle identifier on both machines: `com.stadia-controller-bridge`.
 - Code-signs the staged app bundle target (`auto` by default with ad-hoc fallback).
+- Disables macOS Game Controller system shortcuts that can open Apple Games, Game Center, Game Overlay, or Launchpad from controller system/share buttons.
 - Points launchd to the staged app executable.
 
 This avoids relying on transient `.build/...` binaries and reduces repeated Accessibility re-approval.
@@ -95,6 +96,7 @@ git pull --rebase
 
 No restart is needed for mapping changes only (hot reload). Restart/reinstall is needed if code or launchd settings change.
 Do not copy built binaries between machines; each machine should run the installer locally so build/signing and launchd registration match local macOS trust state.
+If a macOS update resets Game Controller system shortcuts, rerun the installer above; it reapplies the shortcut suppression before loading the bridge.
 
 ## Troubleshooting (Recovery Runbook)
 If actions stop firing but controller appears connected:

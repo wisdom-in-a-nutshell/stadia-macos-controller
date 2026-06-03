@@ -16,6 +16,8 @@ APP_EXECUTABLE_NAME="stadia-controller-bridge"
 SIGN_IDENTITY="auto"   # auto|adhoc|none|<identity string>
 SIGNING_IDENTIFIER="com.stadia-controller-bridge"
 FORCE_BUILD=0
+DISABLE_MENU_LONG_PRESS_ACTION=0
+DISABLE_SHARE_LONG_PRESS_SYSTEM_GESTURE_MODE=-1
 
 PLIST_PATH="${HOME}/Library/LaunchAgents/${LABEL}.plist"
 OUT_LOG="${HOME}/Library/Logs/stadia-controller-bridge.launchd.out.log"
@@ -80,6 +82,13 @@ write_info_plist() {
   </dict>
 </plist>
 PLIST
+}
+
+configure_macos_controller_shortcuts() {
+  echo "Disabling macOS Game Controller system shortcuts that conflict with the bridge..."
+  defaults write com.apple.GameController bluetoothPrefsMenuLongPressAction -integer "$DISABLE_MENU_LONG_PRESS_ACTION"
+  defaults write com.apple.GameController bluetoothPrefsShareLongPressSystemGestureMode -integer "$DISABLE_SHARE_LONG_PRESS_SYSTEM_GESTURE_MODE"
+  pkill -u "$USER" cfprefsd >/dev/null 2>&1 || true
 }
 
 while [[ $# -gt 0 ]]; do
@@ -169,6 +178,8 @@ if [[ ! -f "$REPO_DIR/$CONFIG_PATH" ]]; then
   echo "Config file not found: $REPO_DIR/$CONFIG_PATH" >&2
   exit 1
 fi
+
+configure_macos_controller_shortcuts
 
 STAGED_APP_BUNDLE="${RUNTIME_DIR}/${APP_BUNDLE_NAME}"
 STAGED_CONTENTS_DIR="${STAGED_APP_BUNDLE}/Contents"
