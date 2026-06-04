@@ -24,15 +24,6 @@
           "description": "Hold to mimic F12"
         }
       },
-      "leftThumbstickButton": {
-        "debounceMs": 300,
-        "edgeTrigger": true,
-        "action": {
-          "type": "shell",
-          "command": "$HOME/GitHub/stadia-macos-controller/scripts/focus-codex-composer.sh",
-          "description": "Focus existing Codex app window and composer"
-        }
-      },
       "dpadUp": {
         "debounceMs": 140,
         "edgeTrigger": true,
@@ -401,12 +392,15 @@
           }
         },
         "leftThumbstickButton": {
-          "debounceMs": 300,
+          "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "shell",
-            "command": "$HOME/GitHub/stadia-macos-controller/scripts/focus-codex-composer.sh",
-            "description": "Focus existing Codex app window and composer"
+            "type": "keystroke",
+            "keyCode": 27,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Zoom out in Codex app with Cmd+-"
           }
         },
         "rightThumbstickButton": {
