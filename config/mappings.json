@@ -415,22 +415,34 @@
             "description": "Zoom in Codex app with Cmd+="
           }
         },
+        "leftTrigger": {
+          "action": {
+            "type": "holdKeystroke",
+            "keyCode": 59,
+            "modifiers": [],
+            "description": "Hold Control in Codex app for recent-thread switcher chords"
+          }
+        },
         "leftShoulder": {
-          "debounceMs": 200,
+          "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\"\n  key down control\n  key down shift\n  key code 48\n  key up shift\n  key up control\nend tell",
-            "description": "Switch to previous recently viewed Codex thread with explicit Ctrl+Shift+Tab press and release"
+            "type": "keystroke",
+            "keyCode": 48,
+            "modifiers": [
+              "shift"
+            ],
+            "description": "Send Shift+Tab in Codex app; hold L2 for previous recent thread"
           }
         },
         "rightShoulder": {
-          "debounceMs": 200,
+          "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\"\n  key down control\n  key code 48\n  key up control\nend tell",
-            "description": "Switch to next recently viewed Codex thread with explicit Ctrl+Tab press and release"
+            "type": "keystroke",
+            "keyCode": 48,
+            "modifiers": [],
+            "description": "Send Tab in Codex app; hold L2 for next recent thread"
           }
         }
       }
