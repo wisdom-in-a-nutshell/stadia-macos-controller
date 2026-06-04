@@ -420,8 +420,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\"\n  key code 48 using {control down, shift down}\n  delay 0.08\n  key code 36\nend tell",
-            "description": "Switch to previous recently viewed Codex thread with Ctrl+Shift+Tab, then commit selection"
+            "script": "tell application \"System Events\"\n  key down control\n  key down shift\n  key code 48\n  key up shift\n  key up control\nend tell",
+            "description": "Switch to previous recently viewed Codex thread with explicit Ctrl+Shift+Tab press and release"
           }
         },
         "rightShoulder": {
@@ -429,8 +429,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\"\n  key code 48 using {control down}\n  delay 0.08\n  key code 36\nend tell",
-            "description": "Switch to next recently viewed Codex thread with Ctrl+Tab, then commit selection"
+            "script": "tell application \"System Events\"\n  key down control\n  key code 48\n  key up control\nend tell",
+            "description": "Switch to next recently viewed Codex thread with explicit Ctrl+Tab press and release"
           }
         }
       }
