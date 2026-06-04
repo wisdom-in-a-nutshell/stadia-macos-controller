@@ -420,12 +420,12 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 33,
+            "keyCode": 48,
             "modifiers": [
-              "command",
+              "control",
               "shift"
             ],
-            "description": "Switch to previous Codex chat with Shift+Cmd+["
+            "description": "Switch to previous recently viewed Codex thread with Ctrl+Shift+Tab"
           }
         },
         "rightShoulder": {
@@ -433,12 +433,11 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 30,
+            "keyCode": 48,
             "modifiers": [
-              "command",
-              "shift"
+              "control"
             ],
-            "description": "Switch to next Codex chat with Shift+Cmd+]"
+            "description": "Switch to next recently viewed Codex thread with Ctrl+Tab"
           }
         }
       }
