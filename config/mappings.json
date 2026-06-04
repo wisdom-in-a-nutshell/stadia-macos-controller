@@ -419,25 +419,18 @@
           "debounceMs": 200,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 48,
-            "modifiers": [
-              "control",
-              "shift"
-            ],
-            "description": "Switch to previous recently viewed Codex thread with Ctrl+Shift+Tab"
+            "type": "applescript",
+            "script": "tell application \"System Events\"\n  key code 48 using {control down, shift down}\n  delay 0.08\n  key code 36\nend tell",
+            "description": "Switch to previous recently viewed Codex thread with Ctrl+Shift+Tab, then commit selection"
           }
         },
         "rightShoulder": {
           "debounceMs": 200,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 48,
-            "modifiers": [
-              "control"
-            ],
-            "description": "Switch to next recently viewed Codex thread with Ctrl+Tab"
+            "type": "applescript",
+            "script": "tell application \"System Events\"\n  key code 48 using {control down}\n  delay 0.08\n  key code 36\nend tell",
+            "description": "Switch to next recently viewed Codex thread with Ctrl+Tab, then commit selection"
           }
         }
       }
