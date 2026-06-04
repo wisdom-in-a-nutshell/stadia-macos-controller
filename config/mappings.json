@@ -28,8 +28,8 @@
         "debounceMs": 300,
         "edgeTrigger": true,
         "action": {
-          "type": "applescript",
-          "script": "tell application id \"com.openai.codex\" to activate\n delay 0.15\n tell application \"System Events\"\n   tell process \"Codex\"\n     set frontmost to true\n     delay 0.05\n     set windowPosition to position of front window\n     set windowSize to size of front window\n     set targetX to (item 1 of windowPosition) + ((item 1 of windowSize) / 2)\n     set targetY to (item 2 of windowPosition) + (item 2 of windowSize) - 90\n     click at {targetX, targetY}\n   end tell\n end tell",
+          "type": "shell",
+          "command": "$HOME/GitHub/stadia-macos-controller/scripts/focus-codex-composer.sh",
           "description": "Focus existing Codex app window and composer"
         }
       },
@@ -404,8 +404,8 @@
           "debounceMs": 300,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application id \"com.openai.codex\" to activate\n delay 0.15\n tell application \"System Events\"\n   tell process \"Codex\"\n     set frontmost to true\n     delay 0.05\n     set windowPosition to position of front window\n     set windowSize to size of front window\n     set targetX to (item 1 of windowPosition) + ((item 1 of windowSize) / 2)\n     set targetY to (item 2 of windowPosition) + (item 2 of windowSize) - 90\n     click at {targetX, targetY}\n   end tell\n end tell",
+            "type": "shell",
+            "command": "$HOME/GitHub/stadia-macos-controller/scripts/focus-codex-composer.sh",
             "description": "Focus existing Codex app window and composer"
           }
         },

@@ -7,6 +7,7 @@ Use this page for repo-level commands, file map notes, and runtime contracts.
 - `config/mappings.json`: source of truth for app profiles, `alwaysOn` controls, per-profile mappings, and safety defaults.
 - `scripts/run-bridge.sh`: local `swift run` wrapper.
 - `scripts/check-fast.sh`: fast repo validation for merge markers and Swift package manifest parsing.
+- `scripts/focus-codex-composer.sh`: helper used by controller mappings to activate Codex and focus the composer when Accessibility does not expose Codex windows to `System Events`.
 - `scripts/install-launchd-stadia-controller-bridge.sh`: project-local fallback installer for the bridge LaunchAgent.
 - `scripts/verify-launchd-stadia-controller-bridge.sh`: project-local fallback verifier for launchd wiring, staged runtime path, and signing identifier.
 - `scripts/uninstall-launchd-stadia-controller-bridge.sh`: project-local fallback cleanup for bridge LaunchAgents.

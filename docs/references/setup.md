@@ -52,6 +52,7 @@ Operational notes:
 - Codex app profile controls only fire when `com.openai.codex` is frontmost.
 - Left-stick vertical scroll is configured in `alwaysOn`; when Ghostty is frontmost, the bridge targets Ghostty's focused terminal directly so scrolling follows tab/split focus instead of mouse cursor position.
 - In Codex app, the profile keeps high-frequency text-entry, chat switching, archiving, and panel-toggle controls available without enabling Ghostty-only tab, split, or surface-management actions.
+- Codex composer focus recovery uses `scripts/focus-codex-composer.sh` because Codex may not expose its windows through `System Events`; the helper activates Codex, finds its visible window through CoreGraphics, and clicks the composer region.
 - D-pad arrow-key controls are always-on where no active app profile overrides them; Ghostty overrides horizontal D-pad with zoom actions, and Codex app overrides horizontal D-pad with left/right panel toggles.
 - Keep exact button-to-action documentation in `config/mappings.json`, not in this setup guide.
 
