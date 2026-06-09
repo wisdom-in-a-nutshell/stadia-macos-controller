@@ -229,8 +229,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "ghosttyAction",
-            "ghosttyAction": "goto_split:next",
-            "description": "Cycle splits within current tab via Ghostty native action"
+            "ghosttyAction": "previous_tab",
+            "description": "Move to previous tab via Ghostty native action"
           }
         },
         "rightShoulder": {
@@ -239,7 +239,7 @@
           "action": {
             "type": "ghosttyAction",
             "ghosttyAction": "next_tab",
-            "description": "Cycle tabs via Ghostty native action"
+            "description": "Move to next tab via Ghostty native action"
           }
         }
       }
@@ -428,11 +428,11 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 48,
+            "keyCode": 33,
             "modifiers": [
-              "shift"
+              "command"
             ],
-            "description": "Send Shift+Tab in Codex app; hold L2 for previous recent thread"
+            "description": "Move to previous Codex chat with Cmd+["
           }
         },
         "rightShoulder": {
@@ -440,9 +440,11 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 48,
-            "modifiers": [],
-            "description": "Send Tab in Codex app; hold L2 for next recent thread"
+            "keyCode": 30,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Move to next Codex chat with Cmd+]"
           }
         }
       }
