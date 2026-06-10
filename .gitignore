@@ -9,6 +9,7 @@
 !*.env.example
 
 # Local temp artifacts
-/tmp/
+/tmp/*
+!/tmp/.gitignore
 /.tmp/
 /temp/

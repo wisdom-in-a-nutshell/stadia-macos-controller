@@ -3,15 +3,18 @@
 Use this page for repo-level commands, file map notes, and runtime contracts.
 
 ## Repo Map
+- `AGENTS.md`: cold-start repo router for agents.
 - `src/main.swift`: CLI parsing, config loading and validation, frontmost-app profile resolution, action execution, controller polling, and config hot reload.
 - `config/mappings.json`: source of truth for app profiles, `alwaysOn` controls, per-profile mappings, and safety defaults.
 - `scripts/run-bridge.sh`: local `swift run` wrapper.
-- `scripts/check-fast.sh`: fast repo validation for merge markers and Swift package manifest parsing.
+- `scripts/check-fast.sh`: fast repo validation. Delegates cheap generic checks to `~/GitHub/scripts/bin/repo-fast-check`, then validates Swift package manifest parsing when Swift manifest files are staged.
 - `scripts/install-launchd-stadia-controller-bridge.sh`: project-local fallback installer for the bridge LaunchAgent.
 - `scripts/verify-launchd-stadia-controller-bridge.sh`: project-local fallback verifier for launchd wiring, staged runtime path, and signing identifier.
 - `scripts/uninstall-launchd-stadia-controller-bridge.sh`: project-local fallback cleanup for bridge LaunchAgents.
 - `docs/architecture/`: subsystem shape, boundaries, and runtime flow.
 - `docs/references/`: durable commands, config contracts, and operational lookup notes.
+- `docs/projects/`: active multi-session execution state when needed.
+- `tmp/`: repo-local scratch space for disposable agent artifacts.
 
 ## Validation
 - Run `./scripts/check-fast.sh` for repo-native fast validation on every change.
