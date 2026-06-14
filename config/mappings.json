@@ -427,25 +427,26 @@
           "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "modifierChord",
-            "keyCode": 48,
+            "type": "keystroke",
+            "keyCode": 33,
             "modifiers": [
-              "control",
+              "command",
               "shift"
             ],
-            "description": "Move to previous recently viewed Codex chat with Ctrl+Shift+Tab"
+            "description": "Move to previous Codex chat with Cmd+Shift+["
           }
         },
         "rightShoulder": {
           "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "modifierChord",
-            "keyCode": 48,
+            "type": "keystroke",
+            "keyCode": 30,
             "modifiers": [
-              "control"
+              "command",
+              "shift"
             ],
-            "description": "Move to next recently viewed Codex chat with Ctrl+Tab"
+            "description": "Move to next Codex chat with Cmd+Shift+]"
           }
         }
       }
