@@ -420,7 +420,7 @@
             "type": "holdKeystroke",
             "keyCode": 59,
             "modifiers": [],
-            "description": "Hold Control in Codex app for recent-thread switcher chords"
+            "description": "Hold Control in Codex app for manual modifier chords"
           }
         },
         "leftShoulder": {
@@ -428,11 +428,12 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 33,
+            "keyCode": 48,
             "modifiers": [
-              "command"
+              "control",
+              "shift"
             ],
-            "description": "Move to previous Codex chat with Cmd+["
+            "description": "Move to previous recently viewed Codex chat with Ctrl+Shift+Tab"
           }
         },
         "rightShoulder": {
@@ -440,11 +441,11 @@
           "edgeTrigger": true,
           "action": {
             "type": "keystroke",
-            "keyCode": 30,
+            "keyCode": 48,
             "modifiers": [
-              "command"
+              "control"
             ],
-            "description": "Move to next Codex chat with Cmd+]"
+            "description": "Move to next recently viewed Codex chat with Ctrl+Tab"
           }
         }
       }

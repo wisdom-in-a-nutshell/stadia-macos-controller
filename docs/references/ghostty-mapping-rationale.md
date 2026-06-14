@@ -7,9 +7,9 @@ Reduce cognitive load while using dictation + controller together by making butt
 `config/mappings.json` owns the exact current layout: button names, keycodes, modifiers, helper commands, debounce values, and action descriptions. Keep this page focused on layout intent so it does not drift from the config.
 
 ## Layout Principles
-- Shoulder buttons use a paired previous/next model for tab-style navigation:
-  - L1 moves to the previous tab or thread.
-  - R1 moves to the next tab or thread.
+- Shoulder buttons use a paired previous/next model, scoped to the active app:
+  - In Ghostty, L1/R1 move to the previous/next tab.
+  - In the Codex app, L1/R1 move through recently viewed chats with `Ctrl+Shift+Tab` / `Ctrl+Tab`, not linear browser back/forward history.
 - Face buttons are reserved for high-frequency terminal input and correction, not layout-changing actions.
 - The menu-style center button is reserved for Codex mode changes through native keyboard shortcuts rather than injected slash-command text.
 - The held-trigger modifier chord remains experimental; it should stay low-risk and avoid destructive combinations.
