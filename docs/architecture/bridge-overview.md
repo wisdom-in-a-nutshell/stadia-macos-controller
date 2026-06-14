@@ -54,8 +54,9 @@ flowchart TD
 
 ## Action Types
 
-- `keystroke` / `holdKeystroke`
+- `keystroke` / `modifierChord` / `holdKeystroke`
   - generic macOS key injection
+  - `modifierChord` sends real modifier key down/up events around the keystroke for app switchers that commit on modifier release
 - `ghosttyAction`
   - Ghostty-native terminal action such as `next_tab`, `goto_split:next`, or `close_surface`
 - `applescript`

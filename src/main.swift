@@ -162,6 +162,7 @@ struct ActionConfig: Decodable {
 
 enum ActionType: String, Decodable {
     case keystroke
+    case modifierChord
     case holdKeystroke
     case shell
     case applescript
@@ -311,9 +312,9 @@ struct ConfigLoader {
 
     private static func validateAction(_ action: ActionConfig, context: String) throws {
         switch action.type {
-        case .keystroke:
+        case .keystroke, .modifierChord:
             guard action.keyCode != nil else {
-                throw BridgeError.configValidationFailed("\(context) keystroke action requires keyCode")
+                throw BridgeError.configValidationFailed("\(context) \(action.type.rawValue) action requires keyCode")
             }
         case .holdKeystroke:
             guard action.keyCode != nil else {
@@ -496,6 +497,20 @@ final class ActionExecutor {
             let flags = effectiveModifierFlags(from: action.modifiers ?? [])
             try postKeystroke(keyCode: keyCode, modifiers: flags)
             print("[ACTION] keystroke keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
+
+        case .modifierChord:
+            guard let keyCodeValue = action.keyCode else {
+                throw BridgeError.actionExecutionFailed("modifierChord action missing keyCode")
+            }
+
+            if !AXIsProcessTrusted() {
+                throw BridgeError.actionExecutionFailed("Accessibility permission is required for modifier chord injection")
+            }
+
+            let keyCode = CGKeyCode(keyCodeValue)
+            let modifiers = action.modifiers ?? []
+            try postModifierChord(keyCode: keyCode, modifiers: modifiers, releaseDelayMs: action.delayMs)
+            print("[ACTION] modifier-chord keyCode=\(keyCodeValue) profile=\(profile) button=\(button)")
 
         case .holdKeystroke:
             throw BridgeError.actionExecutionFailed("holdKeystroke must be handled as press/release lifecycle")
@@ -768,6 +783,21 @@ final class ActionExecutor {
         activeHeldModifierFlags.union(modifierFlags(from: modifiers))
     }
 
+    private func modifierKeyCode(for modifier: String) -> CGKeyCode? {
+        switch modifier.lowercased() {
+        case "command", "cmd":
+            return 55
+        case "shift":
+            return 56
+        case "option", "alt":
+            return 58
+        case "control", "ctrl":
+            return 59
+        default:
+            return nil
+        }
+    }
+
     private func modifierFlag(forHeldKeyCode keyCode: CGKeyCode) -> CGEventFlags? {
         switch keyCode {
         case 54, 55:
@@ -786,6 +816,48 @@ final class ActionExecutor {
     private func postKeystroke(keyCode: CGKeyCode, modifiers: CGEventFlags) throws {
         try postKeyEvent(keyCode: keyCode, keyDown: true, modifiers: modifiers)
         try postKeyEvent(keyCode: keyCode, keyDown: false, modifiers: modifiers)
+    }
+
+    private func postModifierChord(keyCode: CGKeyCode, modifiers: [String], releaseDelayMs: Int?) throws {
+        let modifierKeys = modifiers.compactMap { modifier -> (keyCode: CGKeyCode, flag: CGEventFlags)? in
+            guard let keyCode = modifierKeyCode(for: modifier),
+                  let flag = modifierFlag(forHeldKeyCode: keyCode) else {
+                return nil
+            }
+            return (keyCode, flag)
+        }
+
+        var seenFlags = CGEventFlags()
+        let uniqueModifierKeys = modifierKeys.filter { modifierKey in
+            guard !seenFlags.contains(modifierKey.flag) else {
+                return false
+            }
+            seenFlags.formUnion(modifierKey.flag)
+            return true
+        }
+
+        var flags = activeHeldModifierFlags
+        let pressedModifierKeys = uniqueModifierKeys.filter { modifierKey in
+            !activeHeldModifierFlags.contains(modifierKey.flag)
+        }
+
+        for modifierKey in pressedModifierKeys {
+            flags.formUnion(modifierKey.flag)
+            try postKeyEvent(keyCode: modifierKey.keyCode, keyDown: true, modifiers: flags)
+        }
+
+        let chordFlags = activeHeldModifierFlags.union(seenFlags)
+        try postKeystroke(keyCode: keyCode, modifiers: chordFlags)
+
+        let delayMs = releaseDelayMs ?? 35
+        if delayMs > 0 {
+            Thread.sleep(forTimeInterval: Double(delayMs) / 1000.0)
+        }
+
+        for modifierKey in pressedModifierKeys.reversed() {
+            flags.remove(modifierKey.flag)
+            try postKeyEvent(keyCode: modifierKey.keyCode, keyDown: false, modifiers: flags)
+        }
     }
 
 

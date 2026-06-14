@@ -71,10 +71,15 @@ Behavior note:
 - `action` (`ActionConfig`): action to execute.
 
 ## ActionConfig
-- `type` (`"keystroke" | "holdKeystroke" | "shell" | "applescript" | "ghosttyAction" | "text" | "mouseClick"`)
+- `type` (`"keystroke" | "modifierChord" | "holdKeystroke" | "shell" | "applescript" | "ghosttyAction" | "text" | "mouseClick"`)
 - Keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)
+- Modifier chord fields:
+  - `keyCode` (`int`, required)
+  - `modifiers` (`string[]`, optional)
+  - `delayMs` (`int`, optional, default `35`): delay before releasing modifiers after the target keystroke.
+  - Behavior: sends physical modifier key down events, the target keystroke, then physical modifier key up events. Use this for app switchers that commit on modifier release.
 - Hold keystroke fields:
   - `keyCode` (`int`, required)
   - `modifiers` (`string[]`, optional)

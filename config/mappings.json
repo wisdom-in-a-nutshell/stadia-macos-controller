@@ -427,7 +427,7 @@
           "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
+            "type": "modifierChord",
             "keyCode": 48,
             "modifiers": [
               "control",
@@ -440,7 +440,7 @@
           "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
+            "type": "modifierChord",
             "keyCode": 48,
             "modifiers": [
               "control"
