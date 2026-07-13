@@ -97,6 +97,7 @@ const elements = {
   contextNote: document.querySelector("#context-note"),
   controllerHeading: document.querySelector("#controller-heading"),
   controllerMap: document.querySelector("#controller-map"),
+  calloutLayer: document.querySelector("#callout-layer"),
   detailControl: document.querySelector("#detail-control"),
   detailDescription: document.querySelector("#detail-description"),
   detailFacts: document.querySelector("#detail-facts"),
@@ -119,6 +120,62 @@ const state = {
 };
 
 const interactiveDiagram = window.matchMedia("(min-width: 720px)");
+
+const SVGNS = "http://www.w3.org/2000/svg";
+
+// Anchor point on the controller silhouette for each callout, plus which side
+// rail the label sits in. Cluster entries (dpad, rstick) fan four directions.
+const CALLOUTS = [
+  { id: "leftTrigger", token: "L2", side: "left", anchor: { x: 224, y: 74 } },
+  { id: "leftShoulder", token: "L1", side: "left", anchor: { x: 184, y: 131 } },
+  { id: "leftStickVerticalScroll", token: "L-stick", side: "left", anchor: { x: 244, y: 236 } },
+  { id: "leftThumbstickButton", token: "L3", side: "left", anchor: { x: 250, y: 280 } },
+  { id: "options", token: "Options", side: "left", anchor: { x: 392, y: 214 } },
+  { id: "share", token: "Capture", side: "left", anchor: { x: 399, y: 296 } },
+  {
+    id: "dpad",
+    token: "D-pad",
+    side: "left",
+    anchor: { x: 250, y: 408 },
+    members: [
+      { glyph: "↑", control: "dpadUp" },
+      { glyph: "↓", control: "dpadDown" },
+      { glyph: "←", control: "dpadLeft" },
+      { glyph: "→", control: "dpadRight" },
+    ],
+  },
+
+  { id: "rightTrigger", token: "R2", side: "right", anchor: { x: 676, y: 74 } },
+  { id: "rightShoulder", token: "R1", side: "right", anchor: { x: 716, y: 131 } },
+  { id: "menu", token: "Menu", side: "right", anchor: { x: 508, y: 214 } },
+  { id: "y", token: "Y", side: "right", anchor: { x: 678, y: 212 } },
+  { id: "x", token: "X", side: "right", anchor: { x: 633, y: 260 } },
+  { id: "b", token: "B", side: "right", anchor: { x: 723, y: 260 } },
+  { id: "a", token: "A", side: "right", anchor: { x: 678, y: 312 } },
+  {
+    id: "rstick",
+    token: "Right stick",
+    side: "right",
+    anchor: { x: 614, y: 352 },
+    members: [
+      { glyph: "↑", control: "rightStickUp" },
+      { glyph: "↓", control: "rightStickDown" },
+      { glyph: "←", control: "rightStickLeft" },
+      { glyph: "→", control: "rightStickRight" },
+    ],
+  },
+  { id: "rightThumbstickButton", token: "R3", side: "right", anchor: { x: 602, y: 412 } },
+];
+
+const CALLOUT_LAYOUT = {
+  railTop: 58,
+  railBottom: 512,
+  left: { labelX: 138, turnX: 160 },
+  right: { labelX: 762, turnX: 740 },
+  rowHeight: 34,
+  clusterHead: 24,
+  clusterRow: 19,
+};
 
 function profileLabel(profileName) {
   if (PROFILE_LABELS[profileName]) {
@@ -208,6 +265,55 @@ function compactDescription(description) {
     .replace(/\s+with\s+(?:Cmd|Ctrl|Shift|Option).+$/i, "")
     .replace(/^Open\s+/i, "Open ")
     .trim();
+}
+
+function truncateLabel(value, limit = 26) {
+  const text = (value || "").trim();
+  if (text.length <= limit) {
+    return text;
+  }
+  return `${text.slice(0, limit - 1).trimEnd()}…`;
+}
+
+// A concise, human-readable "what it does" phrase for the diagram callouts.
+// Menu and native actions already read well from the summary; keystrokes and
+// typed text read better from a compacted description.
+function calloutLabel(record) {
+  if (!record) {
+    return "Unmapped";
+  }
+
+  const action = record.action || {};
+  if (action.type === "text" && action.text) {
+    return truncateLabel(action.text, 18);
+  }
+
+  if (action.type === "shell") {
+    const compact = compactDescription(action.description || "Run helper")
+      .replace(/ in .*/i, "")
+      .replace(/\b(Ghostty|Codex)\b/g, "")
+      .replace(/\b(a|an|the|new)\b/gi, " ")
+      .replace(/^Split right /i, "Split ")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+    return truncateLabel(compact.charAt(0).toUpperCase() + compact.slice(1), 22);
+  }
+
+  if (action.type === "keystroke" || action.type === "modifierChord") {
+    const compact = (record.description || record.summary || "")
+      .replace(/^Send\s+/i, "")
+      .replace(/\s+in (the )?Codex app$/i, "")
+      .replace(/\s+with\s+(?:Cmd|Ctrl|Shift|Option|Shift\+Tab).+$/i, "")
+      .replace(/^Toggle the Codex app\s+/i, "Toggle ")
+      .replace(/^Toggle Codex\s+/i, "Toggle ")
+      .replace(/\bCodex\s+/g, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+    const phrase = compact || record.summary;
+    return truncateLabel(phrase.charAt(0).toUpperCase() + phrase.slice(1), 22);
+  }
+
+  return truncateLabel(record.summary, 22);
 }
 
 function actionTypeLabel(type) {
@@ -511,12 +617,139 @@ function renderController() {
     }
   }
 
-  for (const labelElement of elements.controllerMap.querySelectorAll("[data-label-control]")) {
-    const record = state.records.get(labelElement.dataset.labelControl);
-    const text = labelElement.querySelector(".resolved-label");
-    text.textContent = record ? record.summary : "Unmapped";
-    labelElement.classList.toggle("is-unmapped", !record);
+  renderCallouts();
+}
+
+function svgEl(name, attrs = {}) {
+  const node = document.createElementNS(SVGNS, name);
+  for (const [key, value] of Object.entries(attrs)) {
+    node.setAttribute(key, String(value));
   }
+  return node;
+}
+
+function calloutEntryHeight(entry) {
+  if (entry.members) {
+    return CALLOUT_LAYOUT.clusterHead + entry.activeMembers.length * CALLOUT_LAYOUT.clusterRow;
+  }
+  return CALLOUT_LAYOUT.rowHeight;
+}
+
+function layoutRail(entries) {
+  const { railTop, railBottom } = CALLOUT_LAYOUT;
+  entries.sort((left, right) => left.anchor.y - right.anchor.y);
+  const heights = entries.map(calloutEntryHeight);
+  const total = heights.reduce((sum, height) => sum + height, 0);
+  const gap = entries.length > 1
+    ? Math.max(8, (railBottom - railTop - total) / (entries.length - 1))
+    : 0;
+
+  let top = entries.length > 1 ? railTop : (railTop + railBottom - total) / 2;
+  entries.forEach((entry, index) => {
+    entry.top = top;
+    top += heights[index] + gap;
+  });
+}
+
+function drawLeader(anchor, side, attachY) {
+  const rail = CALLOUT_LAYOUT[side];
+  return svgEl("polyline", {
+    class: "callout-line",
+    points: `${anchor.x},${anchor.y} ${rail.turnX},${attachY} ${rail.labelX},${attachY}`,
+  });
+}
+
+function buildCalloutNode(entry) {
+  const rail = CALLOUT_LAYOUT[entry.side];
+  const textAnchor = entry.side === "left" ? "end" : "start";
+  const group = svgEl("g", { class: "callout" });
+
+  if (entry.members) {
+    const headY = entry.top + 12;
+    group.append(drawLeader(entry.anchor, entry.side, headY - 4));
+    group.append(svgEl("circle", { class: "callout-dot", cx: entry.anchor.x, cy: entry.anchor.y, r: 3 }));
+
+    const token = svgEl("text", { class: "callout-token", x: rail.labelX, y: headY, "text-anchor": textAnchor });
+    token.textContent = entry.token;
+    group.append(token);
+
+    entry.activeMembers.forEach((member, index) => {
+      const rowY = headY + CALLOUT_LAYOUT.clusterHead - 6 + index * CALLOUT_LAYOUT.clusterRow;
+      const row = svgEl("g", {
+        class: "callout-dir",
+        "data-control": member.control,
+        tabindex: interactiveDiagram.matches ? 0 : -1,
+        role: "button",
+        "aria-label": `${controlLabel(member.control)}: ${member.record.summary}`,
+      });
+      row.classList.toggle("is-selected", member.control === state.selectedControl);
+
+      const text = svgEl("text", { x: rail.labelX, y: rowY, "text-anchor": textAnchor });
+      const glyph = svgEl("tspan", { class: "dir-glyph" });
+      glyph.textContent = `${member.glyph} `;
+      const label = svgEl("tspan", { class: "dir-action" });
+      label.textContent = calloutLabel(member.record);
+      text.append(glyph, label);
+      row.append(text);
+      group.append(row);
+    });
+    return group;
+  }
+
+  const record = state.records.get(entry.id);
+  const tokenY = entry.top + 11;
+  const actionY = entry.top + 27;
+  group.dataset.control = entry.id;
+  group.setAttribute("tabindex", interactiveDiagram.matches ? "0" : "-1");
+  group.setAttribute("role", "button");
+  group.setAttribute("aria-label", `${controlLabel(entry.id)}: ${record ? record.summary : "unmapped"}`);
+  group.classList.toggle("is-selected", entry.id === state.selectedControl);
+
+  group.append(drawLeader(entry.anchor, entry.side, actionY - 5));
+  group.append(svgEl("circle", { class: "callout-dot", cx: entry.anchor.x, cy: entry.anchor.y, r: 3 }));
+
+  const token = svgEl("text", { class: "callout-token", x: rail.labelX, y: tokenY, "text-anchor": textAnchor });
+  token.textContent = entry.token;
+  group.append(token);
+
+  const action = svgEl("text", { class: "callout-action", x: rail.labelX, y: actionY, "text-anchor": textAnchor });
+  action.textContent = calloutLabel(record);
+  group.append(action);
+
+  return group;
+}
+
+function renderCallouts() {
+  if (!elements.calloutLayer) {
+    return;
+  }
+
+  const left = [];
+  const right = [];
+
+  for (const definition of CALLOUTS) {
+    const entry = { ...definition };
+    if (entry.members) {
+      entry.activeMembers = entry.members
+        .map((member) => ({ ...member, record: state.records.get(member.control) }))
+        .filter((member) => member.record);
+      if (!entry.activeMembers.length) {
+        continue;
+      }
+    } else if (!state.records.has(entry.id)) {
+      continue;
+    }
+    (entry.side === "left" ? left : right).push(entry);
+  }
+
+  layoutRail(left);
+  layoutRail(right);
+
+  const fragment = document.createDocumentFragment();
+  for (const entry of [...left, ...right]) {
+    fragment.append(buildCalloutNode(entry));
+  }
+  elements.calloutLayer.replaceChildren(fragment);
 }
 
 function renderMappingList() {

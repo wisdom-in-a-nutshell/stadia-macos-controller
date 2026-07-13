@@ -9,6 +9,15 @@ tool: direct, calm, and easy to scan.
 ## Visual direction
 
 - Controller-dominant master-detail composition.
+- The controller renders the real Stadia face layout: offset sticks (left stick
+  upper-left, D-pad lower-left; face buttons upper-right, right stick lower-right)
+  and the Stadia centre cluster (Options and Menu pair, Stadia button, Capture
+  and Assistant).
+- Exploded-diagram callouts: every mapped control draws a hairline leader out to a
+  side-rail label (token plus concise action) so the whole mapping reads at a
+  glance, console-manual style. D-pad and right-stick directions group into one
+  cluster callout each. Callouts are generated from the resolved config, never
+  hand-maintained, and hide on narrow screens in favour of the mapping rows.
 - Cool sage-tinted off-white canvas; never cream, beige, or paper-textured.
 - Flat surfaces separated by hairlines. No decorative shadows or glass effects.
 - Sage indicates selection, focus, and active state.

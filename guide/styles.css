@@ -529,27 +529,107 @@ html:not([data-active-profile="codexApp"]) .context-note {
   stroke: var(--rose-line);
 }
 
-.control-label {
-  pointer-events: none;
+/* Exploded diagram callouts */
+.callout-line {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.4;
+  transition: stroke var(--t-fast) var(--ease-out);
 }
 
-.control-label text:first-child {
+.callout-dot {
+  fill: var(--surface);
+  stroke: var(--controller-ink);
+  stroke-width: 1.5;
+  transition: fill var(--t-fast) var(--ease-out), stroke var(--t-fast) var(--ease-out);
+}
+
+.callout-token {
   fill: var(--muted);
   font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
-.control-label .resolved-label {
+.callout-action {
   fill: var(--text);
   font-family: var(--font-sans);
-  font-size: 17px;
-  font-weight: 550;
+  font-size: 14.5px;
+  font-weight: 560;
 }
 
-.control-label.is-unmapped .resolved-label {
-  fill: var(--muted);
+.callout-dir text {
+  fill: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 480;
+}
+
+.callout-dir .dir-glyph {
+  fill: var(--faint);
+  font-weight: 700;
+}
+
+.callout,
+.callout-dir {
+  cursor: pointer;
+}
+
+.callout text,
+.callout-dir text {
+  transition: fill var(--t-fast) var(--ease-out);
+}
+
+.callout:hover .callout-line,
+.callout:focus-visible .callout-line {
+  stroke: var(--accent-line);
+}
+
+.callout:hover .callout-dot,
+.callout:focus-visible .callout-dot {
+  stroke: var(--accent);
+}
+
+.callout:hover .callout-action,
+.callout:focus-visible .callout-action,
+.callout-dir:hover text,
+.callout-dir:focus-visible text {
+  fill: var(--accent-ink);
+}
+
+.callout.is-selected .callout-line {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.callout.is-selected .callout-dot {
+  fill: var(--accent);
+  stroke: var(--accent);
+}
+
+.callout.is-selected .callout-token {
+  fill: var(--accent-ink);
+}
+
+.callout.is-selected .callout-action,
+.callout-dir.is-selected text,
+.callout-dir.is-selected .dir-glyph {
+  fill: var(--accent-ink);
+  font-weight: 620;
+}
+
+.callout :focus-visible,
+.callout-dir:focus-visible {
+  outline: none;
+}
+
+.callout:focus-visible .callout-action,
+.callout-dir:focus-visible text {
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
 }
 
 .controller-help {
@@ -574,7 +654,7 @@ html:not([data-active-profile="codexApp"]) .context-note {
     font-size: 34px;
   }
 
-  .controller-map .control-label {
+  .controller-map #callout-layer {
     display: none;
   }
 }

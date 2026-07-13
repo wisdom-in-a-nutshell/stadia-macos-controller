@@ -62,12 +62,12 @@
             <svg
               class="controller-map"
               id="controller-map"
-              viewBox="110 30 680 500"
+              viewBox="-20 24 960 516"
               role="group"
               aria-label="Interactive Stadia controller map"
             >
               <path class="controller-body" d="M238 116C302 78 598 78 662 116c68 40 101 154 82 268-11 68-52 111-98 83l-99-78c-28-22-166-22-194 0l-99 78c-46 28-87-15-98-83-19-114 14-228 82-268Z"/>
-              <path class="controller-seam" d="M238 116c68 44 356 44 424 0M353 389c35-26 159-26 194 0"/>
+              <path class="controller-seam" d="M238 116c68 44 356 44 424 0"/>
 
               <g class="control control-wide" data-control="leftTrigger" tabindex="0" role="button">
                 <rect x="220" y="52" width="118" height="44" rx="14"/>
@@ -86,30 +86,30 @@
                 <text x="647" y="136">R1</text>
               </g>
 
-              <g class="control dpad-control" data-control="dpadUp" tabindex="0" role="button">
-                <path d="M273 211h46v54h-46z"/>
-                <path class="control-glyph" d="m296 225-9 12h18Z"/>
-              </g>
-              <g class="control dpad-control" data-control="dpadLeft" tabindex="0" role="button">
-                <path d="M242 257h54v46h-54z"/>
-                <path class="control-glyph" d="m258 280 12-9v18Z"/>
-              </g>
-              <g class="control dpad-control" data-control="dpadRight" tabindex="0" role="button">
-                <path d="M296 257h54v46h-54z"/>
-                <path class="control-glyph" d="m334 280-12-9v18Z"/>
-              </g>
-              <g class="control dpad-control" data-control="dpadDown" tabindex="0" role="button">
-                <path d="M273 295h46v54h-46z"/>
-                <path class="control-glyph" d="m296 335-9-12h18Z"/>
-              </g>
-
               <g class="control stick-zone" data-control="leftStickVerticalScroll" tabindex="0" role="button">
-                <circle cx="318" cy="405" r="62"/>
-                <path class="stick-direction" d="m318 357-8 11h16Zm0 96-8-11h16Z"/>
+                <circle cx="300" cy="250" r="58"/>
+                <path class="stick-direction" d="m300 204-8 11h16Zm0 92-8-11h16Z"/>
               </g>
               <g class="control stick-press" data-control="leftThumbstickButton" tabindex="0" role="button">
-                <circle cx="318" cy="405" r="38"/>
-                <text x="318" y="410">L3</text>
+                <circle cx="300" cy="250" r="36"/>
+                <text x="300" y="255">L3</text>
+              </g>
+
+              <g class="control dpad-control" data-control="dpadUp" tabindex="0" role="button">
+                <path d="M277 341h46v54h-46z"/>
+                <path class="control-glyph" d="m300 355-9 12h18Z"/>
+              </g>
+              <g class="control dpad-control" data-control="dpadLeft" tabindex="0" role="button">
+                <path d="M246 387h54v46h-54z"/>
+                <path class="control-glyph" d="m262 410 12-9v18Z"/>
+              </g>
+              <g class="control dpad-control" data-control="dpadRight" tabindex="0" role="button">
+                <path d="M300 387h54v46h-54z"/>
+                <path class="control-glyph" d="m338 410-12-9v18Z"/>
+              </g>
+              <g class="control dpad-control" data-control="dpadDown" tabindex="0" role="button">
+                <path d="M277 425h46v54h-46z"/>
+                <path class="control-glyph" d="m300 465-9-12h18Z"/>
               </g>
 
               <g class="control stick-zone" data-control="rightStickUp" tabindex="0" role="button">
@@ -151,44 +151,33 @@
               </g>
 
               <g class="control center-control" data-control="options" tabindex="0" role="button">
-                <rect x="383" y="225" width="48" height="32" rx="16"/>
-                <text x="407" y="246">••</text>
-              </g>
-              <g class="control center-control" data-control="share" tabindex="0" role="button">
-                <rect x="435" y="205" width="30" height="42" rx="12"/>
-                <path class="control-glyph" d="M443 220h14v12h-14z"/>
+                <rect x="392" y="206" width="40" height="26" rx="13"/>
+                <path class="control-glyph" d="M404 215h16v2.4h-16zm0 5h16v2.4h-16z"/>
               </g>
               <g class="control center-control" data-control="menu" tabindex="0" role="button">
-                <rect x="469" y="225" width="48" height="32" rx="16"/>
-                <path class="control-glyph" d="M484 236h18v2h-18zm0 6h18v2h-18z"/>
+                <rect x="468" y="206" width="40" height="26" rx="13"/>
+                <path class="control-glyph" d="M479 217.6a1.9 1.9 0 1 0 0 .1zm7 0a1.9 1.9 0 1 0 0 .1zm7 0a1.9 1.9 0 1 0 0 .1z"/>
               </g>
               <g class="control home-control" data-control="home" tabindex="-1" aria-hidden="true">
-                <circle cx="450" cy="300" r="31"/>
-                <text x="450" y="306">S</text>
+                <circle cx="450" cy="256" r="23"/>
+                <path class="control-glyph" d="M450 244c6 0 11 3 11 8 0 3-2 5-6 5h-9c-2 0-3 1-3 3 0 3 3 4 7 4v3c-7 0-12-3-12-8 0-3 3-5 6-5h9c2 0 2-1 2-2 0-3-4-4-8-4z"/>
+              </g>
+              <g class="control center-control" data-control="share" tabindex="0" role="button">
+                <circle cx="416" cy="296" r="17"/>
+                <path class="control-glyph" d="M408 289h4v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2h4a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-16a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1zm8 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+              </g>
+              <g class="control home-control" data-control="assistant" tabindex="-1" aria-hidden="true">
+                <circle cx="484" cy="296" r="17"/>
+                <path class="control-glyph" d="M484 288a2.6 2.6 0 0 1 2.6 2.6c0 2-2.6 5.4-2.6 5.4s-2.6-3.4-2.6-5.4A2.6 2.6 0 0 1 484 288zm-6 8a2.2 2.2 0 0 1 2.2 2.2c0 1.7-2.2 4.6-2.2 4.6s-2.2-2.9-2.2-4.6A2.2 2.2 0 0 1 478 296zm12 0a2.2 2.2 0 0 1 2.2 2.2c0 1.7-2.2 4.6-2.2 4.6s-2.2-2.9-2.2-4.6A2.2 2.2 0 0 1 490 296z"/>
               </g>
 
-              <g class="control-label" data-label-control="leftShoulder">
-                <text x="149" y="180" text-anchor="start">L1</text>
-                <text class="resolved-label" x="149" y="199" text-anchor="start">Unmapped</text>
-              </g>
-              <g class="control-label" data-label-control="rightShoulder">
-                <text x="751" y="180" text-anchor="end">R1</text>
-                <text class="resolved-label" x="751" y="199" text-anchor="end">Unmapped</text>
-              </g>
-              <g class="control-label" data-label-control="leftTrigger">
-                <text x="149" y="72" text-anchor="start">L2</text>
-                <text class="resolved-label" x="149" y="91" text-anchor="start">Unmapped</text>
-              </g>
-              <g class="control-label" data-label-control="rightTrigger">
-                <text x="751" y="72" text-anchor="end">R2</text>
-                <text class="resolved-label" x="751" y="91" text-anchor="end">Unmapped</text>
-              </g>
+              <g id="callout-layer" aria-hidden="true"></g>
             </svg>
           </div>
 
           <p class="controller-help">
             <span class="controller-help-narrow">Use the full-size mapping rows below to choose a control and see its exact behavior.</span>
-            <span class="controller-help-wide">Select a button, stick direction, or mapping row for its exact behavior.</span>
+            <span class="controller-help-wide">Every mapped control is labelled. Select any button or label for its exact behavior.</span>
           </p>
         </section>
 
