@@ -9,7 +9,9 @@ Reduce cognitive load while using dictation + controller together by making butt
 ## Layout Principles
 - Shoulder buttons use a paired previous/next model, scoped to the active app:
   - In Ghostty, L1/R1 move to the previous/next tab.
-  - In the Codex app, L1/R1 move to the previous/next chat with `Cmd+Shift+[` / `Cmd+Shift+]`, avoiding both browser history and the recent-chat switcher overlay.
+  - In the Codex app, L1/R1 invoke the native View menu's Previous Task/Next Task commands. This avoids Codex's overlapping task and browser-tab keyboard shortcuts.
+- Codex app commands use native menu actions when Codex exposes them. New Task, sidebar toggles, zoom, and previous/next task therefore do not depend on keyboard shortcuts remaining stable across app updates.
+- Literal input controls remain keystroke- or text-based: composer text, Enter, Escape, Backspace, Ctrl+C, and the held Control modifier. Archive and Plan mode also remain shortcut-based because Codex does not expose native menu commands for them.
 - Face buttons are reserved for high-frequency terminal input and correction, not layout-changing actions.
 - The menu-style center button is reserved for Codex mode changes through native keyboard shortcuts rather than injected slash-command text.
 - The held-trigger modifier chord remains experimental; it should stay low-risk and avoid destructive combinations.
@@ -19,7 +21,7 @@ Reduce cognitive load while using dictation + controller together by making butt
   - new tab means "start somewhere else" and should open the repo chooser immediately.
   - left thumbstick split means "choose a repo in a neighboring pane".
   - right thumbstick split means "stay in this workspace" and should start Codex in the inherited current directory.
-- Core Ghostty navigation/management buttons target Ghostty actions directly where available so they do not depend on separate keybinding definitions staying in sync.
+- Core Ghostty navigation, management, and zoom buttons target Ghostty actions directly where available so they do not depend on separate keybinding definitions staying in sync.
 
 ## Notes
 - Mapping changes hot-reload from `config/mappings.json`; restart is not required for config-only changes.

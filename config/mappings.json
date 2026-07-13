@@ -156,24 +156,18 @@
           "debounceMs": 140,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 27,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Zoom out in Ghostty with Cmd+-"
+            "type": "ghosttyAction",
+            "ghosttyAction": "decrease_font_size",
+            "description": "Zoom out through Ghostty's native font-size action"
           }
         },
         "dpadRight": {
           "debounceMs": 140,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 24,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Zoom in Ghostty with Cmd+="
+            "type": "ghosttyAction",
+            "ghosttyAction": "increase_font_size",
+            "description": "Zoom in through Ghostty's native font-size action"
           }
         },
         "rightThumbstickButton": {
@@ -304,12 +298,9 @@
           "debounceMs": 500,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 45,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Open a new Codex chat with Cmd+N"
+            "type": "applescript",
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"New Task\" of menu \"File\" of menu bar 1",
+            "description": "Open a new Codex task through the native File menu"
           }
         },
         "menu": {
@@ -370,49 +361,36 @@
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 11,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Toggle Codex app left sidebar with Cmd+B"
+            "type": "applescript",
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Toggle Sidebar\" of menu \"View\" of menu bar 1",
+            "description": "Toggle the Codex app left sidebar through the native View menu"
           }
         },
         "dpadRight": {
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 11,
-            "modifiers": [
-              "command",
-              "option"
-            ],
-            "description": "Toggle Codex app right diff panel with Option+Cmd+B"
+            "type": "applescript",
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Toggle Side Panel\" of menu \"View\" of menu bar 1",
+            "description": "Toggle the Codex app right side panel through the native View menu"
           }
         },
         "leftThumbstickButton": {
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 27,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Zoom out in Codex app with Cmd+-"
+            "type": "applescript",
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Zoom Out\" of menu \"View\" of menu bar 1",
+            "description": "Zoom out in the Codex app through the native View menu"
           }
         },
         "rightThumbstickButton": {
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 24,
-            "modifiers": [
-              "command"
-            ],
-            "description": "Zoom in Codex app with Cmd+="
+            "type": "applescript",
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Zoom In\" of menu \"View\" of menu bar 1",
+            "description": "Zoom in the Codex app through the native View menu"
           }
         },
         "leftTrigger": {
@@ -427,26 +405,18 @@
           "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 33,
-            "modifiers": [
-              "command",
-              "shift"
-            ],
-            "description": "Move to previous Codex chat with Cmd+Shift+["
+            "type": "applescript",
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Previous Task\" of menu \"View\" of menu bar 1",
+            "description": "Move to the previous Codex task through the native View menu"
           }
         },
         "rightShoulder": {
           "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "keystroke",
-            "keyCode": 30,
-            "modifiers": [
-              "command",
-              "shift"
-            ],
-            "description": "Move to next Codex chat with Cmd+Shift+]"
+            "type": "applescript",
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Next Task\" of menu \"View\" of menu bar 1",
+            "description": "Move to the next Codex task through the native View menu"
           }
         }
       }
