@@ -512,13 +512,22 @@ html:not([data-active-profile="codexApp"]) .context-note {
 
 .home-control {
   cursor: default;
-  opacity: 0.28;
+  opacity: 0.4;
 }
 
 .home-control > circle {
   fill: var(--controller-control);
   stroke: var(--line);
   stroke-width: 2;
+}
+
+.home-glyph {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 
 .face-y > circle {
