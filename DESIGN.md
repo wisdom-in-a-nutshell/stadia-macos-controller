@@ -9,10 +9,11 @@ tool: direct, calm, and easy to scan.
 ## Visual direction
 
 - Controller-dominant master-detail composition.
-- The controller renders the real Stadia face layout: offset sticks (left stick
-  upper-left, D-pad lower-left; face buttons upper-right, right stick lower-right)
-  and the Stadia centre cluster (Options and Menu pair, Stadia button, Capture
-  and Assistant).
+- The controller renders the real Stadia face layout: a symmetric layout with the
+  D-pad upper-left and face buttons upper-right, and both analog sticks on the
+  same lower plane (left stick lower-left, right stick lower-right), plus the
+  Stadia centre cluster (Options and Menu pair, Stadia button, Capture and
+  Assistant).
 - Exploded-diagram callouts: every mapped control draws a hairline leader out to a
   side-rail label (token plus concise action) so the whole mapping reads at a
   glance, console-manual style. D-pad and right-stick directions group into one

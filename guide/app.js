@@ -128,15 +128,11 @@ const SVGNS = "http://www.w3.org/2000/svg";
 const CALLOUTS = [
   { id: "leftTrigger", token: "L2", side: "left", anchor: { x: 224, y: 74 } },
   { id: "leftShoulder", token: "L1", side: "left", anchor: { x: 184, y: 131 } },
-  { id: "leftStickVerticalScroll", token: "L-stick", side: "left", anchor: { x: 244, y: 236 } },
-  { id: "leftThumbstickButton", token: "L3", side: "left", anchor: { x: 250, y: 280 } },
-  { id: "options", token: "Options", side: "left", anchor: { x: 392, y: 214 } },
-  { id: "share", token: "Capture", side: "left", anchor: { x: 399, y: 296 } },
   {
     id: "dpad",
     token: "D-pad",
     side: "left",
-    anchor: { x: 250, y: 408 },
+    anchor: { x: 203, y: 250 },
     members: [
       { glyph: "↑", control: "dpadUp" },
       { glyph: "↓", control: "dpadDown" },
@@ -144,19 +140,23 @@ const CALLOUTS = [
       { glyph: "→", control: "dpadRight" },
     ],
   },
+  { id: "options", token: "Options", side: "left", anchor: { x: 398, y: 222 } },
+  { id: "share", token: "Capture", side: "left", anchor: { x: 413, y: 312 } },
+  { id: "leftStickVerticalScroll", token: "L-stick", side: "left", anchor: { x: 302, y: 344 } },
+  { id: "leftThumbstickButton", token: "L3", side: "left", anchor: { x: 322, y: 376 } },
 
   { id: "rightTrigger", token: "R2", side: "right", anchor: { x: 676, y: 74 } },
   { id: "rightShoulder", token: "R1", side: "right", anchor: { x: 716, y: 131 } },
-  { id: "menu", token: "Menu", side: "right", anchor: { x: 508, y: 214 } },
-  { id: "y", token: "Y", side: "right", anchor: { x: 678, y: 212 } },
-  { id: "x", token: "X", side: "right", anchor: { x: 633, y: 260 } },
-  { id: "b", token: "B", side: "right", anchor: { x: 723, y: 260 } },
-  { id: "a", token: "A", side: "right", anchor: { x: 678, y: 312 } },
+  { id: "y", token: "Y", side: "right", anchor: { x: 676, y: 206 } },
+  { id: "menu", token: "Menu", side: "right", anchor: { x: 506, y: 222 } },
+  { id: "x", token: "X", side: "right", anchor: { x: 636, y: 248 } },
+  { id: "b", token: "B", side: "right", anchor: { x: 712, y: 250 } },
+  { id: "a", token: "A", side: "right", anchor: { x: 676, y: 300 } },
   {
     id: "rstick",
     token: "Right stick",
     side: "right",
-    anchor: { x: 614, y: 352 },
+    anchor: { x: 600, y: 352 },
     members: [
       { glyph: "↑", control: "rightStickUp" },
       { glyph: "↓", control: "rightStickDown" },
@@ -164,7 +164,7 @@ const CALLOUTS = [
       { glyph: "→", control: "rightStickRight" },
     ],
   },
-  { id: "rightThumbstickButton", token: "R3", side: "right", anchor: { x: 602, y: 412 } },
+  { id: "rightThumbstickButton", token: "R3", side: "right", anchor: { x: 578, y: 380 } },
 ];
 
 const CALLOUT_LAYOUT = {
