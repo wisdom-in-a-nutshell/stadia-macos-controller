@@ -23,6 +23,10 @@ flowchart LR
 
 - `scripts/run-controller-guide.sh` starts a Python standard-library HTTP server
   on `127.0.0.1:8173` and opens the default browser.
+- Production uses a dedicated LaunchAgent on `127.0.0.1:8798`. The shared
+  Mac mini Cloudflare Tunnel routes `controller.adithyan.io` to that loopback
+  service; Cloudflare Access authenticates the browser before traffic reaches
+  the guide.
 - `scripts/serve-controller-guide.py` serves an explicit allowlist of guide
   assets and exposes the live config at `/api/mappings`.
 - The server does not expose the repository as a static directory.
@@ -39,6 +43,9 @@ flowchart LR
 - The guide is read-only. Mapping edits continue to happen in the JSON file.
 - The server binds to loopback by default and uses a restrictive content security
   policy. It has no package dependencies, remote fonts, analytics, or telemetry.
+- The public hostname is private-by-authentication: it is reachable on the
+  internet only through the Adithyan-only Cloudflare Access application. Do not
+  remove that policy because the guide exposes exact local automation mappings.
 
 ## Failure behavior
 

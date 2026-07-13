@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import plistlib
 import subprocess
 import sys
 import threading
@@ -18,6 +19,8 @@ sys.dont_write_bytecode = True
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SERVER_PATH = REPO_ROOT / "scripts" / "serve-controller-guide.py"
+DEPLOY_PATH = REPO_ROOT / "scripts" / "deploy-controller-guide.sh"
+INSTALLER_PATH = REPO_ROOT / "scripts" / "install-launchd-controller-guide.sh"
 
 
 def load_server_module():
@@ -32,6 +35,45 @@ def load_server_module():
 def fetch(url: str) -> tuple[int, str, bytes]:
     with urlopen(url, timeout=3) as response:  # noqa: S310 - loopback test server
         return response.status, response.headers.get_content_type(), response.read()
+
+
+def check_deploy_contract() -> None:
+    dry_run = subprocess.run(
+        [str(DEPLOY_PATH), "--json", "--no-input"],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    assert dry_run.returncode == 0, dry_run.stderr
+    payload = json.loads(dry_run.stdout)
+    assert payload["schema_version"] == "1.0"
+    assert payload["command"] == "deploy-controller-guide"
+    assert payload["status"] == "ok"
+    assert payload["data"]["mode"] == "dry-run"
+    assert payload["error"] is None
+
+    invalid = subprocess.run(
+        [str(DEPLOY_PATH), "--invalid"],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+    assert invalid.returncode == 2
+    invalid_payload = json.loads(invalid.stdout)
+    assert invalid_payload["status"] == "error"
+    assert invalid_payload["error"]["code"] == "E_INVALID_USAGE"
+
+    installer = subprocess.run(
+        [str(INSTALLER_PATH), "--dry-run", "--no-input"],
+        capture_output=True,
+        check=False,
+    )
+    assert installer.returncode == 0, installer.stderr.decode()
+    plist = plistlib.loads(installer.stdout)
+    assert plist["Label"].endswith(".stadia-controller-guide")
+    assert plist["RunAtLoad"] is True
+    assert plist["KeepAlive"] is True
+    assert plist["ProgramArguments"][-2:] == ["--port", "8798"]
 
 
 def main() -> int:
@@ -54,6 +96,14 @@ def main() -> int:
         served = json.loads(body)
         expected = json.loads((REPO_ROOT / "config" / "mappings.json").read_text())
         assert served == expected
+
+        status, content_type, body = fetch(f"{base_url}/api/health")
+        assert status == 200
+        assert content_type == "application/json"
+        assert json.loads(body) == {
+            "status": "ok",
+            "config": "config/mappings.json",
+        }
 
         for path, expected_type in (
             ("/styles.css", "text/css"),
@@ -85,7 +135,12 @@ def main() -> int:
         subprocess.run([node, "--check", str(REPO_ROOT / "guide" / "boot.js")], check=True)
         subprocess.run([node, "--check", str(REPO_ROOT / "guide" / "app.js")], check=True)
 
-    print("[check-controller-guide] routes, live config, isolation, and JavaScript passed")
+    check_deploy_contract()
+
+    print(
+        "[check-controller-guide] routes, live config, isolation, JavaScript, "
+        "and deploy contracts passed"
+    )
     return 0
 
 

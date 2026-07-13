@@ -39,6 +39,25 @@ its Refresh control loads mappings. To use another port:
 The server binds to loopback by default, exposes only the guide assets and
 `/api/mappings`, and does not allow mapping edits.
 
+The durable Mac mini production instance is available at
+`https://controller.adithyan.io/` after signing in through Cloudflare Access.
+Deploy or reconcile its loopback LaunchAgent with:
+
+```bash
+./scripts/deploy-controller-guide.sh --apply --plain --no-input
+```
+
+Inspect the service or logs without changing it:
+
+```bash
+./scripts/install-launchd-controller-guide.sh --status --no-input
+./scripts/install-launchd-controller-guide.sh --logs 150 --no-input
+```
+
+The deploy command defaults to a non-mutating JSON dry run. Production listens
+only on `127.0.0.1:8798`; the shared Cloudflare Tunnel and Adithyan-only Access
+policy own external routing and browser authentication.
+
 If Accessibility permission has not appeared yet, run once with prompt enabled:
 
 ```bash
