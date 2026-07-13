@@ -6,6 +6,10 @@ Use this page for repo-level commands, file map notes, and runtime contracts.
 - `AGENTS.md`: cold-start repo router for agents.
 - `src/main.swift`: CLI parsing, config loading and validation, frontmost-app profile resolution, action execution, controller polling, and config hot reload.
 - `config/mappings.json`: source of truth for app profiles, `alwaysOn` controls, per-profile mappings, and safety defaults.
+- `guide/`: dependency-free, read-only controller map rendered from the live mapping config.
+- `scripts/run-controller-guide.sh`: start the loopback guide server and open it in the default browser.
+- `scripts/serve-controller-guide.py`: allowlisted static/API server for the guide; never serves the repo root.
+- `scripts/check-controller-guide.py`: loopback route, config parity, isolation, and JavaScript validation.
 - `scripts/run-bridge.sh`: local `swift run` wrapper.
 - `scripts/check-fast.sh`: fast repo validation. Delegates cheap generic checks to `~/GitHub/scripts/bin/repo-fast-check`, then validates Swift package manifest parsing when Swift manifest files are staged.
 - `scripts/install-launchd-stadia-controller-bridge.sh`: project-local fallback installer for the bridge LaunchAgent.
@@ -18,6 +22,7 @@ Use this page for repo-level commands, file map notes, and runtime contracts.
 
 ## Validation
 - Run `./scripts/check-fast.sh` for repo-native fast validation on every change.
+- Controller Guide checks run as part of `./scripts/check-fast.sh` and can also be run directly with `python3 scripts/check-controller-guide.py`.
 - Run `swift build` when `Package.swift`, `src/`, or runtime-facing scripts change.
 - Do not claim launchd or runtime changes are healthy without both:
   - `launchctl print gui/$(id -u)/com.stadia-controller-bridge`

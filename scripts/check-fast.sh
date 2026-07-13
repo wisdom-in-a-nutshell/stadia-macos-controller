@@ -17,6 +17,8 @@ cd "$ROOT_DIR"
   --check-shell \
   --no-input
 
+python3 scripts/check-controller-guide.py
+
 mapfile -t staged_files < <(git diff --cached --name-only --diff-filter=ACMR)
 
 needs_swift_manifest_check=0

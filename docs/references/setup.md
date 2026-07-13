@@ -20,6 +20,25 @@ or:
 swift run stadia-controller-bridge --config config/mappings.json --no-dry-run
 ```
 
+## Open the Controller Guide
+
+Start the read-only local mapping guide and open it in the default browser:
+
+```bash
+./scripts/run-controller-guide.sh
+```
+
+The guide listens on `http://localhost:8173/` until the terminal process is
+stopped with Control-C. It rereads `config/mappings.json` whenever the page or
+its Refresh control loads mappings. To use another port:
+
+```bash
+./scripts/run-controller-guide.sh --port 8174
+```
+
+The server binds to loopback by default, exposes only the guide assets and
+`/api/mappings`, and does not allow mapping edits.
+
 If Accessibility permission has not appeared yet, run once with prompt enabled:
 
 ```bash

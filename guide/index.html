@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <title>Controller Guide</title>
+    <link rel="icon" href="data:,">
+    <script src="/boot.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to controller</a>
+
+    <div class="app-shell">
+      <header class="page-header">
+        <div class="title-group">
+          <p class="eyebrow">Stadia · macOS</p>
+          <h1>Controller Guide</h1>
+          <p class="lede">Every control, read directly from the bridge configuration.</p>
+        </div>
+
+        <div class="config-state" id="config-state" role="status" aria-live="polite">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span>
+            <strong>Loading mappings</strong>
+            <small>config/mappings.json</small>
+          </span>
+        </div>
+      </header>
+
+      <nav class="profile-nav" aria-label="Application profile">
+        <div class="profile-tabs" id="profile-tabs" role="tablist" aria-label="Application profile"></div>
+        <button class="quiet-button" id="refresh-button" type="button" aria-label="Refresh mappings">
+          <svg aria-hidden="true" viewBox="0 0 20 20">
+            <path d="M16.1 6.6A7 7 0 1 0 17 10h-1.8a5.2 5.2 0 1 1-.7-2.6l-2.2.1.1 1.7 4.8-.2-.2-4.8-1.7.1.1 1.5c.2.3.5.5.7.8Z"/>
+          </svg>
+          <span>Refresh</span>
+        </button>
+      </nav>
+
+      <div class="context-note" id="context-note">
+        <span class="note-mark" aria-hidden="true">!</span>
+        <div>
+          <strong>Browser focus can capture task navigation</strong>
+          <p>Hide the right side panel with D-pad Right, then use L1 or R1 to move tasks predictably.</p>
+        </div>
+      </div>
+
+      <main id="main-content" class="main-layout" tabindex="-1">
+        <section class="controller-section" aria-labelledby="controller-heading">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker" id="profile-context">Resolved controls</p>
+              <h2 id="controller-heading">Choose a control</h2>
+            </div>
+            <p class="mapping-count" id="mapping-count">— mapped</p>
+          </div>
+
+          <div class="controller-stage">
+            <svg
+              class="controller-map"
+              id="controller-map"
+              viewBox="110 30 680 500"
+              role="group"
+              aria-label="Interactive Stadia controller map"
+            >
+              <path class="controller-body" d="M238 116C302 78 598 78 662 116c68 40 101 154 82 268-11 68-52 111-98 83l-99-78c-28-22-166-22-194 0l-99 78c-46 28-87-15-98-83-19-114 14-228 82-268Z"/>
+              <path class="controller-seam" d="M238 116c68 44 356 44 424 0M353 389c35-26 159-26 194 0"/>
+
+              <g class="control control-wide" data-control="leftTrigger" tabindex="0" role="button">
+                <rect x="220" y="52" width="118" height="44" rx="14"/>
+                <text x="279" y="79">L2</text>
+              </g>
+              <g class="control control-wide" data-control="rightTrigger" tabindex="0" role="button">
+                <rect x="562" y="52" width="118" height="44" rx="14"/>
+                <text x="621" y="79">R2</text>
+              </g>
+              <g class="control control-wide" data-control="leftShoulder" tabindex="0" role="button">
+                <rect x="181" y="107" width="144" height="48" rx="16"/>
+                <text x="253" y="136">L1</text>
+              </g>
+              <g class="control control-wide" data-control="rightShoulder" tabindex="0" role="button">
+                <rect x="575" y="107" width="144" height="48" rx="16"/>
+                <text x="647" y="136">R1</text>
+              </g>
+
+              <g class="control dpad-control" data-control="dpadUp" tabindex="0" role="button">
+                <path d="M273 211h46v54h-46z"/>
+                <path class="control-glyph" d="m296 225-9 12h18Z"/>
+              </g>
+              <g class="control dpad-control" data-control="dpadLeft" tabindex="0" role="button">
+                <path d="M242 257h54v46h-54z"/>
+                <path class="control-glyph" d="m258 280 12-9v18Z"/>
+              </g>
+              <g class="control dpad-control" data-control="dpadRight" tabindex="0" role="button">
+                <path d="M296 257h54v46h-54z"/>
+                <path class="control-glyph" d="m334 280-12-9v18Z"/>
+              </g>
+              <g class="control dpad-control" data-control="dpadDown" tabindex="0" role="button">
+                <path d="M273 295h46v54h-46z"/>
+                <path class="control-glyph" d="m296 335-9-12h18Z"/>
+              </g>
+
+              <g class="control stick-zone" data-control="leftStickVerticalScroll" tabindex="0" role="button">
+                <circle cx="318" cy="405" r="62"/>
+                <path class="stick-direction" d="m318 357-8 11h16Zm0 96-8-11h16Z"/>
+              </g>
+              <g class="control stick-press" data-control="leftThumbstickButton" tabindex="0" role="button">
+                <circle cx="318" cy="405" r="38"/>
+                <text x="318" y="410">L3</text>
+              </g>
+
+              <g class="control stick-zone" data-control="rightStickUp" tabindex="0" role="button">
+                <path d="M548 337a63 63 0 0 1 70 0l-21 34a25 25 0 0 0-28 0Z"/>
+                <path class="stick-direction" d="m583 345-8 11h16Z"/>
+              </g>
+              <g class="control stick-zone" data-control="rightStickRight" tabindex="0" role="button">
+                <path d="M626 345a63 63 0 0 1 0 70l-34-21a25 25 0 0 0 0-28Z"/>
+                <path class="stick-direction" d="m621 380-11-8v16Z"/>
+              </g>
+              <g class="control stick-zone" data-control="rightStickDown" tabindex="0" role="button">
+                <path d="M618 423a63 63 0 0 1-70 0l21-34a25 25 0 0 0 28 0Z"/>
+                <path class="stick-direction" d="m583 415-8-11h16Z"/>
+              </g>
+              <g class="control stick-zone" data-control="rightStickLeft" tabindex="0" role="button">
+                <path d="M540 415a63 63 0 0 1 0-70l34 21a25 25 0 0 0 0 28Z"/>
+                <path class="stick-direction" d="m545 380 11-8v16Z"/>
+              </g>
+              <g class="control stick-press" data-control="rightThumbstickButton" tabindex="0" role="button">
+                <circle cx="583" cy="380" r="32"/>
+                <text x="583" y="385">R3</text>
+              </g>
+
+              <g class="control face-control face-y" data-control="y" tabindex="0" role="button">
+                <circle cx="650" cy="218" r="28"/>
+                <text x="650" y="224">Y</text>
+              </g>
+              <g class="control face-control face-x" data-control="x" tabindex="0" role="button">
+                <circle cx="605" cy="263" r="28"/>
+                <text x="605" y="269">X</text>
+              </g>
+              <g class="control face-control face-b" data-control="b" tabindex="0" role="button">
+                <circle cx="695" cy="263" r="28"/>
+                <text x="695" y="269">B</text>
+              </g>
+              <g class="control face-control face-a" data-control="a" tabindex="0" role="button">
+                <circle cx="650" cy="308" r="28"/>
+                <text x="650" y="314">A</text>
+              </g>
+
+              <g class="control center-control" data-control="options" tabindex="0" role="button">
+                <rect x="383" y="225" width="48" height="32" rx="16"/>
+                <text x="407" y="246">••</text>
+              </g>
+              <g class="control center-control" data-control="share" tabindex="0" role="button">
+                <rect x="435" y="205" width="30" height="42" rx="12"/>
+                <path class="control-glyph" d="M443 220h14v12h-14z"/>
+              </g>
+              <g class="control center-control" data-control="menu" tabindex="0" role="button">
+                <rect x="469" y="225" width="48" height="32" rx="16"/>
+                <path class="control-glyph" d="M484 236h18v2h-18zm0 6h18v2h-18z"/>
+              </g>
+              <g class="control home-control" data-control="home" tabindex="-1" aria-hidden="true">
+                <circle cx="450" cy="300" r="31"/>
+                <text x="450" y="306">S</text>
+              </g>
+
+              <g class="control-label" data-label-control="leftShoulder">
+                <text x="149" y="180" text-anchor="start">L1</text>
+                <text class="resolved-label" x="149" y="199" text-anchor="start">Unmapped</text>
+              </g>
+              <g class="control-label" data-label-control="rightShoulder">
+                <text x="751" y="180" text-anchor="end">R1</text>
+                <text class="resolved-label" x="751" y="199" text-anchor="end">Unmapped</text>
+              </g>
+              <g class="control-label" data-label-control="leftTrigger">
+                <text x="149" y="72" text-anchor="start">L2</text>
+                <text class="resolved-label" x="149" y="91" text-anchor="start">Unmapped</text>
+              </g>
+              <g class="control-label" data-label-control="rightTrigger">
+                <text x="751" y="72" text-anchor="end">R2</text>
+                <text class="resolved-label" x="751" y="91" text-anchor="end">Unmapped</text>
+              </g>
+            </svg>
+          </div>
+
+          <p class="controller-help">
+            <span class="controller-help-narrow">Use the full-size mapping rows below to choose a control and see its exact behavior.</span>
+            <span class="controller-help-wide">Select a button, stick direction, or mapping row for its exact behavior.</span>
+          </p>
+        </section>
+
+        <aside class="detail-panel" id="detail-panel" aria-labelledby="detail-title">
+          <p class="detail-control" id="detail-control">Control</p>
+          <h2 id="detail-title">Choose a mapped control</h2>
+          <p class="detail-description" id="detail-description">Its configured behavior and execution path will appear here.</p>
+
+          <dl class="detail-facts" id="detail-facts"></dl>
+
+          <div class="detail-source">
+            <span>Source</span>
+            <code id="detail-source">config/mappings.json</code>
+          </div>
+        </aside>
+      </main>
+
+      <section class="mapping-index" aria-labelledby="mapping-index-title">
+        <div class="index-heading">
+          <div>
+            <p class="section-kicker">Quick reference</p>
+            <h2 id="mapping-index-title">All resolved mappings</h2>
+          </div>
+          <p>Profile actions override the same always-on button, matching bridge behavior.</p>
+        </div>
+        <div class="mapping-list" id="mapping-list"></div>
+      </section>
+
+      <footer class="page-footer">
+        <p>Read-only guide · mappings stay owned by <code>config/mappings.json</code></p>
+        <p id="loaded-at">Waiting for configuration</p>
+      </footer>
+    </div>
+
+    <template id="fact-template">
+      <div class="fact-row">
+        <dt></dt>
+        <dd></dd>
+      </div>
+    </template>
+  </body>
+</html>
