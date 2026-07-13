@@ -66,8 +66,47 @@
               role="group"
               aria-label="Interactive Stadia controller map"
             >
-              <path class="controller-body" d="M238 116C302 78 598 78 662 116c68 40 101 154 82 268-11 68-52 111-98 83l-99-78c-28-22-166-22-194 0l-99 78c-46 28-87-15-98-83-19-114 14-228 82-268Z"/>
-              <path class="controller-seam" d="M238 116c68 44 356 44 424 0"/>
+              <defs>
+                <linearGradient id="cg-body" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#ffffff"/>
+                  <stop offset="0.5" stop-color="#f5f7f5"/>
+                  <stop offset="1" stop-color="#e2e6e2"/>
+                </linearGradient>
+                <linearGradient id="cg-bumper" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#ffffff"/>
+                  <stop offset="1" stop-color="#e6eae6"/>
+                </linearGradient>
+                <linearGradient id="cg-key" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#454a45"/>
+                  <stop offset="1" stop-color="#20231f"/>
+                </linearGradient>
+                <radialGradient id="cg-stick" cx="0.38" cy="0.3" r="0.9">
+                  <stop offset="0" stop-color="#5b605a"/>
+                  <stop offset="0.55" stop-color="#343831"/>
+                  <stop offset="1" stop-color="#1c1e1b"/>
+                </radialGradient>
+                <radialGradient id="cg-well" cx="0.5" cy="0.42" r="0.72">
+                  <stop offset="0" stop-color="#c9cec9"/>
+                  <stop offset="0.75" stop-color="#d8dcd8"/>
+                  <stop offset="1" stop-color="#eef1ee"/>
+                </radialGradient>
+                <filter id="cg-drop" x="-15%" y="-15%" width="130%" height="140%">
+                  <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#20301f" flood-opacity="0.18"/>
+                </filter>
+                <filter id="cg-soft" x="-40%" y="-40%" width="180%" height="200%">
+                  <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" flood-color="#20301f" flood-opacity="0.3"/>
+                </filter>
+                <filter id="cg-faint" x="-40%" y="-40%" width="180%" height="200%">
+                  <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#20301f" flood-opacity="0.2"/>
+                </filter>
+              </defs>
+
+              <path class="controller-body" filter="url(#cg-drop)" d="M238 116C302 78 598 78 662 116c68 40 101 154 82 268-11 68-52 111-98 83l-99-78c-28-22-166-22-194 0l-99 78c-46 28-87-15-98-83-19-114 14-228 82-268Z"/>
+              <path class="controller-sheen" d="M244 122c66 40 346 40 412 0 30 18 53 52 66 96-96 44-448 44-544 0 13-44 36-78 66-96Z"/>
+
+              <path class="dpad-plate" filter="url(#cg-soft)" d="M236 183h38v48h35v38h-35v48h-38v-48h-35v-38h35z"/>
+              <circle class="stick-well" cx="352" cy="356" r="56"/>
+              <circle class="stick-well" cx="548" cy="356" r="56"/>
 
               <g class="control control-wide" data-control="leftTrigger" tabindex="0" role="button">
                 <rect x="220" y="52" width="118" height="44" rx="14"/>
@@ -87,19 +126,19 @@
               </g>
 
               <g class="control dpad-control" data-control="dpadUp" tabindex="0" role="button">
-                <path d="M232 181h46v54h-46z"/>
-                <path class="control-glyph" d="m255 195-9 12h18Z"/>
+                <path d="M236 183h38v48h-38z"/>
+                <path class="control-glyph" d="m255 197-9 12h18Z"/>
               </g>
               <g class="control dpad-control" data-control="dpadLeft" tabindex="0" role="button">
-                <path d="M201 227h54v46h-54z"/>
-                <path class="control-glyph" d="m217 250 12-9v18Z"/>
+                <path d="M201 231h35v38h-35z"/>
+                <path class="control-glyph" d="m215 250 12-9v18Z"/>
               </g>
               <g class="control dpad-control" data-control="dpadRight" tabindex="0" role="button">
-                <path d="M255 227h54v46h-54z"/>
-                <path class="control-glyph" d="m293 250-12-9v18Z"/>
+                <path d="M274 231h35v38h-35z"/>
+                <path class="control-glyph" d="m295 250-12-9v18Z"/>
               </g>
               <g class="control dpad-control" data-control="dpadDown" tabindex="0" role="button">
-                <path d="M232 265h46v54h-46z"/>
+                <path d="M236 271h38v48h-38z"/>
                 <path class="control-glyph" d="m255 305-9-12h18Z"/>
               </g>
 
@@ -150,6 +189,7 @@
                 <text x="352" y="361">L3</text>
               </g>
 
+              <circle class="stick-base" cx="548" cy="356" r="58"/>
               <g class="control stick-zone" data-control="rightStickUp" tabindex="0" role="button">
                 <path d="M513 313a63 63 0 0 1 70 0l-21 34a25 25 0 0 0-28 0Z"/>
                 <path class="stick-direction" d="m548 321-8 11h16Z"/>

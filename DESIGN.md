@@ -14,6 +14,11 @@ tool: direct, calm, and easy to scan.
   same lower plane (left stick lower-left, right stick lower-right), plus the
   Stadia centre cluster (Options and Menu pair, Stadia button, Capture and
   Assistant).
+- The controller is drawn as a soft product render of the Clearly White Stadia
+  hardware: a shaded white shell with black thumbsticks, D-pad, face buttons, and
+  system keys, using fixed light-artwork gradients (SVG defs) independent of any
+  page theme. This illustration is the one sanctioned exception to the flat-
+  surface rule; page chrome around it stays flat and hairline-separated.
 - Exploded-diagram callouts: every mapped control draws a hairline leader out to a
   side-rail label (token plus concise action) so the whole mapping reads at a
   glance, console-manual style. D-pad and right-stick directions group into one

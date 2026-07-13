@@ -26,7 +26,6 @@
   --rose-line: oklch(0.85 0.06 38);
 
   --on-fill: oklch(0.99 0.002 150);
-  --controller-fill: oklch(0.985 0.004 150);
   --controller-control: oklch(0.91 0.009 152);
   --controller-ink: oklch(0.38 0.014 152);
 
@@ -85,7 +84,6 @@
     --rose-soft: oklch(0.31 0.04 36);
     --rose-line: oklch(0.5 0.06 38);
     --on-fill: oklch(0.2 0.005 152);
-    --controller-fill: oklch(0.235 0.007 152);
     --controller-control: oklch(0.3 0.009 152);
     --controller-ink: oklch(0.82 0.009 150);
   }
@@ -436,16 +434,28 @@ html:not([data-active-profile="codexApp"]) .context-note {
 }
 
 .controller-body {
-  fill: var(--controller-fill);
-  stroke: var(--line);
-  stroke-width: 2;
+  fill: url(#cg-body);
+  stroke: oklch(0.87 0.008 152);
+  stroke-width: 1.5;
 }
 
-.controller-seam {
-  fill: none;
-  stroke: var(--line-soft);
-  stroke-linecap: round;
-  stroke-width: 2;
+.controller-sheen {
+  fill: #ffffff;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.dpad-plate {
+  fill: url(#cg-key);
+}
+
+.stick-well {
+  fill: url(#cg-well);
+}
+
+.stick-base {
+  fill: url(#cg-stick);
+  filter: url(#cg-soft);
 }
 
 .control {
@@ -453,15 +463,60 @@ html:not([data-active-profile="codexApp"]) .context-note {
   cursor: pointer;
   transform-box: fill-box;
   transform-origin: center;
+  outline: none;
 }
 
 .control > circle,
 .control > rect,
 .control > path:first-child {
   fill: var(--controller-control);
-  stroke: var(--line);
-  stroke-width: 2;
+  stroke: none;
   transition: fill var(--t-fast) var(--ease-out), stroke var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out);
+}
+
+/* White shell keys: triggers and bumpers */
+.control-wide > rect {
+  fill: url(#cg-bumper);
+  stroke: oklch(0.86 0.008 152);
+  stroke-width: 1.2;
+  filter: url(#cg-faint);
+}
+
+/* Black keys: face buttons and center buttons */
+.face-control > circle,
+.center-control > circle,
+.center-control > rect {
+  fill: url(#cg-key);
+  filter: url(#cg-soft);
+}
+
+.face-control,
+.center-control,
+.dpad-control,
+.stick-press,
+.stick-zone {
+  color: oklch(0.95 0.004 150);
+}
+
+/* D-pad segments sit on the black plate; invisible until interacted */
+.dpad-control > path:first-child {
+  fill: transparent;
+}
+
+/* Sticks: black rubber ring plus domed cap */
+.stick-zone > circle,
+.stick-zone > path:first-child {
+  fill: url(#cg-stick);
+}
+
+.stick-zone[data-control="leftStickVerticalScroll"] > circle {
+  filter: url(#cg-soft);
+}
+
+.stick-press > circle {
+  fill: url(#cg-stick);
+  stroke: oklch(0.32 0.006 150);
+  stroke-width: 1.5;
 }
 
 .control text {
@@ -486,8 +541,8 @@ html:not([data-active-profile="codexApp"]) .context-note {
 .control:focus-visible > circle,
 .control:focus-visible > rect,
 .control:focus-visible > path:first-child {
-  fill: var(--accent-soft);
-  stroke: var(--accent-line);
+  stroke: var(--accent);
+  stroke-width: 2.5;
 }
 
 .control.is-selected > circle,
@@ -495,6 +550,7 @@ html:not([data-active-profile="codexApp"]) .context-note {
 .control.is-selected > path:first-child {
   fill: var(--accent-ink);
   stroke: var(--accent);
+  stroke-width: 2.5;
 }
 
 .control.is-selected {
@@ -512,30 +568,40 @@ html:not([data-active-profile="codexApp"]) .context-note {
 
 .home-control {
   cursor: default;
-  opacity: 0.4;
 }
 
 .home-control > circle {
-  fill: var(--controller-control);
-  stroke: var(--line);
-  stroke-width: 2;
+  fill: #ffffff;
+  stroke: oklch(0.88 0.008 152);
+  stroke-width: 1.2;
+  filter: url(#cg-faint);
+}
+
+.home-control[data-control="assistant"] > circle {
+  fill: url(#cg-key);
+  stroke: none;
+}
+
+.home-control[data-control="assistant"] {
+  color: oklch(0.95 0.004 150);
+  opacity: 0.9;
 }
 
 .home-glyph {
   fill: none;
-  stroke: currentColor;
-  stroke-width: 2.4;
+  stroke: var(--accent);
+  stroke-width: 2.6;
   stroke-linecap: round;
   stroke-linejoin: round;
   pointer-events: none;
 }
 
 .face-y > circle {
-  stroke: var(--amber-line);
+  stroke: none;
 }
 
 .face-b > circle {
-  stroke: var(--rose-line);
+  stroke: none;
 }
 
 /* Exploded diagram callouts */
