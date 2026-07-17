@@ -9,8 +9,8 @@ Reduce cognitive load while using dictation + controller together by making butt
 ## Layout Principles
 - Shoulder buttons use a paired previous/next model, scoped to the active app:
   - In Ghostty, L1/R1 move to the previous/next tab.
-  - In the Codex app, L1/R1 invoke the native View menu's Previous Task/Next Task commands. This avoids Codex's overlapping task and browser-tab keyboard shortcuts.
-- Codex app commands use native menu actions when Codex exposes them. New Task, sidebar toggles, zoom, and previous/next task therefore do not depend on keyboard shortcuts remaining stable across app updates.
+  - In the Codex app, L1/R1 invoke the native View menu's Previous Chat/Next Chat commands. This avoids Codex's overlapping chat and browser-tab keyboard shortcuts.
+- Codex app commands use native menu actions when Codex exposes them. New Chat, sidebar and review-panel toggles, zoom, and previous/next chat therefore do not depend on keyboard shortcuts remaining stable across app updates. The exact menu labels in `config/mappings.json` must track Codex app menu renames.
 - Literal input controls remain keystroke- or text-based: composer text, Enter, Escape, Backspace, Ctrl+C, and the held Control modifier. Archive and Plan mode also remain shortcut-based because Codex does not expose native menu commands for them.
 - Face buttons are reserved for high-frequency terminal input and correction, not layout-changing actions.
 - The menu-style center button is reserved for Codex mode changes through native keyboard shortcuts rather than injected slash-command text.

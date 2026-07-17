@@ -299,8 +299,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"New Task\" of menu \"File\" of menu bar 1",
-            "description": "Open a new Codex task through the native File menu"
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"New Chat\" of menu \"File\" of menu bar 1",
+            "description": "Open a new Codex chat through the native File menu"
           }
         },
         "menu": {
@@ -371,8 +371,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Toggle Side Panel\" of menu \"View\" of menu bar 1",
-            "description": "Toggle the Codex app right side panel through the native View menu"
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Toggle Review Panel\" of menu \"View\" of menu bar 1",
+            "description": "Toggle the Codex app right review panel through the native View menu"
           }
         },
         "leftThumbstickButton": {
@@ -406,8 +406,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Previous Task\" of menu \"View\" of menu bar 1",
-            "description": "Move to the previous Codex task through the native View menu"
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Previous Chat\" of menu \"View\" of menu bar 1",
+            "description": "Move to the previous Codex chat through the native View menu"
           }
         },
         "rightShoulder": {
@@ -415,8 +415,8 @@
           "edgeTrigger": true,
           "action": {
             "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Next Task\" of menu \"View\" of menu bar 1",
-            "description": "Move to the next Codex task through the native View menu"
+            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Next Chat\" of menu \"View\" of menu bar 1",
+            "description": "Move to the next Codex chat through the native View menu"
           }
         }
       }
