@@ -18,6 +18,7 @@ cd "$ROOT_DIR"
   --no-input
 
 python3 scripts/check-controller-guide.py
+python3 scripts/check-mappings.py
 
 mapfile -t staged_files < <(git diff --cached --name-only --diff-filter=ACMR)
 

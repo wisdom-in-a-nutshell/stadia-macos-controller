@@ -102,6 +102,8 @@ Behavior note:
 - Optional shared field:
   - `description` (`string`)
 
+Label-bound AppleScripts such as `click menu item "Previous Chat"` are rejected by `scripts/check-mappings.py`; use a direct keystroke for latency-sensitive native menu shortcuts.
+
 ## SafetyConfig
 - `dryRun` (`bool`): if true, print actions without executing.
 - `emergencyToggleButton` (`string`, optional): pressing this button toggles bridge enablement.

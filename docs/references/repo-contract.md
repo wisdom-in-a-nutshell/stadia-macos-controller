@@ -10,12 +10,13 @@ Use this page for repo-level commands, file map notes, and runtime contracts.
 - `scripts/run-controller-guide.sh`: start the loopback guide server and open it in the default browser.
 - `scripts/serve-controller-guide.py`: allowlisted static/API server for the guide; never serves the repo root.
 - `scripts/check-controller-guide.py`: loopback route, config parity, isolation, and JavaScript validation.
+- `scripts/check-mappings.py`: fast action-schema checks and a guard against label-bound menu AppleScripts.
 - `scripts/install-launchd-controller-guide.sh`: dry-run-first installer, status,
   logs, and uninstall surface for the production guide LaunchAgent on port 8798.
 - `scripts/deploy-controller-guide.sh`: non-interactive, structured deploy contract
   used by the Mac mini production reconciler.
 - `scripts/run-bridge.sh`: local `swift run` wrapper.
-- `scripts/check-fast.sh`: fast repo validation. Delegates cheap generic checks to `~/GitHub/scripts/bin/repo-fast-check`, then validates Swift package manifest parsing when Swift manifest files are staged.
+- `scripts/check-fast.sh`: fast repo validation. Delegates cheap generic checks to `~/GitHub/scripts/bin/repo-fast-check`, validates the controller guide and mappings, then validates Swift package manifest parsing when Swift manifest files are staged.
 - `scripts/install-launchd-stadia-controller-bridge.sh`: project-local fallback installer for the bridge LaunchAgent.
 - `scripts/verify-launchd-stadia-controller-bridge.sh`: project-local fallback verifier for launchd wiring, staged runtime path, and signing identifier.
 - `scripts/uninstall-launchd-stadia-controller-bridge.sh`: project-local fallback cleanup for bridge LaunchAgents.
@@ -27,6 +28,7 @@ Use this page for repo-level commands, file map notes, and runtime contracts.
 ## Validation
 - Run `./scripts/check-fast.sh` for repo-native fast validation on every change.
 - Controller Guide checks run as part of `./scripts/check-fast.sh` and can also be run directly with `python3 scripts/check-controller-guide.py`.
+- Mapping checks run as part of `./scripts/check-fast.sh` and can also be run directly with `python3 scripts/check-mappings.py`.
 - Validate the guide deploy interface with its default JSON dry run and verify
   production with `scripts/install-launchd-controller-guide.sh --status --no-input`.
 - Run `swift build` when `Package.swift`, `src/`, or runtime-facing scripts change.
@@ -51,3 +53,4 @@ Use this page for repo-level commands, file map notes, and runtime contracts.
 - Use explicit `appProfiles` matching only.
 - `alwaysOn` is an explicit cross-app control list, not a fallback profile.
 - If the frontmost bundle ID is unmapped, only `alwaysOn` controls should fire.
+- Keep latency-sensitive Codex controls on direct keystroke actions; `scripts/check-mappings.py` enforces this contract.

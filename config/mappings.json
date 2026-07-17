@@ -298,9 +298,12 @@
           "debounceMs": 500,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"New Chat\" of menu \"File\" of menu bar 1",
-            "description": "Open a new Codex chat through the native File menu"
+            "type": "keystroke",
+            "keyCode": 45,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Open a new Codex chat with Cmd+N"
           }
         },
         "menu": {
@@ -361,36 +364,49 @@
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Toggle Sidebar\" of menu \"View\" of menu bar 1",
-            "description": "Toggle the Codex app left sidebar through the native View menu"
+            "type": "keystroke",
+            "keyCode": 11,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Toggle the Codex app left sidebar with Cmd+B"
           }
         },
         "dpadRight": {
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Toggle Review Panel\" of menu \"View\" of menu bar 1",
-            "description": "Toggle the Codex app right review panel through the native View menu"
+            "type": "keystroke",
+            "keyCode": 11,
+            "modifiers": [
+              "command",
+              "option"
+            ],
+            "description": "Toggle the Codex app right review panel with Option+Cmd+B"
           }
         },
         "leftThumbstickButton": {
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Zoom Out\" of menu \"View\" of menu bar 1",
-            "description": "Zoom out in the Codex app through the native View menu"
+            "type": "keystroke",
+            "keyCode": 27,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Zoom out in the Codex app with Cmd+-"
           }
         },
         "rightThumbstickButton": {
           "debounceMs": 180,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Zoom In\" of menu \"View\" of menu bar 1",
-            "description": "Zoom in the Codex app through the native View menu"
+            "type": "keystroke",
+            "keyCode": 24,
+            "modifiers": [
+              "command"
+            ],
+            "description": "Zoom in the Codex app with Cmd+="
           }
         },
         "leftTrigger": {
@@ -405,18 +421,26 @@
           "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Previous Chat\" of menu \"View\" of menu bar 1",
-            "description": "Move to the previous Codex chat through the native View menu"
+            "type": "keystroke",
+            "keyCode": 33,
+            "modifiers": [
+              "command",
+              "shift"
+            ],
+            "description": "Move to the previous Codex chat with Cmd+Shift+["
           }
         },
         "rightShoulder": {
           "debounceMs": 100,
           "edgeTrigger": true,
           "action": {
-            "type": "applescript",
-            "script": "tell application \"System Events\" to tell first application process whose bundle identifier is \"com.openai.codex\" to click menu item \"Next Chat\" of menu \"View\" of menu bar 1",
-            "description": "Move to the next Codex chat through the native View menu"
+            "type": "keystroke",
+            "keyCode": 30,
+            "modifiers": [
+              "command",
+              "shift"
+            ],
+            "description": "Move to the next Codex chat with Cmd+Shift+]"
           }
         }
       }
