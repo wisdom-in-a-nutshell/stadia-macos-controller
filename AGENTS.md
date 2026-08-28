@@ -32,3 +32,13 @@ This root `AGENTS.md` applies repo-wide. Keep exact operational detail in `docs/
 - Run `./scripts/check-fast.sh` before handoff.
 - Run `./scripts/check-full.sh` for runtime, launchd, or Swift code changes where a full build matters.
 - For live launchd changes, verify the LaunchAgent and test a real controller action against the changed behavior.
+
+## Controller Guide Production
+
+- `scripts/deploy-controller-guide.sh` is the single noninteractive production client. It emits
+  JSON by default and owns the exact-source full gate, versioned activation, health proof, status,
+  sanitized logs, and rollback.
+- Production guide releases live outside the checkout under
+  `~/.local/share/stadia-controller-guide/production`; never point launchd back at mutable repo files.
+- Do not use raw `launchctl print` as the guide's status surface. It can expose inherited
+  environment values; use `scripts/deploy-controller-guide.sh --status`.

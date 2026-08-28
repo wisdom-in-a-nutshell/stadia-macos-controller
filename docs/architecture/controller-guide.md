@@ -8,15 +8,18 @@ guide never receives controller events and cannot execute or edit actions.
 flowchart LR
     Browser[Local browser]
     Server[Loopback guide server]
-    Assets[guide HTML, CSS, and JavaScript]
-    Config[config/mappings.json]
+    Release[Read-only versioned guide release]
+    RepoConfig[Repo config/mappings.json]
+    ReleaseConfig[Released config/mappings.json]
+    Deploy[Exact-source deploy]
     Bridge[Controller bridge]
 
     Browser -->|GET static assets| Server
     Browser -->|GET /api/mappings| Server
-    Server --> Assets
-    Server --> Config
-    Config --> Bridge
+    Server --> Release
+    Release --> ReleaseConfig
+    RepoConfig --> Deploy --> Release
+    RepoConfig --> Bridge
 ```
 
 ## Runtime shape
@@ -27,8 +30,11 @@ flowchart LR
   Mac mini Cloudflare Tunnel routes `controller.adithyan.io` to that loopback
   service; Cloudflare Access authenticates the browser before traffic reaches
   the guide.
-- `scripts/serve-controller-guide.py` serves an explicit allowlist of guide
-  assets and exposes the live config at `/api/mappings`.
+- `scripts/serve-controller-guide.py` serves an explicit allowlist of guide assets and exposes the
+  active release's config at `/api/mappings`.
+- Production packages only the guide assets, config, server, and source marker as a read-only
+  release under `~/.local/share/stadia-controller-guide/production/releases/`; launchd never serves
+  the mutable checkout.
 - The server does not expose the repository as a static directory.
 - `guide/app.js` resolves effective button mappings the same way as the bridge:
   an enabled application-profile mapping wins over the same `alwaysOn` button.
@@ -41,6 +47,8 @@ flowchart LR
 - Controller names, physical positions, and the Codex browser-focus operational
   note are presentation metadata, not duplicated action configuration.
 - The guide is read-only. Mapping edits continue to happen in the JSON file.
+- The local development guide rereads the checkout config. Production rereads its immutable released
+  copy; a committed mapping change reaches it through the immediate latest-wins deploy.
 - The server binds to loopback by default and uses a restrictive content security
   policy. It has no package dependencies, remote fonts, analytics, or telemetry.
 - The public hostname is private-by-authentication: it is reachable on the
@@ -52,5 +60,9 @@ flowchart LR
 - Invalid or unreadable JSON returns a structured `500` response and produces an
   actionable error state in the page.
 - Unknown routes return `404`; they cannot be used to browse other repo files.
-- Refreshing the page or pressing Refresh rereads the JSON, so mapping changes do
-  not require rebuilding the guide.
+- Refreshing the page or pressing Refresh rereads the active release's JSON. Mapping changes do not
+  need an application build, but production changes release atomically so guide assets and mappings
+  always come from one committed revision.
+- Deployment runs the complete guide release gate in an exact-SHA worktree and rechecks clean `main`
+  before activation. Launchd or health failure restores the prior versioned release. The separate
+  repo-wide full gate still compiles the Swift bridge.

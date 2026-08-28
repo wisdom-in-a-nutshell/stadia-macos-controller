@@ -50,13 +50,24 @@ Deploy or reconcile its loopback LaunchAgent with:
 Inspect the service or logs without changing it:
 
 ```bash
-./scripts/install-launchd-controller-guide.sh --status --no-input
-./scripts/install-launchd-controller-guide.sh --logs 150 --no-input
+./scripts/deploy-controller-guide.sh --status --json --no-input
+./scripts/deploy-controller-guide.sh --logs 150 --json --no-input
+./scripts/deploy-controller-guide.sh --rollback --json --no-input
 ```
 
-The deploy command defaults to a non-mutating JSON dry run. Production listens
-only on `127.0.0.1:8798`; the shared Cloudflare Tunnel and Adithyan-only Access
-policy own external routing and browser authentication.
+The deploy command defaults to a non-mutating JSON dry run. Apply requires clean committed `main`,
+runs the complete gate from a detached exact-SHA worktree, packages a read-only versioned release
+outside the checkout, and restores the prior release if launchd or health proof fails. Production
+listens only on `127.0.0.1:8798`; the shared Cloudflare Tunnel and Adithyan-only Access policy own
+external routing and browser authentication.
+
+The guide release gate validates every tracked shell, Python, and JSON file plus the guide routes,
+mapping parity, source stability, JSON client, status/log redaction, and plist contract. The
+repo-wide `scripts/check-full.sh` additionally builds the Swift bridge; guide deployment does not
+repeat that unrelated build.
+
+Health proof waits 30 seconds by default. Use `--timeout 1..600` to override it and
+`--progress off` when the caller wants only the final JSON object; progress otherwise goes to stderr.
 
 If Accessibility permission has not appeared yet, run once with prompt enabled:
 

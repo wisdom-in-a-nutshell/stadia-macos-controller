@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Serve the controller guide and live mappings on the loopback interface."""
+"""Serve the controller guide and its colocated mappings on the loopback interface."""
 
 from __future__ import annotations
 
@@ -18,6 +18,7 @@ from urllib.parse import urlsplit
 REPO_ROOT = Path(__file__).resolve().parents[1]
 GUIDE_ROOT = REPO_ROOT / "guide"
 MAPPINGS_PATH = REPO_ROOT / "config" / "mappings.json"
+SOURCE_PATH = REPO_ROOT / "SOURCE_SHA"
 STATIC_ROUTES = {
     "/": "index.html",
     "/index.html": "index.html",
@@ -40,8 +41,16 @@ class ControllerGuideHandler(BaseHTTPRequestHandler):
         path = urlsplit(self.path).path
 
         if path == "/api/health":
+            try:
+                source_sha = SOURCE_PATH.read_text(encoding="utf-8").strip()
+            except OSError:
+                source_sha = "unreleased"
             self._send_json(
-                {"status": "ok", "config": str(MAPPINGS_PATH.relative_to(REPO_ROOT))},
+                {
+                    "status": "ok",
+                    "config": str(MAPPINGS_PATH.relative_to(REPO_ROOT)),
+                    "source_sha": source_sha,
+                },
                 send_body=send_body,
             )
             return
@@ -126,7 +135,11 @@ class ControllerGuideHandler(BaseHTTPRequestHandler):
             self.wfile.write(body)
 
     def log_message(self, format_string: str, *args: object) -> None:
-        print(f"[guide] {self.address_string()} {format_string % args}")
+        message = format_string % args
+        # Request targets can contain credentials or session values in query strings. Keep useful
+        # method/path/status logging while ensuring production logs never retain the query.
+        message = message.replace(self.path, urlsplit(self.path).path)
+        print(f"[guide] {self.address_string()} {message}")
 
 
 def create_server(host: str = "127.0.0.1", port: int = 8173) -> ThreadingHTTPServer:
