@@ -17,9 +17,6 @@ Use this page for repo-level commands, file map notes, and runtime contracts.
   used by the Mac mini production reconciler; JSON-default dry run, exact-source full gate,
   versioned activation, health, status, sanitized logs, rollback, and uninstall share this surface.
 - `scripts/deploy_controller_guide.py`: testable implementation behind the stable shell entrypoint.
-- `scripts/install-launchd-controller-guide.sh`: deprecated compatibility forwarder. It preserves
-  common older invocations without rendering a plist or printing raw launchd state; new automation
-  must use the deploy client directly.
 - `scripts/run-bridge.sh`: local `swift run` wrapper.
 - `scripts/check-fast.sh`: fast repo validation. Delegates cheap generic checks to `~/GitHub/scripts/bin/repo-fast-check`, validates the controller guide and mappings, then validates Swift package manifest parsing when Swift manifest files are staged.
 - `scripts/install-launchd-stadia-controller-bridge.sh`: project-local fallback installer for the bridge LaunchAgent.
