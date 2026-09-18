@@ -1,7 +1,5 @@
 # References
 
-Use this folder for durable implementation facts, command snippets, and operational lookup material for humans and agents.
-
-Start with `repo-contract.md` for the repo map, validation expectations, and runtime contracts.
-
-Keep volatile execution state in `docs/projects/<project>/tasks.md`.
+- [Local run and preview](setup.md)
+- [Bridge installation and recovery](deployment.md)
+- [Mapping and guide release contracts](repo-contract.md)

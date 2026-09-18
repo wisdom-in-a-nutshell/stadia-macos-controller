@@ -1,115 +1,57 @@
-# Deployment (Two Machines)
+# Bridge installation and recovery
 
-Use this when you want the controller bridge running on both machines with the same repo/config.
-
-## 1) Clone and verify
-On each machine:
+Use the shared machine wrapper on each Mac; do not copy built binaries between
+machines. Local build/signing and Accessibility trust must match that machine.
 
 ```bash
-git clone git@github.com:wisdom-in-a-nutshell/stadia-macos-controller.git ~/GitHub/stadia-macos-controller
-cd ~/GitHub/stadia-macos-controller
-swift build
+~/GitHub/scripts/setup/stadia/install-launchd-stadia-controller-bridge.sh --mode dry-run
+~/GitHub/scripts/setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
+~/GitHub/scripts/setup/stadia/verify-launchd-stadia-controller-bridge.sh
+~/GitHub/scripts/setup/stadia/uninstall-launchd-stadia-controller-bridge.sh
 ```
 
-## 2) Configure mappings
-Edit `config/mappings.json` as needed. Hot reload is enabled while the bridge process is running.
-For Ghostty layout rationale, see `docs/references/ghostty-mapping-rationale.md`.
+If the shared wrapper is unavailable, the corresponding `scripts/` commands
+in this repo provide the project-local implementation.
 
-## 3) Install launchd service
-Canonical machine-ops command (recommended) from `~/GitHub/scripts`:
+## Stable identity and Accessibility
 
-```bash
-cd ~/GitHub/scripts
-./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
-```
+- Label and bundle/signing identifier: `com.stadia-controller-bridge`.
+- App: `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`.
+- Grant Accessibility to its `Contents/MacOS/stadia-controller-bridge` executable,
+  not a temporary `.build/` binary.
+- Installer signing defaults to `--sign-identity auto`: Apple certificate when
+  available, otherwise ad-hoc. `adhoc` forces ad-hoc; an explicit certificate pins
+  identity; `none` skips signing and is unsuitable for stable trust.
 
-Optional signing override examples:
-- `./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity auto` (default behavior)
-- `./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live --sign-identity adhoc`
+The installer reuses unchanged staged source to avoid unnecessary trust churn;
+changed source or `--force-build` rebuilds it. Mapping-only changes hot-reload.
+Runtime/action-schema or launchd changes require reinstalling before live proof.
+Shell/AppleScript helper output is captured in bridge logs so failures remain
+attributable to the action.
 
-Project-local fallback (equivalent):
+The installer also suppresses macOS Game Controller shortcuts that compete for
+system/share buttons. Rerun it if a macOS update restores those shortcuts.
 
-```bash
-cd ~/GitHub/stadia-macos-controller
-./scripts/install-launchd-stadia-controller-bridge.sh --mode live
-```
+## Verify and recover
 
-For safer testing first:
-
-```bash
-cd ~/GitHub/scripts
-./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode dry-run
-```
-
-What this installer now does:
-- Reuses the staged runtime app bundle when source files are unchanged (avoids unnecessary re-sign/trust churn).
-- Builds a fresh binary (`release` by default) only when source changed or `--force-build` is used.
-- Stages it to a stable app bundle path: `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`.
-- Uses one stable default LaunchAgent label on both machines: `com.stadia-controller-bridge`.
-- Uses one stable default signing/bundle identifier on both machines: `com.stadia-controller-bridge`.
-- Code-signs the staged app bundle target (`auto` by default with ad-hoc fallback).
-- Disables macOS Game Controller system shortcuts that can open Apple Games, Game Center, Game Overlay, or Launchpad from controller system/share buttons.
-- Points launchd to the staged app executable.
-
-This avoids relying on transient `.build/...` binaries and reduces repeated Accessibility re-approval.
-
-## 4) Accessibility permission (first-time, one stable app executable)
-Grant Accessibility to the staged executable path used by launchd:
-- `System Settings > Privacy & Security > Accessibility`
-- Add/enable:
-  - `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge`
-
-If entries got messy from old runs:
-1. Remove old `stadia-controller-bridge` entries.
-2. Re-add the staged executable path above.
-3. Re-run installer:
+Use the verifier above, inspect the bounded bridge logs, and test a real button
+against the changed behavior. A running process alone is not input proof.
 
 ```bash
-cd ~/GitHub/scripts
-./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
-```
-
-## 5) Validate service state
-```bash
-launchctl print gui/$(id -u)/com.stadia-controller-bridge | sed -n '1,90p'
-```
-
-Check logs:
-```bash
-tail -n 80 ~/Library/Logs/stadia-controller-bridge.launchd.out.log
+tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log
 tail -n 80 ~/Library/Logs/stadia-controller-bridge.launchd.err.log
 ```
 
-One-command verifier (recommended):
-```bash
-cd ~/GitHub/scripts
-./setup/stadia/verify-launchd-stadia-controller-bridge.sh
-```
+- Events appear but actions do not: re-enable the staged executable in
+  System Settings → Privacy & Security → Accessibility. Remove obsolete entries
+  if necessary, then reinstall with the same signing identity.
+- A reinstall breaks previously working actions: check signing/Accessibility
+  identity before repeatedly rebuilding or re-signing.
+- `home` never appears while `menu`, `options`, and `share` do: the controller
+  mode/API may not expose Home. Map confirmed buttons rather than assuming
+  permission failure. Search the bridge log for those button names.
+- Apple Games/Game Center/Overlay/Launchpad opens: disable the connected
+  controller's system shortcuts or let the installer reconcile them. Reconnect
+  the controller; a logout/login may be needed for macOS to apply the change.
 
-## 6) Update workflow
-On either machine:
-
-```bash
-cd ~/GitHub/stadia-macos-controller
-git pull --rebase
-```
-
-No restart is needed for mapping changes only (hot reload). Restart/reinstall is needed if code or launchd settings change.
-Do not copy built binaries between machines; each machine should run the installer locally so build/signing and launchd registration match local macOS trust state.
-If a macOS update resets Game Controller system shortcuts, rerun the installer above; it reapplies the shortcut suppression before loading the bridge.
-
-## Troubleshooting (Recovery Runbook)
-If actions stop firing but controller appears connected:
-
-1. Check service + logs:
-```bash
-launchctl print gui/$(id -u)/com.stadia-controller-bridge | sed -n '1,90p'
-tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log
-```
-2. If logs show Accessibility errors, re-enable staged executable in:
-   `System Settings > Privacy & Security > Accessibility`
-3. Reconcile install with stable signing:
-```bash
-cd ~/GitHub/scripts
-./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
-```
+Local source runs and the read-only mapping preview are in [setup](setup.md).

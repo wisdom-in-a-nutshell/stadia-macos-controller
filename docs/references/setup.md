@@ -1,180 +1,39 @@
-# Local Setup (Phase 1)
+# Local run and preview
 
-## Prerequisites
-- macOS with Xcode CLI tools installed.
-- Stadia controller connected (USB or wireless).
-
-## Run in Dry-Run Mode (default)
-```bash
-swift run stadia-controller-bridge --config config/mappings.json
-```
-
-or:
+The bridge needs macOS command-line tools and a connected Stadia controller.
+Local execution defaults to dry run:
 
 ```bash
 ./scripts/run-bridge.sh
+# Equivalent explicit source invocation:
+swift run stadia-controller-bridge --config config/mappings.json
 ```
 
-## Run in Live Mode
-```bash
-swift run stadia-controller-bridge --config config/mappings.json --no-dry-run
-```
+Add `--no-dry-run` for live input actions. Use `--prompt-accessibility` when
+requesting the required Accessibility permission. For the installed service,
+use [deployment and recovery](deployment.md), including its stable app identity.
 
-## Open the Controller Guide
-
-Start the read-only local mapping guide and open it in the default browser:
+## Controller guide
 
 ```bash
 ./scripts/run-controller-guide.sh
-```
-
-The guide listens on `http://localhost:8173/` until the terminal process is
-stopped with Control-C. It rereads `config/mappings.json` whenever the page or
-its Refresh control loads mappings. To use another port:
-
-```bash
 ./scripts/run-controller-guide.sh --port 8174
 ```
 
-The server binds to loopback by default, exposes only the guide assets and
-`/api/mappings`, and does not allow mapping edits.
+The default guide is `http://localhost:8173/`; stop it with Control-C. It rereads
+`config/mappings.json` on page load/Refresh, exposes only guide assets and
+`/api/mappings`, and never edits mappings. Production guide operations are in
+[the release contract](repo-contract.md).
 
-The durable Mac mini production instance is available at
-`https://controller.adithyan.io/` after signing in through Cloudflare Access.
-Deploy or reconcile its loopback LaunchAgent with:
+## Mappings
 
-```bash
-./scripts/deploy-controller-guide.sh --apply --plain --no-input
-```
+The running bridge watches `config/mappings.json`. Code changes need a restart;
+new actions or schema require reinstalling the staged launchd binary.
+`appProfiles` matches the frontmost bundle ID; only `alwaysOn` controls work
+outside a matching profile.
 
-Inspect the service or logs without changing it:
-
-```bash
-./scripts/deploy-controller-guide.sh --status --json --no-input
-./scripts/deploy-controller-guide.sh --logs 150 --json --no-input
-./scripts/deploy-controller-guide.sh --rollback --json --no-input
-```
-
-The deploy command defaults to a non-mutating JSON dry run. Apply requires clean committed `main`,
-runs the complete gate from a detached exact-SHA worktree, packages a read-only versioned release
-outside the checkout, and restores the prior release if launchd or health proof fails. Production
-listens only on `127.0.0.1:8798`; the shared Cloudflare Tunnel and Adithyan-only Access policy own
-external routing and browser authentication.
-
-The guide release gate validates every tracked shell, Python, and JSON file plus the guide routes,
-mapping parity, source stability, JSON client, status/log redaction, and plist contract. The
-repo-wide `scripts/check-full.sh` additionally builds the Swift bridge; guide deployment does not
-repeat that unrelated build.
-
-Health proof waits 30 seconds by default. Use `--timeout 1..600` to override it and
-`--progress off` when the caller wants only the final JSON object; progress otherwise goes to stderr.
-
-If Accessibility permission has not appeared yet, run once with prompt enabled:
-
-```bash
-swift run stadia-controller-bridge --config config/mappings.json --no-dry-run --prompt-accessibility
-```
-
-## Accessibility Permission (required for keystroke actions)
-1. Open `System Settings` > `Privacy & Security` > `Accessibility`.
-2. Allow this staged app executable:
-   - `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge`
-3. Keep one stable install identity (`--sign-identity auto` default, with fallback to ad-hoc).
-
-## Stable Names (Both Machines)
-- LaunchAgent label default: `com.stadia-controller-bridge`
-- Bundle identifier/signing identifier default: `com.stadia-controller-bridge`
-- Staged app bundle path: `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app`
-
-## Signing Modes (Installer)
-- `--sign-identity auto` (default): prefer Apple cert if available, fallback to ad-hoc.
-- `--sign-identity adhoc`: always ad-hoc sign (`-`), no Apple cert dependency.
-- `--sign-identity "Apple Development: ..."`: pin one explicit cert for maximum consistency.
-- `--sign-identity none`: skip signing (not recommended).
-
-## Current Mapping
-`config/mappings.json` is the source of truth for the live controller layout, including keycodes, modifiers, Ghostty actions, helper commands, debounce settings, and descriptions.
-
-Operational notes:
-- `alwaysOn` controls remain active outside Ghostty.
-- Ghostty profile controls only fire when `com.mitchellh.ghostty` is frontmost.
-- Codex app profile controls only fire when `com.openai.codex` is frontmost.
-- Left-stick vertical scroll is configured in `alwaysOn`; when Ghostty is frontmost, the bridge targets Ghostty's focused terminal directly so scrolling follows tab/split focus instead of mouse cursor position.
-- In Codex app, the profile keeps high-frequency text-entry, previous/next chat switching, archiving, and panel-toggle controls available without enabling Ghostty-only tab, split, or surface-management actions.
-- D-pad arrow-key controls are always-on where no active app profile overrides them; Ghostty overrides horizontal D-pad with zoom actions, and Codex app overrides horizontal D-pad with left/right panel toggles.
-- Keep exact button-to-action documentation in `config/mappings.json`, not in this setup guide.
-
-Dictation stability note:
-- Auto-submit-on-release behavior is intentionally not configured for triggers.
-- Reason: dictation completion timing is asynchronous, so automatic `Enter` can submit partial/previous text.
-- Recommended pattern: keep trigger and submit separate (for example, trigger on `R2`, submit with a dedicated button).
-
-Non-profiled apps:
-- If frontmost app is not mapped in `appProfiles`, only controls listed in `alwaysOn` still execute.
-- All other controls log `[SKIP] no active app profile`.
-
-If your Ghostty split binding differs, edit `config/mappings.json`.
-For design intent behind the current layout, see `docs/references/ghostty-mapping-rationale.md`.
-If Ghostty AppleScript is disabled or you are on Ghostty older than `1.3.0`, mappings that depend on Ghostty AppleScript helpers must be changed back to plain keystrokes, `ghosttyAction`, or another supported action type.
-
-## Hot Reload
-- `config/mappings.json` is watched while the bridge is running.
-- Save changes to mappings and the process reloads automatically.
-- Code changes still require a process restart.
-- Runtime/config-schema changes also require reinstalling the staged launchd app so launchd stops running the old binary:
-  - `~/GitHub/scripts/setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live`
-
-## Ghostty AppleScript Note
-- This repo intentionally builds part of the Ghostty flow on top of Ghostty's native AppleScript support.
-- Current AppleScript usage is intentionally narrow:
-  - shell helpers create Codex/Ghostty surfaces with custom startup behavior.
-  - `ghosttyAction` dispatches Ghostty-native terminal actions through Ghostty's AppleScript bridge.
-- Ghostty marks AppleScript as a preview API in `1.3.x`, but this is currently the cleanest way to express tab-level startup behavior and has been validated in live use.
-
-## Launchd Service (optional)
-Install as a user LaunchAgent:
-
-```bash
-cd ~/GitHub/scripts
-./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live
-```
-
-Uninstall:
-
-```bash
-cd ~/GitHub/scripts
-./setup/stadia/uninstall-launchd-stadia-controller-bridge.sh
-```
-
-Verify:
-
-```bash
-cd ~/GitHub/scripts
-./setup/stadia/verify-launchd-stadia-controller-bridge.sh
-```
-
-## Troubleshooting (Recurring Issues)
-- Symptom: controller events appear in logs but no actions fire.
-  - Cause: Accessibility trust missing for staged app executable.
-  - Fix: re-enable `~/Library/Application Support/stadia-controller-bridge/StadiaControllerBridge.app/Contents/MacOS/stadia-controller-bridge` in Accessibility.
-- Symptom: `menu`/`options`/`share` events appear, but `home` never appears in logs even after repeated presses.
-  - Cause: likely input exposure limitation for current controller mode/connection; some APIs do not surface Assistant/Home on Stadia.
-  - Fix: treat `home` as unavailable on that setup; map other confirmed buttons instead.
-  - Quick check:
-    - `rg -n "button=home|button=share|button=menu|button=options" ~/Library/Logs/stadia-controller-bridge.launchd.out.log -S`
-- Symptom: Apple Games, Game Center, Game Overlay, or Launchpad opens when pressing controller system/share buttons.
-  - Cause: macOS Game Controller system shortcuts are handling the same physical buttons before or alongside the bridge.
-  - Fix: turn off the shortcuts in `System Settings` > `Game Controllers` for the connected controller, or run:
-    - `defaults write com.apple.GameController bluetoothPrefsMenuLongPressAction -integer 0`
-    - `defaults write com.apple.GameController bluetoothPrefsShareLongPressSystemGestureMode -integer -1`
-  - Apply: disconnect and reconnect the controller; if macOS still opens the Apple UI, log out and back in once.
-- Symptom: worked earlier, then broke right after reinstall.
-  - Cause: signing identity changed, or app executable was unnecessarily rebuilt/re-signed.
-  - Fix: reinstall with stable signing:
-    - `cd ~/GitHub/scripts && ./setup/stadia/install-launchd-stadia-controller-bridge.sh --mode live`
-- Fast status checks:
-  - `launchctl print gui/$(id -u)/com.stadia-controller-bridge | sed -n '1,90p'`
-  - `tail -n 120 ~/Library/Logs/stadia-controller-bridge.launchd.out.log`
-
-External context:
-- Google Chrome team notes Stadia Assistant/Capture are outside the standard gamepad set and need lower-level access (`WebHID`) in browsers: https://developer.chrome.com/blog/stadia
+Keep dictation and submit separate. Dictation completion is asynchronous, so
+automatic Enter on trigger release can submit partial or previous text.
+For Ghostty-specific routing and API constraints, use
+`docs/architecture/ghostty-integration.md` and
+`docs/references/ghostty-mapping-rationale.md`.

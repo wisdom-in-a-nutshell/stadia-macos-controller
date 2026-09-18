@@ -1,44 +1,25 @@
 # Stadia macOS Controller
 
-Local macOS input bridge for using a Stadia controller with Ghostty, Codex, and system-level shortcuts.
+Local input bridge for a Stadia controller, Ghostty, Codex, and system shortcuts,
+plus a read-only browser guide to the mappings.
 
-## Scope
-
-This root `AGENTS.md` applies repo-wide. Keep exact operational detail in `docs/` instead of adding nested agent guidance.
-
-## Start Here
-
-- `docs/architecture/bridge-overview.md`: runtime shape, boundaries, and event flow.
-- `docs/architecture/ghostty-integration.md`: Ghostty-specific action flow.
-- `docs/references/repo-contract.md`: repo map, validation, runtime, install, and mapping contracts.
-- `docs/references/setup.md`: local run, accessibility, launchd, and troubleshooting commands.
-
-## Docs Contract
-
-- `docs/architecture/`: subsystem shape, boundaries, responsibilities, and main flows.
-- `docs/references/`: commands, file maps, config contracts, and operational lookup facts.
-- `docs/projects/<project>/tasks.md`: active multi-session execution state.
-- `docs/projects/archive/`: completed or superseded trackers.
-
-## Repo Rules
-
-- Keep `config/mappings.json` as the source of truth for controller mappings.
-- Keep machine-level install and launchd wiring in `~/GitHub/scripts/setup/stadia/`; this repo owns bridge code, config, and fallback project-local scripts.
-- Runtime or config-schema changes require reinstalling the staged launchd app before claiming live behavior is updated.
-- Update docs in the same change when bridge behavior, config contracts, launchd behavior, or operational commands change.
+- `config/mappings.json` owns mappings; `src/main.swift` owns the bridge.
+  Exact button descriptions belong in the config, not a second table in docs.
+- `~/GitHub/scripts/setup/stadia/` owns machine installation and launchd wiring;
+  this repo owns bridge source and the project-local installer implementation.
+- Local run/preview: `docs/references/setup.md`.
+- Bridge installation, signing, Accessibility, and recovery:
+  `docs/references/deployment.md`.
+- Guide release and mapping constraints: `docs/references/repo-contract.md`.
+- For Ghostty behavior, use `docs/architecture/ghostty-integration.md` and
+  `docs/references/ghostty-mapping-rationale.md`.
 
 ## Validation
 
-- Run `./scripts/check-fast.sh` before handoff.
-- Run `./scripts/check-full.sh` for runtime, launchd, or Swift code changes where a full build matters.
-- For live launchd changes, verify the LaunchAgent and test a real controller action against the changed behavior.
+`./scripts/check-fast.sh` checks guide routes and mappings. Use
+`./scripts/check-full.sh` for Swift/runtime changes; it includes the bridge build.
+Guide-only deployment uses its own full gate without rebuilding the bridge.
 
-## Controller Guide Production
-
-- `scripts/deploy-controller-guide.sh` is the single noninteractive production client. It emits
-  JSON by default and owns the exact-source full gate, versioned activation, health proof, status,
-  sanitized logs, and rollback.
-- Production guide releases live outside the checkout under
-  `~/.local/share/stadia-controller-guide/production`; never point launchd back at mutable repo files.
-- Do not use raw `launchctl print` as the guide's status surface. It can expose inherited
-  environment values; use `scripts/deploy-controller-guide.sh --status`.
+Mappings hot-reload, but new runtime/schema behavior requires reinstalling the
+staged app. Before claiming live behavior, verify the LaunchAgent and exercise
+a real controller action. Guide health is not proof that the input bridge works.
